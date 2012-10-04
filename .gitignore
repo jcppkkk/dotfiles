@@ -1,0 +1,7 @@
+vim/bundle
+*~
+*.pyc
+# ignore local setting
+bashrc_local
+*.pyc
+/local/share

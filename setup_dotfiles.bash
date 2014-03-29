@@ -9,9 +9,9 @@ sudo apt-get install ctags git dos2unix wget
 # sudo locale-gen zh_TW.UTF-8 || true
 
 
-## install powerline
-
-pip install --user git+git://github.com/Lokaltog/powerline
+## install pyenv & powerline
+curl https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+pip install git+git://github.com/Lokaltog/powerline
 
 
 ## Replace dotfiles with link and backup old ones

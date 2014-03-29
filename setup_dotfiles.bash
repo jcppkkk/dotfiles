@@ -21,7 +21,7 @@ dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 \ls | grep -v "~$\|/setup_" | while read file;
 do 
     target="$HOME/.$file"
-    mv -f "$target" "$dotfiles_oldfolder/"
+    [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
     ln -fvs -T "$(readlink -f "$file" )" "$target"
 done )
 

@@ -3,7 +3,7 @@ set -x
 # new machine setup
 which ctags >& /dev/null || sudo apt-get install exuberant-ctags || sudo apt-get install ctags
 which git >& /dev/null || sudo apt-get install git
-sudo locale-gen zh_TW.UTF-8 || true
+# sudo locale-gen zh_TW.UTF-8 || true
 
 # Setup self default using rebase when pull
 git config branch.master.rebase true
@@ -36,3 +36,5 @@ sudo chown ${USER}. ~/.bash_history ~/.viminfo
 # patch fonts for powerline
 fc-cache -vf ~/.fonts
 exec bash -i
+
+

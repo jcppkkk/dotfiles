@@ -1,40 +1,44 @@
 #!/bin/bash -e
 set -x
-# new machine setup
-which ctags >& /dev/null || sudo apt-get install exuberant-ctags || sudo apt-get install ctags
-which git >& /dev/null || sudo apt-get install git
-# sudo locale-gen zh_TW.UTF-8 || true
-
-# Setup self default using rebase when pull
-git config branch.master.rebase true
-
-
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 cd $current
 
-# prepare vim plugins
-[ ! -e vim/bundle/vundle ] && git clone https://github.com/gmarik/vundle.git vim/bundle/vundle
 
-# link dotfiles
+#########
+# new machine setup
+#########
+sudo apt-get install ctags git dos2unix wget
+# sudo locale-gen zh_TW.UTF-8 || true
+
+
+#########
+# Replace dotfiles with link and backup old ones
+#########
+dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
-\ls | while read file;
+( set +x
+\ls | grep -v "~$\|/setup_" | while read file;
 do 
-    [ "$file" = "dotfiles_setup" ] && continue
-    localfile="$HOME/.$file"
-    dotfile="$(readlink -f "$file" )"
-    [ -e "$localfile" ] && mv -f "$localfile" "$dotfiles_oldfolder/"
-    ln -fvs -T "$dotfile" "$localfile"
-done
+    target="$HOME/.$file"
+    mv -f "$target" "$dotfiles_oldfolder/"
+    ln -fvs -T "$(readlink -f "$file" )" "$target"
+done )
 
-vim +BundleInstall +qall
 
-which dos2unix &>/dev/null && find $HOME/.vim/ -name \*.vim -exec dos2unix {} \;
+#########
+# install vim plugins
+#########
+[ ! -e vim/bundle/vundle ] && git clone https://github.com/gmarik/vundle.git vim/bundle/vundle
+vim +BundleInstall! +qall
+find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
+
+#########
+# Local changes/fixes
+#########
+git config branch.master.rebase true                        # Setup self default using rebase when pull
+[ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
 sudo chown ${USER}. ~/.bash_history ~/.viminfo
+wget -N https://github.com/git/git/raw/master/contrib/completion/git-completion.bash
 
-# patch fonts for powerline
-fc-cache -vf ~/.fonts
-exec bash -i
-
-
+exec bash -i # reload bash

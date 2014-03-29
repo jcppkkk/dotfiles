@@ -247,6 +247,16 @@ do
 done
 unset path
 
+#-------------------------------------------------------------
+# Insert pyenv PATH
+#-------------------------------------------------------------
+export PYENV_ROOT="${HOME}/.pyenv"
+
+if [ -d "${PYENV_ROOT}" ]; then
+    export PATH="${PYENV_ROOT}/bin:${PATH}"
+    eval "$(pyenv init -)"
+fi
+
 
 #-------------------------------------------------------------
 # Try to keep environment pollution down, EPA loves us.

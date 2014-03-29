@@ -38,6 +38,7 @@ Bundle 'OmniCppComplete'
 Bundle 'renamer.vim'
 Bundle 'pep8'
 Bundle 'AutoTag'
+Bundle 'kchmck/vim-coffee-script'
 
 " ===========================================================================
 " first the disabled features due to security concerns

@@ -28,7 +28,7 @@ done )
 
 ## install vim plugins
 [ ! -e vim/bundle/vundle ] && git clone https://github.com/gmarik/vundle.git vim/bundle/vundle
-vim +BundleInstall! +qall
+vim +BundleInstall +qall
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 
@@ -36,6 +36,5 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
 sudo chown ${USER}. ~/.bash_history ~/.viminfo
-wget -N https://github.com/git/git/raw/master/contrib/completion/git-completion.bash
 
 exec bash -i # reload bash

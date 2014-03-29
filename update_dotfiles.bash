@@ -4,7 +4,7 @@ current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
 
 # Update powerline
-pip install --user git+git://github.com/Lokaltog/powerline --upgrade
+pip install git+git://github.com/Lokaltog/powerline --upgrade
 
 # Update vim plugins
 vim +BundleInstall! +qall

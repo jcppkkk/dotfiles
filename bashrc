@@ -310,8 +310,9 @@ fi
 # Prompt_command
 #-------------------------------------------------------------
 # Powerline prompt
-if [ -f ~/.local/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh ]; then
-    source ~/.local/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh
+powerline=$(find ~/.pyenv/ ~/.local/ -name 'powerline.sh')
+if [ -f "$powerline" ]; then
+    source "$powerline"
 fi
 
 [[ "$PROMPT_COMMAND" != "${PROMPT_COMMAND/history/}" ]] ||

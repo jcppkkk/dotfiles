@@ -22,13 +22,8 @@ sudo apt-get -y install ctags git dos2unix wget
 
 
 ## install pyenv & powerline
-export PYENV_ROOT="${HOME}/.pyenv"
-
-if [ -d "${PYENV_ROOT}" ]; then
-        export PATH="${PYENV_ROOT}/bin:${PATH}"
-            eval "$(pyenv init -)"
-        fi
 curl https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+. ~/.bashrc
 pyenv versions | grep -q 2.7.6 || pyenv install 2.7.6
 pyenv global 2.7.6
 pip install git+git://github.com/Lokaltog/powerline

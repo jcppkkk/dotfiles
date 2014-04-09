@@ -1,5 +1,4 @@
-#!/bin/bash -e
-set -x
+#!/bin/bash -xe
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
 
@@ -23,7 +22,10 @@ sudo apt-get -y install ctags git dos2unix wget
 
 ## install pyenv & powerline
 curl https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
-. ~/.bashrc
+export setupdotfile=yes
+set +xe
+source ~/.bashrc
+set -xe
 pyenv versions | grep -q 2.7.6 || pyenv install 2.7.6
 pyenv global 2.7.6
 pip install git+git://github.com/Lokaltog/powerline

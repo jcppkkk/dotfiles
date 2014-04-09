@@ -310,7 +310,7 @@ fi
 # Prompt_command
 #-------------------------------------------------------------
 # Powerline prompt
-powerline=$(find ~/.pyenv/ ~/.local/ -name 'powerline.sh')
+powerline=$(find ~/.pyenv/ -name 'powerline.sh')
 if [ -f "$powerline" ]; then
     source "$powerline"
 fi

@@ -330,7 +330,7 @@ set dictionary=/usr/share/dict/words            " used with CTRL-X CTRL-K
 set fileencodings=utf-8-bom,ucs-bom,utf-8,cp936,big5,gb18030,ucs
 set fileformats=unix,dos
 set showtabline=1                       " auto hide tab title if only 1 tab
-" tabs and indenting
+set binary
 
 
 " ===========================================================================

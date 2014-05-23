@@ -28,6 +28,7 @@ Bundle 'gmarik/vundle'
 " original repos on github
 Bundle 'mfukar/robotframework-vim'
 Bundle 'altercation/vim-colors-solarized'
+Bundle 'vim-ruby/vim-ruby'
 
 " " vim-scripts repos
 Bundle 'L9'
@@ -111,8 +112,8 @@ map <MouseMiddle> <esc>"*p
 set autoindent smartindent      " turn on auto/smart indenting
 set expandtab                   " use spaces, not tabs
 set smarttab                    " make <tab> and <backspace> smarter
-set tabstop=4                   " tabstops of 8
-set shiftwidth=4                " indents of 8
+set softtabstop=4 tabstop=4 shiftwidth=4
+au FileType ruby set softtabstop=2 tabstop=2 shiftwidth=2
 set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
 set updatecount=100             " write swap file to disk every 100 chars

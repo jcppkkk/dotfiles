@@ -64,14 +64,6 @@ fi
 #-------------------------------------------------------------
 alias more='less'
 export EDITOR=vim
-export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
-    vim -R -c 'set ft=man nomod nolist nonu' -c 'map q :q<CR>' \
-    -c 'map <SPACE> <C-D>' -c 'map b <C-U>' \
-    -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
-#export LESSCHARSET='latin1'
-#export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'
-   # Use this if lesspipe.sh exists
-#export LESS='-i -S -w -N -z -4 -g -e -M -F -X -R -P%t?f%f \
 export LESS='-i -z -4 -M -X -R'
 export  LESSCHARDEF="8bcccbcc18b95.."
 export  LESS_TERMCAP_mb='[1;31m'      # begin blinking

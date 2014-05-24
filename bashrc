@@ -355,7 +355,7 @@ if type -P mintty &>/dev/null;then
 fi
 
 # TMUX
-if [ ! -z "$TMUX" ]; then 
+if [ -z "$TMUX" ]; then 
     [ -f /var/run/motd ] && cat /var/run/motd
 fi
 

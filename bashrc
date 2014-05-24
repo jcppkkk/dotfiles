@@ -301,14 +301,17 @@ fi
 #-------------------------------------------------------------
 # Prompt_command
 #-------------------------------------------------------------
-# Powerline prompt
-powerline=$(find ~/.pyenv/ -name 'powerline.sh')
-if [ -f "$powerline" ]; then
-    source "$powerline"
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    # Powerline prompt
+    powerline=$(find ~/.pyenv/ -name 'powerline.sh')
+    if [ -f "$powerline" ]; then
+        source "$powerline"
+    fi
 fi
 
-[[ "$PROMPT_COMMAND" != "${PROMPT_COMMAND/history/}" ]] ||
+if [[ "$PROMPT_COMMAND" == "${PROMPT_COMMAND/history/}" ]] ; then
 	export PROMPT_COMMAND="${PROMPT_COMMAND}"$'\n'"history -a;history -c; history -r"
+fi
 
 #-------------------------------------------------------------
 # History

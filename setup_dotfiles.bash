@@ -16,8 +16,8 @@ done )
 
 
 ## new machine setup
-packages=ctags git dos2unix wget
-which $packages || sudo apt-get -y $packages
+packages="ctags git dos2unix wget"
+which $packages || sudo apt-get install -y $packages
 # sudo locale-gen zh_TW.UTF-8 || true
 
 

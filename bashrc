@@ -200,6 +200,8 @@ function killps()                 # Kill by process name.
 #-------------------------------------------------------------
 # import completions
 #-------------------------------------------------------------
+[[ "$-" = *x* ]] && set +x && x=x # store -x flag when sourcing external resource
+[[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
 for file in \
     /etc/bash_completion \
     ~/.git-completion.sh
@@ -208,6 +210,8 @@ do
         . $file
     fi
 done
+[ "$x" = "x" ] && set -x && unset x # restore -x flag
+[ "$e" = "e" ] && set -e && unset e # restore -e flag
 ## my addition
 __expand_tilde_by_ref()
 {
@@ -358,4 +362,4 @@ fi
 if [ -z "$TMUX" ]; then 
     [ -f /var/run/motd ] && cat /var/run/motd
 fi
-
+true

@@ -64,6 +64,7 @@ fi
 #-------------------------------------------------------------
 alias more='less'
 export EDITOR=vim
+export PAGER='more +/exit'
 export LESS='-i -z -4 -M -X -R'
 export  LESSCHARDEF="8bcccbcc18b95.."
 export  LESS_TERMCAP_mb='[1;31m'      # begin blinking

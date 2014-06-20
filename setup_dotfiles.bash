@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
 
@@ -16,19 +16,31 @@ done )
 
 
 ## new machine setup
-packages="ctags git dos2unix wget"
-which $packages || sudo apt-get install -y $packages
+packages="exuberant-ctags git dos2unix wget make build-essential libssl-dev zlib1g-dev libbz2-dev \
+	libreadline-dev libsqlite3-dev wget curl llvm"
+install_packages=""
+for P in $packages; do
+	if dpkg -s "$P" >/dev/null 2>&1; then 
+		echo "$P is installed."
+	else
+		echo "$P is not installed."
+		install_packages="$install_packages $P"
+	fi
+done
+[ -n "$install_packages" ] && sudo apt-get install -y $install_packages
+
 # sudo locale-gen zh_TW.UTF-8 || true
 
 
 ## install pyenv & powerline
+CFLAGS='-g -O2'
 curl -L https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
 export setupdotfile=yes
 set +e
 source ~/.bashrc
 set -e
-pyenv versions | grep -q 2.7.6 || pyenv install 2.7.6
-pyenv global 2.7.6
+pyenv versions | grep -q 2.7.7 || pyenv install 2.7.7
+pyenv global 2.7.7
 pip install git+git://github.com/Lokaltog/powerline
 
 

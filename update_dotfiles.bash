@@ -3,6 +3,9 @@ set -x
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
 
+# Clean old files
+[ -d local ] && echo The local folder for powerline is not needed anymore, remove? && \rm -ri local
+
 # Update powerline
 pip install git+git://github.com/Lokaltog/powerline --upgrade
 

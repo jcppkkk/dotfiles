@@ -29,6 +29,7 @@ Bundle 'gmarik/vundle'
 Bundle 'mfukar/robotframework-vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'vim-ruby/vim-ruby'
+Bundle 'kchmck/vim-coffee-script'
 
 " " vim-scripts repos
 Bundle 'L9'
@@ -39,7 +40,6 @@ Bundle 'OmniCppComplete'
 Bundle 'renamer.vim'
 Bundle 'pep8'
 Bundle 'AutoTag'
-Bundle 'kchmck/vim-coffee-script'
 
 " ===========================================================================
 " first the disabled features due to security concerns
@@ -72,6 +72,7 @@ set scrolloff=2                " keep at least 10 lines above/below cursor
 set sidescrolloff=5             " keep at least 5 columns left/right of cursor
 set history=200                 " remember the last 200 commands
 set showcmd		                " display incomplete commands
+set tags=./tags;
 
 " ===========================================================================
 " meta

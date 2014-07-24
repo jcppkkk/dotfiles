@@ -30,6 +30,8 @@ Bundle 'mfukar/robotframework-vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'kchmck/vim-coffee-script'
+Plugin 'ciaranm/detectindent'
+autocmd BufReadPost * :DetectIndent
 
 " " vim-scripts repos
 Bundle 'L9'
@@ -114,7 +116,6 @@ set autoindent smartindent      " turn on auto/smart indenting
 set expandtab                   " use spaces, not tabs
 set smarttab                    " make <tab> and <backspace> smarter
 set softtabstop=4 tabstop=4 shiftwidth=4
-au FileType ruby set softtabstop=2 tabstop=2 shiftwidth=2
 set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
 set updatecount=100             " write swap file to disk every 100 chars
@@ -374,27 +375,6 @@ vmap <silent>c<down>    !boxes -t 4 -r<CR>
 " ===========================================================================
 
 map <F2> :call FormartSrc()<CR>
-"定义FormartSrc()
-func FormartSrc()
-    exec "w"
-    if &filetype == 'c'
-        exec "!astyle --style=ansi --one-line=keep-statements -a --suffix=none %"
-    elseif &filetype == 'cpp' || &filetype == 'hpp'
-        exec "r !astyle --style=ansi --one-line=keep-statements -a --suffix=none %> /dev/null 2>&1"
-    elseif &filetype == 'perl'
-        exec "!astyle --style=gnu --suffix=none %"
-    elseif &filetype == 'py'||&filetype == 'python'
-        exec "r !autopep8 -i --aggressive %"
-    elseif &filetype == 'java'
-        exec "!astyle --style=java --suffix=none %"
-    elseif &filetype == 'jsp'
-        exec "!astyle --style=gnu --suffix=none %"
-    elseif &filetype == 'xml'
-        exec "!astyle --style=gnu --suffix=none %"
-    endif
-    exec "e! %"
-endfunc
-"结束定义FormartSrc
 
 let g:pep8_map='<F3>'
 map <F4> :set expandtab!<BAR>set expandtab?<CR>
@@ -410,13 +390,14 @@ set pastetoggle=<F9>
 
 " <B> <C> this script use to excute make in vim and open quickfix window
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat 
-nmap <silent> B :call Do_make()<cr><cr><cr>
+nmap <silent> B :call Do_make__()<cr><cr><cr>
 nmap <silent> C :cclose<cr>
-function Do_make()
+function Do_make__()
     up
     execute "make"
     execute "cwindow"
 endfunction
+
 
 
 " ===========================================================================

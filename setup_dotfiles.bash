@@ -51,6 +51,7 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 
 ## Local changes/fixes
+rm -rf local
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
 [ -e ~/.bash_history ] && sudo -s chown ${USER}. ~/.bash_history

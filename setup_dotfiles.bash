@@ -45,6 +45,7 @@ pip install git+git://github.com/Lokaltog/powerline
 
 
 ## install vim plugins
+[ -e vim/bundle/vundle ] && (cd vim/bundle/vundle; git pull)
 [ ! -e vim/bundle/vundle ] && git clone https://github.com/gmarik/vundle.git vim/bundle/vundle
 vim +BundleInstall +qall
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;

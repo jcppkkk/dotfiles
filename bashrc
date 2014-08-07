@@ -173,6 +173,17 @@ function extract()      # Handy Extract Program.
      fi
 }
 
+function jcrm ()
+{
+    queue="."
+    while [ -n "$queue" ]
+    do
+	echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type f\
+	    -regextype posix-extended -regex "(.*\.(core|gch|swp|tmp|orig|nfs\..*)|.*~)$" -print -delete
+	queue=`echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type d`
+    done
+    unset queue
+}
 #-------------------------------------------------------------
 # Process/system related functions:
 #-------------------------------------------------------------

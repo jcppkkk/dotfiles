@@ -30,8 +30,10 @@ Bundle 'mfukar/robotframework-vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'kchmck/vim-coffee-script'
-Plugin 'ciaranm/detectindent'
-autocmd BufReadPost * :DetectIndent
+Bundle 'roryokane/detectindent'
+autocmd BufReadPost * :DetectIndent 
+let g:detectindent_preferred_expandtab = 1 
+let g:detectindent_preferred_indent = 4 
 
 " " vim-scripts repos
 Bundle 'L9'
@@ -115,7 +117,6 @@ map <MouseMiddle> <esc>"*p
 set autoindent smartindent      " turn on auto/smart indenting
 set expandtab                   " use spaces, not tabs
 set smarttab                    " make <tab> and <backspace> smarter
-set softtabstop=4 tabstop=4 shiftwidth=4
 set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
 set updatecount=100             " write swap file to disk every 100 chars
@@ -418,10 +419,6 @@ set t_Co=256
 if has('autocmd')
     filetype plugin indent on
     " jump to last line edited in a given file (based on .viminfo)
-    "autocmd BufReadPost *
-    "       \ if !&diff && line("'\"") > 0 && line("'\"") <= line("$") |
-    "       \       exe "normal g`\"" |
-    "       \ endif
     autocmd BufReadPost *
                 \ if line("'\"") > 0|
                 \       if line("'\"") <= line("$")|
@@ -440,4 +437,5 @@ if has('autocmd')
 
     " configure various extenssions
     let git_diff_spawn_mode=2
+
 endif

@@ -324,7 +324,7 @@ _bash_history_sync() {
 }
 PROMPT_COMMAND=_bash_history_sync
 
-if [ -d  ~/.pyenv/ ] && ( [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] ); then
+if [ -d  ~/.pyenv/ -a \( -n "$SSH_CLIENT" -o -n "$SSH_TTY" \) ]; then
     # Powerline prompt
     powerline=$(find ~/.pyenv/ -path '*/bash/powerline.sh')
     if [ -f "$powerline" ]; then

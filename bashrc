@@ -316,17 +316,25 @@ fi
 #-------------------------------------------------------------
 # Prompt_command
 #-------------------------------------------------------------
+_bash_history_sync() {
+    builtin history -a
+    HISTFILESIZE=$HISTSIZE
+    builtin history -c
+    builtin history -r
+}
+PROMPT_COMMAND=_bash_history_sync
+
 if [ -d  ~/.pyenv/ ] && ( [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] ); then
     # Powerline prompt
     powerline=$(find ~/.pyenv/ -path '*/bash/powerline.sh')
     if [ -f "$powerline" ]; then
+	powerline-daemon -q
+	POWERLINE_BASH_CONTINUATION=1
+	POWERLINE_BASH_SELECT=1
         source "$powerline"
     fi
 fi
 
-if [[ "$PROMPT_COMMAND" == "${PROMPT_COMMAND/history/}" ]] ; then
-	export PROMPT_COMMAND="${PROMPT_COMMAND}"$'\n'"history -a;history -c; history -r"
-fi
 
 #-------------------------------------------------------------
 # History
@@ -340,7 +348,7 @@ export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
 export HISTIGNORE="&:ls:[bf]g:exit"
 export HOSTFILE=$HOME/.hosts    # Put list of remote hosts in ~/.hosts ...
 export HISTSIZE=10000
-export HISTFILESIZE=10000
+export HISTFILESIZE=$HISTSIZE
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
 
 

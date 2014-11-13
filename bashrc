@@ -245,7 +245,6 @@ fi
 path="$path $HOME/bin"
 path="$path $HOME/.bin"
 path="$path $HOME/.local/bin"
-path="$path $HOME/.rvm/bin" # Add RVM to PATH for scriptin
 path="$path /android-cts/tools"
 path="$path /android-sdk-linux_x86/tools"
 for a in $path

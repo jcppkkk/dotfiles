@@ -19,3 +19,5 @@ fi
 
 export LANG="en_US.utf8"
 export LANGUAGE="en"
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting

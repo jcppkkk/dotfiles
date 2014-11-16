@@ -15,7 +15,7 @@
 # Personnal Aliases
 #-------------------
 
-. get-platform
+[ -f ~/.get-platform ] && . ~/.get-platform
 
 alias ssh='LC_ALL=en_US.UTF-8 ssh'
 alias aa='vim ~/.bashrc && source ~/.bashrc'

@@ -15,6 +15,8 @@
 # Personnal Aliases
 #-------------------
 
+. get-platform
+
 alias ssh='LC_ALL=en_US.UTF-8 ssh'
 alias aa='vim ~/.bashrc && source ~/.bashrc'
 alias as='vim ~/.bash_aliases && source ~/.bashrc'
@@ -42,7 +44,7 @@ alias df='df -kTh'
 #-------------------------------------------------------------
 # The 'ls' family (this assumes you use a recent GNU ls)
 #-------------------------------------------------------------
-if [ "$OS" == "Linux" ]; then
+if [[ $platform == 'linux' ]]; then
     alias ls='ls -h -F --color=auto'
 else
     alias ls='ls -AhG'

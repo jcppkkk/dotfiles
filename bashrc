@@ -21,9 +21,7 @@ shopt -s checkwinsize
 #-------------------------------------------------------------
 for file in /etc/bashrc ~/.bash_aliases ~/.git-prompt.sh ~/.rvm/scripts/rvm ~/.get-platform
 do
-    if [ -f $file ]; then
-        . $file
-    fi
+    [ -f $file ] && . $file
 done
 
 #-------------------------------------------------------------

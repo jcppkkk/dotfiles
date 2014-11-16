@@ -19,20 +19,12 @@ shopt -s checkwinsize
 # ~/.zer0prompt         : preload color prompt
 # ~/.rvm/scripts/rvm    : Load RVM into a shell session *as a function*
 #-------------------------------------------------------------
-for file in /etc/bashrc ~/.bash_aliases ~/.git-prompt.sh ~/.rvm/scripts/rvm
+for file in /etc/bashrc ~/.bash_aliases ~/.git-prompt.sh ~/.rvm/scripts/rvm ~/.get-platform
 do
     if [ -f $file ]; then
         . $file
     fi
 done
-
-#-------------------------------------------------------------
-# Freebsd setting
-#-------------------------------------------------------------
-if [ `uname` = "FreeBSD" ];
-then
-    export PACKAGEROOT="ftp://ftp.tw.FreeBSD.org"
-fi
 
 #-------------------------------------------------------------
 # Change language by terminal (local console OR ssh ?)
@@ -178,8 +170,8 @@ function jcrm ()
     queue="."
     while [ -n "$queue" ]
     do
-	echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type f\
-	    -regextype posix-extended -regex "(.*\.(core|gch|swp|tmp|orig|nfs\..*)|.*~)$" -print -delete
+	echo "$queue" | xargs -I'{}' find "{}" -mindepth 1 -maxdepth 1 -type f \
+            \( -name "*~" -o -name "*.core" -o -name "*.gch" -o -name "*.swp" -o -name "*.orig" -o -regex ".*\.nfs.*$" \) -print -delete
 	queue=`echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type d`
     done
     unset queue
@@ -227,7 +219,7 @@ done
 ## my addition
 __expand_tilde_by_ref()
 {
-        return 0;
+    return 0;
 }
 
 #-------------------------------------------------------------
@@ -250,7 +242,7 @@ path="$path /android-sdk-linux_x86/tools"
 for a in $path
 do
     [ -d "$a" ] && [ ":$PATH:" = ":${PATH/:$a:/}:" ] &&
-        export PATH="$PATH:$a"
+    export PATH="$PATH:$a"
 done
 unset path
 
@@ -302,8 +294,8 @@ if ${use_color} ; then
 			eval $(dircolors -b /etc/DIR_COLORS)
 		fi
 	fi
-	alias ls='ls --color=auto'
-	alias grep='grep --colour=auto'
+	#alias ls='ls --color=auto'
+	#alias grep='grep --colour=auto'
 else
 	if [[ ${EUID} == 0 ]] ; then
 		# show root@ when we don't have colors
@@ -324,17 +316,21 @@ _bash_history_sync() {
 }
 PROMPT_COMMAND=_bash_history_sync
 
-if [ -d  ~/.pyenv/ -a \( -n "$SSH_CLIENT" -o -n "$SSH_TTY" \) ]; then
-    # Powerline prompt
-    powerline=$(find ~/.pyenv/ -path '*/bash/powerline.sh')
-    if [ -f "$powerline" ]; then
-	powerline-daemon -q
-	POWERLINE_BASH_CONTINUATION=1
-	POWERLINE_BASH_SELECT=1
-        source "$powerline"
+for file in \
+    ~/.pyenv/ \
+    /usr/local/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh
+do
+    if [ -n "$SSH_CLIENT" -o -n "$SSH_TTY" -o $platform = "mac" ]; then
+        # Powerline prompt
+        [ -e $file ] && powerline=$(find $file -path '*/bash/powerline.sh')
+        if [ -f "$powerline" ]; then
+            powerline-daemon -q
+            POWERLINE_BASH_CONTINUATION=1
+            POWERLINE_BASH_SELECT=1
+            source "$powerline"
+        fi
     fi
-fi
-
+done
 
 #-------------------------------------------------------------
 # History

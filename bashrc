@@ -5,7 +5,6 @@ if [[ $- != *i* && $setupdotfile = "" ]] ; then
 	# Shell is non-interactive.  Be done now!
 	return
 fi
-
 #-------------------------------------------------------------
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when
@@ -318,7 +317,7 @@ for file in \
     ~/.pyenv/ \
     /usr/local/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh
 do
-    if [ -n "$SSH_CLIENT" -o -n "$SSH_TTY" -o $platform = "mac" ]; then
+    if [ -n "$SSH_CLIENT" -o -n "$SSH_TTY" -o "$platform" = "mac" ]; then
         # Powerline prompt
         [ -e $file ] && powerline=$(find $file -path '*/bash/powerline.sh')
         if [ -f "$powerline" ]; then

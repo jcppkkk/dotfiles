@@ -52,7 +52,7 @@ case $platform in
         ;;
 esac
 
-linux_check_pkg() { pkg -s "$1" >/dev/null 2>&1; }
+linux_check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
 linux_install_pkg() { sudo apt-get install -y $@; }
 mac_check_pkg() { brew list -1 | grep -q "^${1}\$"; }
 mac_install_pkg() { brew install $@; }
@@ -95,7 +95,8 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 ## install powerline
 #######################
 [[ $platform == 'mac' ]] && pip install git+git://github.com/Lokaltog/powerline
-[[ $platform == 'linux' ]] && pip install --user git+git://github.com/Lokaltog/powerline
+[[ $platform == 'linux' ]] && (curl https://bootstrap.pypa.io/get-pip.py | sudo python) \
+    && pip install --user git+git://github.com/Lokaltog/powerline
 
 
 ## Local changes/fixes

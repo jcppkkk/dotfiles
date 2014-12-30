@@ -63,7 +63,7 @@ let c_no_curly_error = 1
 set nocompatible                " vim defaults, not vi!
 set hidden                      " allow editing multiple unsaved buffers
 set more                        " the 'more' prompt
-"filetype on                     " automatic file type detection
+filetype on                     " automatic file type detection
 set autoread                    " watch for file changes by other programs
 "set visualbell                 " visual beep
 set backup                      " produce *~ backup files
@@ -71,8 +71,10 @@ set backupext=~                 " add ~ to the end of backup files
 ":set patchmode=~               " only produce *~ if not there
 set noautowrite                 " don't automatically write on :next, etc
 let maplocalleader=','          " all my macros start with ,
+"set lazyredraw                  " don't redraw when running macros
+set ttyfast                     " Speedup for tty
 set wildmenu                    " : menu has tab completion, etc
-set scrolloff=2                " keep at least 10 lines above/below cursor
+set scrolloff=5                " keep at least 10 lines above/below cursor
 set sidescrolloff=5             " keep at least 5 columns left/right of cursor
 set history=200                 " remember the last 200 commands
 set showcmd		                " display incomplete commands
@@ -87,10 +89,8 @@ map <LocalLeader>cs :source ~/.vimrc<cr>        " quickly source this file
 " ===========================================================================
 " window spacing
 " ===========================================================================
-"set cmdheight=2                 " make command line two lines high
-set cmdheight=1
+set cmdheight=1                 " make command line two lines high
 set ruler                       " show the line number on bar
-set lazyredraw                  " don't redraw when running macros
 set number                      " show 
 
 map <LocalLeader>w+ 100<C-w>+  " grow by 100
@@ -99,7 +99,7 @@ map <LocalLeader>w- 100<C-w>-  " shrink by 100
 " ===========================================================================
 " mouse settings
 " ===========================================================================
-set mouse=                      " disable mouse support in all modes
+set mouse=a                      " disable mouse support in all modes
 set mousehide                   " hide the mouse when typing text
 
 " ,p and shift-insert will paste the X buffer, even on the command line
@@ -217,7 +217,6 @@ map <LocalLeader>bb :ls<cr>
 " ===========================================================================
 syntax enable                       " syntax on
 try
-    "colorscheme my_inkpot              " 256 colour
     colorscheme solarized
 catch /^Vim\%((\a\+)\)\=:E185/
     " deal with it
@@ -227,6 +226,9 @@ let g:solarized_termcolors=256
 
 "set background=light
 set background=dark
+
+set cursorline
+
 
 " ===========================================================================
 " Folding for unified diffs 

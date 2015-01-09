@@ -7,7 +7,7 @@ cd $current
 [ -d local ] && echo The local folder for powerline is not needed anymore, remove? && \rm -ri local
 
 # Update powerline
-pip install git+git://github.com/Lokaltog/powerline --upgrade
+pip install git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
 
 # Update vim plugins
 pushd vim/bundle/vundle/

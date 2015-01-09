@@ -32,8 +32,9 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'roryokane/detectindent'
 autocmd BufReadPost * :DetectIndent 
-let g:detectindent_preferred_expandtab = 1 
-let g:detectindent_preferred_indent = 4 
+let g:detectindent_preferred_expandtab = 4
+let g:detectindent_preferred_indent = 4
+Bundle "pangloss/vim-javascript"
 
 " " vim-scripts repos
 Bundle 'L9'
@@ -395,7 +396,7 @@ set pastetoggle=<F9>
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat 
 nmap <silent> B :call Do_make__()<cr><cr><cr>
 nmap <silent> C :cclose<cr>
-function Do_make__()
+function! Do_make__()
     up
     execute "make"
     execute "cwindow"

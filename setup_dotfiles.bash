@@ -94,9 +94,9 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 #######################
 ## install powerline
 #######################
-[[ $platform == 'mac' ]] && pip install git+git://github.com/Lokaltog/powerline
+[[ $platform == 'mac' ]] && pip install git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
 [[ $platform == 'linux' ]] && (curl https://bootstrap.pypa.io/get-pip.py | sudo python) \
-    && pip install --user git+git://github.com/Lokaltog/powerline
+    && pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
 
 
 ## Local changes/fixes

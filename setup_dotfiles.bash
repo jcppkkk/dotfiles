@@ -1,5 +1,11 @@
 #!/bin/bash -ex
 
+if [ -z "$SUDO_COMMAND" ]
+then
+    sudo $0 $*
+    exit 0
+fi
+
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }

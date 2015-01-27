@@ -5,4 +5,4 @@ vim/bundle
 bashrc_local
 *.pyc
 /local/share
-vim/.netrwhist
+/vim/.netrwhist

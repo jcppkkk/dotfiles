@@ -43,8 +43,7 @@ Bundle 'FuzzyFinder'
 Bundle 'cuteErrorMarker'
 Bundle 'OmniCppComplete'
 " Bundle 'taglist.vim'
-Bundle 'renamer.vim'
-Bundle 'pep8'
+Bundle 'renamer.vim' 
 Bundle 'AutoTag'
 
 " ===========================================================================
@@ -388,9 +387,8 @@ vmap <silent>c<down>    !boxes -t 4 -r<CR>
 
 map <F2> :call FormartSrc()<CR>
 
-let g:pep8_map='<F3>'
+map <F3> :wa<CR>
 map <F4> :set expandtab!<BAR>set expandtab?<CR>
-map <F5> :wa<CR>
 map <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
 
 " <F8> 會在 searching highlight 及非 highlight 間切換

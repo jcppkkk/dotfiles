@@ -30,10 +30,11 @@ Bundle 'mfukar/robotframework-vim'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'kchmck/vim-coffee-script'
+Bundle 'Super-Shell-Indent'
 Bundle 'roryokane/detectindent'
-autocmd BufReadPost * :DetectIndent 
-let g:detectindent_preferred_expandtab = 4
-let g:detectindent_preferred_indent = 4
+"autocmd BufReadPost * :DetectIndent 
+let g:detectindent_preferred_expandtab = 1 
+let g:detectindent_preferred_indent = 4 
 Bundle "pangloss/vim-javascript"
 
 " " vim-scripts repos
@@ -115,9 +116,16 @@ map <MouseMiddle> <esc>"*p
 " ===========================================================================
 " global editing settings
 " ===========================================================================
+
+" In a codebase that uses 4 space characters for each indent, here are good
+" settings to start with:
+"set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+
+" In a codebase that uses a single tab character that appears 4-spaces-wide
+" for each indent these settings should work:
+set tabstop=4 softtabstop=0 noexpandtab shiftwidth=4
+
 set autoindent smartindent      " turn on auto/smart indenting
-set expandtab                   " use spaces, not tabs
-set smarttab                    " make <tab> and <backspace> smarter
 set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
 set updatecount=100             " write swap file to disk every 100 chars

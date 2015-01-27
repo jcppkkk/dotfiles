@@ -24,15 +24,15 @@ fi
 ## Backup dotfiles and replace with link
 #######################
 
-#dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
-#[ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
-#( 
-#\ls | grep -v "~$\|/setup_" | while read file;
-#do 
-#    target="$HOME/.$file"
-#    [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
-#    ln -fvs "$(realpath "$file" )" "$target"
-#done )
+dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
+[ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
+( 
+\ls | grep -v "~$\|/setup_" | while read file;
+do 
+    target="$HOME/.$file"
+    [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
+    ln -fvs "$(realpath "$file" )" "$target"
+done )
 
 #######################
 ## install packages on new machine

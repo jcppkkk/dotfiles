@@ -101,7 +101,7 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 ## install powerline
 #######################
 # Remove deprecated pyenv version powerline
-rm -rf ~/.pyenv/versions/2.7.6/lib/python2.7/site-packages/powerline*
+rm -rf ~/.pyenv/
 
 if hash pip 2>/dev/null; then
 	pip install -U pip
@@ -116,6 +116,8 @@ pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-in
 
 ## Local changes/fixes
 rm -rf local
+[ -L ~/.local ] rm ~/.local
+
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
 

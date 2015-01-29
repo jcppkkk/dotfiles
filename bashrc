@@ -314,9 +314,8 @@ _bash_history_sync() {
 PROMPT_COMMAND=_bash_history_sync
 
 for file in \
-    ~/.pyenv/ \
-    /usr/local/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh \
-    ~/.local/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh
+    /usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
+    ~/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh
 do
     if [ -n "$SSH_CLIENT" -o -n "$SSH_TTY" -o "$platform" = "mac" ]; then
         # Powerline prompt

@@ -116,7 +116,7 @@ pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-in
 
 ## Local changes/fixes
 rm -rf local
-[ -L ~/.local ] rm ~/.local
+[ -L ~/.local ] && rm ~/.local
 
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline

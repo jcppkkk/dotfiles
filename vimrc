@@ -116,13 +116,9 @@ map <MouseMiddle> <esc>"*p
 " global editing settings
 " ===========================================================================
 
-" In a codebase that uses 4 space characters for each indent, here are good
-" settings to start with:
-"set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
-
-" In a codebase that uses a single tab character that appears 4-spaces-wide
-" for each indent these settings should work:
-set tabstop=4 softtabstop=0 noexpandtab shiftwidth=4
+map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z
+map <F11> mz:set softtabstop=0 shiftwidth=4 tabstop=4 noexpandtab<CR>'z
+map <F12> mz:set softtabstop=0 shiftwidth=8 tabstop=8 expandtab<CR>'z
 
 set autoindent smartindent      " turn on auto/smart indenting
 set backspace=eol,start,indent  " allow backspacing over indent, eol, & start

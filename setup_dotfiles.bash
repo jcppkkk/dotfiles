@@ -2,7 +2,7 @@
 
 if [ -z "$SUDO_COMMAND" ]
 then
-    sudo $0 $*
+    sudo H=$HOME U=$USER G=`id -g` $0 $*
     exit 0
 fi
 
@@ -16,8 +16,8 @@ cd $current
 
 # Disable DNS resolution to speedup ssh
 if [ -f /etc/ssh/sshd_config ]; then
-    sudo sed -i -e "s:^#\?UseDNS yes:UseDNS no:" /etc/ssh/sshd_config
-    grep "UseDNS no" /etc/ssh/sshd_config || echo "UseDNS no" | sudo tee -a /etc/ssh/sshd_config
+    sed -i -e "s:^#\?UseDNS yes:UseDNS no:" /etc/ssh/sshd_config
+    grep "UseDNS no" /etc/ssh/sshd_config || echo "UseDNS no" | tee -a /etc/ssh/sshd_config
 fi
 
 #######################
@@ -59,7 +59,7 @@ case $platform in
 esac
 
 linux_check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
-linux_install_pkg() { sudo apt-get install -y $@; }
+linux_install_pkg() { apt-get install -y $@; }
 mac_check_pkg() { brew list -1 | grep -q "^${1}\$"; }
 mac_install_pkg() { brew install $@; }
 
@@ -74,7 +74,7 @@ for P in $packages; do
 done
 [ -n "$install_packages" ] && ${platform}_install_pkg $install_packages
 
-# sudo locale-gen zh_TW.UTF-8 || true
+# locale-gen zh_TW.UTF-8 || true
 
 
 #######################
@@ -100,17 +100,24 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 #######################
 ## install powerline
 #######################
-[[ $platform == 'mac' ]] && pip install git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
-[[ $platform == 'linux' ]] && (curl https://bootstrap.pypa.io/get-pip.py | sudo python) \
-    && pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
+# Remove deprecated pyenv version powerline
+rm -rf ~/.pyenv/versions/2.7.6/lib/python2.7/site-packages/powerline*
+
+if hash pip 2>/dev/null; then
+	pip install -U pip
+else
+	# install pip
+	#[[ $platform == 'mac' ]] 
+	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | python
+fi
+
+pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
 
 
 ## Local changes/fixes
 rm -rf local
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
-gid=`id -g`
-[ -e ~/.bash_history ] && sudo -k -s chown ${USER}:${gid} ~/.bash_history
-[ -e ~/.viminfo ] && sudo -k -s chown ${USER}:${gid} ~/.viminfo
 
+chown -R $U:$G $H
 exec bash -i # reload bash

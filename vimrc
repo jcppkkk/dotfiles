@@ -100,7 +100,7 @@ map <LocalLeader>w- 100<C-w>-  " shrink by 100
 " ===========================================================================
 " mouse settings
 " ===========================================================================
-set mouse=a                      " disable mouse support in all modes
+set mouse=                      " disable mouse support in all modes
 set mousehide                   " hide the mouse when typing text
 
 " ,p and shift-insert will paste the X buffer, even on the command line

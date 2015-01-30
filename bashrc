@@ -317,7 +317,7 @@ for file in \
     /usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
     ~/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh
 do
-    if [ -n "$SSH_CLIENT" -o -n "$SSH_TTY" -o "$platform" = "mac" ]; then
+    if [[ $(who am i) =~ \([0-9\.]+\)$ || "$platform" = "mac" ]]; then
         # Powerline prompt
         [ -e $file ] && powerline=$(find $file -path '*/bash/powerline.sh')
         if [ -f "$powerline" ]; then

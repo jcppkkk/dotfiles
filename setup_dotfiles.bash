@@ -120,6 +120,7 @@ pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-in
 #######################
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
+crontab -l | { cat; echo "@daily $current/git_update_dotfiles.bash"; } | crontab - # Daily Update dotfiles repo
 
 #######################
 ## Local fixes

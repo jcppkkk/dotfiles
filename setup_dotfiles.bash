@@ -2,7 +2,7 @@
 
 if [ -z "$SUDO_COMMAND" ]
 then
-    sudo H=$HOME U=$USER G=`id -g` $0 $*
+    sudo SUDOER_HOME=$HOME SUDOER_USER=$USER SUDOER_GROUP=`id -g` $0 $*
     exit 0
 fi
 
@@ -122,5 +122,5 @@ rm -rf local
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
 
-chown -R $U:$G $H
+chown -R $SUDOER_USER:$SUDOER_GROUP $SUDOER_HOME
 exec bash -i # reload bash

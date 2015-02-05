@@ -115,12 +115,17 @@ hash powerline-daemon && powerline-daemon -k || true
 pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
 
 
-## Local changes/fixes
-rm -rf local
-[ -L ~/.local ] && rm ~/.local
-
+#######################
+## Local changes
+#######################
 git config branch.master.rebase true                        # Setup self default using rebase when pull
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts   # patch fonts for powerline
 
+#######################
+## Local fixes
+#######################
+rm -rf local
+[ -L ~/.local ] && rm ~/.local
 chown -R $SUDOER_USER:$SUDOER_GROUP $SUDOER_HOME
 exec bash -i # reload bash
+

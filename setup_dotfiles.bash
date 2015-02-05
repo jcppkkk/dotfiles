@@ -112,7 +112,7 @@ else
 	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | python
 fi
 
-hash powerline-daemon && powerline-daemon -k || true
+killall powerline-daemon
 pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
 
 

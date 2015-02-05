@@ -5,6 +5,13 @@ if [[ $- != *i* && $setupdotfile = "" ]] ; then
 	# Shell is non-interactive.  Be done now!
 	return
 fi
+
+#-------------------------------------------------------------
+# Show dotfile changes at login
+#-------------------------------------------------------------
+current="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
+(cd "$current"; pwd ; git status -uno)
+
 #-------------------------------------------------------------
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when

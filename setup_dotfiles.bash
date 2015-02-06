@@ -3,6 +3,7 @@
 if [ -z "$SUDO_COMMAND" ]
 then
     sudo SUDOER_HOME=$HOME SUDOER_USER=$USER SUDOER_GROUP=`id -g` $0 $*
+    exec bash -l
     exit 0
 fi
 
@@ -128,5 +129,4 @@ crontab -l | { cat; echo "@daily $current/git_update_dotfiles.bash"; } | crontab
 rm -rf local
 [ -L ~/.local ] && rm ~/.local
 chown -R $SUDOER_USER:$SUDOER_GROUP $SUDOER_HOME
-exec bash -i # reload bash
 

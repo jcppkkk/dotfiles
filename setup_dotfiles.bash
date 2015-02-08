@@ -113,7 +113,7 @@ else
 fi
 
 killall powerline-daemon
-pip install --user git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
+pip install --user git+git://github.com/Lokaltog/powerline --upgrade
 
 
 #######################

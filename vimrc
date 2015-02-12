@@ -32,10 +32,13 @@ Bundle 'vim-ruby/vim-ruby'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'Super-Shell-Indent'
 Bundle 'roryokane/detectindent'
-"autocmd BufReadPost * :DetectIndent 
+autocmd BufReadPost *.jade DetectIndent
+autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1 
 let g:detectindent_preferred_indent = 4 
 Bundle "pangloss/vim-javascript"
+Bundle "digitaltoad/vim-jade"
+Bundle "othree/javascript-libraries-syntax.vim"
 
 " " vim-scripts repos
 Bundle 'L9'
@@ -46,21 +49,21 @@ Bundle 'OmniCppComplete'
 Bundle 'renamer.vim' 
 Bundle 'AutoTag'
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set modelines=0         " no modelines [http://www.guninski.com/vim1.html]
 "let g:secure_modelines_verbose=1 " securemodelines vimscript
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " configure other scripts
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let c_no_curly_error = 1
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " operational settings
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible                " vim defaults, not vi!
 set hidden                      " allow editing multiple unsaved buffers
 set more                        " the 'more' prompt
@@ -81,15 +84,15 @@ set history=200                 " remember the last 200 commands
 set showcmd		                " display incomplete commands
 set tags=./tags;
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " meta
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <LocalLeader>ce :edit ~/.vimrc<cr>          " quickly edit this file
 map <LocalLeader>cs :source ~/.vimrc<cr>        " quickly source this file
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " window spacing
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set cmdheight=1                 " make command line two lines high
 set ruler                       " show the line number on bar
 set number                      " show 
@@ -97,9 +100,9 @@ set number                      " show
 map <LocalLeader>w+ 100<C-w>+  " grow by 100
 map <LocalLeader>w- 100<C-w>-  " shrink by 100
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " mouse settings
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set mouse=                      " disable mouse support in all modes
 set mousehide                   " hide the mouse when typing text
 
@@ -112,14 +115,9 @@ cmap <S-Insert> <S-MiddleMouse>
 " (good for code)
 map <MouseMiddle> <esc>"*p
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " global editing settings
-" ===========================================================================
-
-map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z
-map <F11> mz:set softtabstop=0 shiftwidth=4 tabstop=4 noexpandtab<CR>'z
-map <F12> mz:set softtabstop=0 shiftwidth=8 tabstop=8 expandtab<CR>'z
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set autoindent smartindent      " turn on auto/smart indenting
 set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
@@ -127,18 +125,20 @@ set updatecount=100             " write swap file to disk every 100 chars
 set complete=.,w,b,u,U,t,i,d    " do lots of scanning on tab completion
 set viminfo=%100,'100,/100,h,\"500,:100,n~/.viminfo
 
-
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " tab indent
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <tab> v>
 nmap <s-tab> v<<esc>
 vmap <tab> >gv
 vmap <s-tab> <gv
+map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z
+map <F11> mz:set softtabstop=0 shiftwidth=4 tabstop=4 noexpandtab<CR>'z
+map <F12> mz:set softtabstop=0 shiftwidth=4 tabstop=4 expandtab<CR>'z
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " searching...
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set ignorecase
 set hlsearch                   " enable search highlight globally
 set incsearch                  " show matches as soon as possible
@@ -148,9 +148,9 @@ nmap <LocalLeader>nh :nohlsearch<cr>
 
 set diffopt=filler,iwhite       " ignore all whitespace and sync
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " spelling...
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if v:version >= 700
     let b:lastspelllang='en'
     function! ToggleSpell()
@@ -170,9 +170,9 @@ if v:version >= 700
     setlocal nospell
 endif
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " some useful mappings
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " disable search complete
 let loaded_search_complete = 1
@@ -190,18 +190,14 @@ nmap <silent> gw "_yiw:s/\(\%#\w\+\)\(\W\+\)\(\w\+\)/\3\2\1/<cr><c-o><c-l>
 nmap <silent> gc xph
 
 " save and build
-nmap <LocalLeader>w  :wm<cr>:make<cr>
+nmap <LocalLeader>w  :wa<cr>:make<cr>
 
 " this is for the find function plugin
 nmap <LocalLeader>ff :let name = FunctionName()<CR> :echo name<CR> 
 
-" http://www.vim.org/tips/tip.php?tip_id=1022
-"set foldmethod=expr 
-"set foldexpr=getline(v:lnum)!~\"regex\" 
-
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  buffer management, note 'set hidden' above
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Move to next buffer
 map <LocalLeader>bn :bn<cr>
@@ -210,15 +206,16 @@ map <LocalLeader>bp :bp<cr>
 " List open buffers
 map <LocalLeader>bb :ls<cr>
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " dealing with merge conflicts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " find merge conflict markers
 :map <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup for the visual environment
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax enable                       " syntax on
 try
     colorscheme solarized
@@ -233,11 +230,10 @@ set background=dark
 
 set cursorline
 
-
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folding for unified diffs 
 " http://pastey.net/1483, mgedmin on #vim
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! DiffFoldLevel(lineno) 
     let line = getline(a:lineno) 
@@ -268,9 +264,9 @@ function! FT_Diff()
     endif 
 endf 
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " no folds in vimdiff
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! NoFoldsInDiffMode()
     if &diff 
@@ -285,10 +281,10 @@ augroup Diffs
     autocmd FileType           diff    :call FT_Diff() 
 augroup END
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " force making paths relative to `pwd`
 " this is useful if tag files have absolute paths
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 augroup force-cd-dot
     autocmd!
@@ -296,55 +292,40 @@ augroup force-cd-dot
 augroup END
 set path=**;/
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " notmuch config
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let g:notmuch_debug = 0
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " termcaps
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "set notimeout      " don't timeout on mappings
 set ttimeout       " do timeout on terminal key codes
 set timeoutlen=100 " timeout after 100 msec
 map <M-left> :tabprevious<CR>
 map <M-right> :tabnext<CR>
-"============================================================================
-" tabs
-" ===========================================================================
-"map [2 :tabnew<CR>
-"map 2 :tabclose<CR>
-"map <Left> :tabprevious<CR>
-"map <Right> :tabnext<CR>
-"nmap <Left> :tabprevious<CR>
-"nmap <Right> :tabnext<CR>
-"map <Left> :tabprevious<CR>
-"map <Right> :tabnext<CR>
-"imap <Left> <Esc>:tabprevious<CR>i
-"imap <Right> <Esc>:tabnext<CR>i
-"nnoremap <silent> <Up> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
-"nnoremap <silent> <Down> :execute 'silent! tabmove ' . tabpagenr()<CR>
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " import other files...
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let $kernel_version=system('uname -r | tr -d "\n"')
 set dictionary=/usr/share/dict/words            " used with CTRL-X CTRL-K
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " file encode
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set fileencodings=utf-8-bom,ucs-bom,utf-8,cp936,big5,gb18030,ucs
 set fileformats=unix,dos
 set showtabline=1                       " auto hide tab title if only 1 tab
 set binary
 
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tagkist setting
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let Tlist_Show_One_File = 0 " Displaying tags for only one file~
 let Tlist_Exist_OnlyWindow = 1 " if you are the last, kill yourself
 let Tlist_Use_Right_Window = 0 " split to the right side of the screen
@@ -369,22 +350,24 @@ imap OH <esc>^i
 nmap OH ^
 
 map ZZ :wqa<CR>
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " box comments tool
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap <silent>c<right>   !boxes -t 4 -d c-cmt <CR>
 vmap <silent>c<left>    !boxes -t 4 -d c-cmt -r<CR>
 vmap <silent>c<up>      !boxes -t 4 <CR>
 vmap <silent>c<down>    !boxes -t 4 -r<CR>
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Function Keys F1~F12, B, C,
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-map <F2> :call FormartSrc()<CR>
+if &term =~ "putty-256color"
+    :set term=xterm-256color
+endif 
 
-map <F3> :wa<CR>
 map <F4> :set expandtab!<BAR>set expandtab?<CR>
+map <F5> :wa<CR>
 map <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
 
 " <F8> 會在 searching highlight 及非 highlight 間切換
@@ -406,9 +389,9 @@ endfunction
 
 
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set rtp+=$HOME/.local/lib/python2.7/site-packages/powerline/bindings/vim/
 
 " Always show statusline
@@ -418,9 +401,9 @@ set laststatus=2
 set t_Co=256
 
 
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " auto load extensions for different file types
-" ===========================================================================
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
     filetype plugin indent on
     " jump to last line edited in a given file (based on .viminfo)

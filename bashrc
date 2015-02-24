@@ -227,15 +227,6 @@ __expand_tilde_by_ref()
 }
 
 #-------------------------------------------------------------
-# Add CDPATH for local trunk
-#-------------------------------------------------------------
-if [ -d ~/trunk ] && [[ ":$CDPATH:" != *":~/trunk:"* ]]; then
-    export CDPATH="$CDPATH:~/trunk"
-fi
-# remove posfix ':'
-[[ "$CDPATH" = :* ]] && export CDPATH="${CDPATH#:}"
-
-#-------------------------------------------------------------
 # customize PATH
 #-------------------------------------------------------------
 path="$path $HOME/bin"

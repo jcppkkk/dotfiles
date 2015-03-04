@@ -27,3 +27,5 @@
 	autosetuprebase = always
 [push]
 	default = current
+[credential]
+	helper = cache

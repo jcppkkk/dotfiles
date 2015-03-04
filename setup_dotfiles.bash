@@ -39,7 +39,7 @@ done )
 ## install packages on new machine
 #######################
 
-packages="git dos2unix wget wget curl"
+packages="git dos2unix wget wget curl vim"
 
 case $platform in 
     'linux') 
@@ -112,7 +112,7 @@ else
 	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | python
 fi
 
-killall powerline-daemon
+killall powerline-daemon || true
 pip install --user git+git://github.com/Lokaltog/powerline --upgrade
 
 

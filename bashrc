@@ -7,9 +7,26 @@ if [[ $- != *i* && $setupdotfile = "" ]] ; then
 fi
 
 #-------------------------------------------------------------
+# import other scripts
+# ~/.rvm/scripts/rvm    : Load RVM into a shell session *as a function*
+#-------------------------------------------------------------
+for file in /etc/bashrc ~/.bash_aliases ~/.git-prompt.sh ~/.rvm/scripts/rvm ~/.get-platform
+do
+    [ -f $file ] && . $file
+done
+
+#-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
-current="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
+case "$platform" in
+linux)
+	current="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
+	;;
+mac)
+	current="$( cd "$( dirname "$( greadlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
+	;;
+*)
+esac
 (cd "$current"; pwd ; git status -uno)
 
 #-------------------------------------------------------------
@@ -19,16 +36,6 @@ current="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
 # http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
 #-------------------------------------------------------------
 shopt -s checkwinsize
-
-#-------------------------------------------------------------
-# import other scripts
-# ~/.zer0prompt         : preload color prompt
-# ~/.rvm/scripts/rvm    : Load RVM into a shell session *as a function*
-#-------------------------------------------------------------
-for file in /etc/bashrc ~/.bash_aliases ~/.git-prompt.sh ~/.rvm/scripts/rvm ~/.get-platform
-do
-    [ -f $file ] && . $file
-done
 
 #-------------------------------------------------------------
 # Change language by terminal (local console OR ssh ?)

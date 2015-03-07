@@ -39,7 +39,7 @@ done )
 ## install packages on new machine
 #######################
 
-packages="git dos2unix wget wget curl vim"
+packages="git dos2unix wget wget curl"
 
 case $platform in 
     'linux') 
@@ -51,11 +51,13 @@ case $platform in
         packages="$packages zlib1g-dev"
         packages="$packages libreadline-dev"
         packages="$packages libsqlite3-dev"
+        packages="$packages vim"
         ;;
     'mac')
         brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         packages="$packages ctags"
         packages="$packages python"
+        packages="$packages coreutils"
         ;;
 esac
 
@@ -113,7 +115,7 @@ else
 fi
 
 killall powerline-daemon || true
-pip install --user git+git://github.com/Lokaltog/powerline --upgrade
+pip install `which powerline | grep -v /usr -q && echo --user` git+git://github.com/Lokaltog/powerline --upgrade
 
 
 #######################

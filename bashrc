@@ -315,21 +315,21 @@ _bash_history_sync() {
 }
 PROMPT_COMMAND=_bash_history_sync
 
-for file in \
-    /usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
-    ~/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh
-do
-    if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" = "mac" ]]; then
-        # Powerline prompt
-        [ -e $file ] && powerline=$(find $file -path '*/bash/powerline.sh')
-        if [ -f "$powerline" ]; then
-            powerline-daemon -q
-            POWERLINE_BASH_CONTINUATION=1
-            POWERLINE_BASH_SELECT=1
-            source "$powerline"
-        fi
-    fi
-done
+# Powerline prompt
+if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" = "mac" ]]; then
+	for powerline in \
+		~/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
+		/usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh
+	do
+		if [ -f "$powerline" ]; then
+			powerline-daemon -q
+			POWERLINE_BASH_CONTINUATION=1
+			POWERLINE_BASH_SELECT=1
+			source "$powerline"
+			break
+		fi
+	done
+fi
 
 #-------------------------------------------------------------
 # History

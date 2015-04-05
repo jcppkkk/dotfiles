@@ -115,7 +115,8 @@ else
 fi
 
 killall powerline-daemon || true
-pip install `which powerline | grep -v /usr -q && echo --user` git+git://github.com/Lokaltog/powerline --upgrade
+pip install `which powerline | grep -v /usr -q && echo --user` powerline-status --upgrade
+pip install argparse
 
 
 #######################

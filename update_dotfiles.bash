@@ -8,7 +8,7 @@ cd $current
 
 # Update powerline
 hash powerline-daemon && powerline-daemon -k || true
-pip install `which powerline | grep -v /usr -q && echo --user` git+git://github.com/Lokaltog/powerline --upgrade --ignore-installed
+pip install `which powerline | grep -v /usr -q && echo --user` powerline-status --upgrade --ignore-installed
 
 # Update vim plugins
 pushd vim/bundle/vundle/

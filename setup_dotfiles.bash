@@ -25,12 +25,12 @@ fi
 ## Backup dotfiles and replace with link
 #######################
 
-dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
+dotfiles_oldfolder="$SUDOER_HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
 ( 
 \ls | grep -v "~$\|_dotfiles.bash" | while read file;
 do 
-    target="$HOME/.$file"
+    target="$SUDOER_HOME/.$file"
     [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
     ln -fvs "$(realpath "$file" )" "$target"
 done )
@@ -86,7 +86,7 @@ done
 [ -e vim/bundle/vundle ] && (cd vim/bundle/vundle; git pull)
 [ ! -e vim/bundle/vundle ] && git clone https://github.com/gmarik/vundle.git vim/bundle/vundle
 vim +BundleInstall +qall
-find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
+find $SUDOER_HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 #######################
 ## install pyenv

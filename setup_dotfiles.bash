@@ -1,11 +1,9 @@
 #!/bin/bash -ex
 
-if [ -z "$SUDO_COMMAND" ]
-then
-    sudo SUDOER_HOME=$HOME SUDOER_USER=$USER SUDOER_GROUP=`id -g` $0 $*
-    exec bash -l
-    exit 0
-fi
+# Setup for password-less sudo
+sudo bash -c '
+grep -q "^#includedir.*/etc/sudoers.d" /etc/sudoers || echo "#includedir /etc/sudoers.d" >> /etc/sudoers
+( umask 226 && echo "${SUDO_USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/50_${SUDO_USER}_sh )'
 
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
@@ -17,20 +15,20 @@ cd $current
 
 # Disable DNS resolution to speedup ssh
 if [ -f /etc/ssh/sshd_config ]; then
-    sed -i -e "s:^#\?UseDNS yes:UseDNS no:" /etc/ssh/sshd_config
-    grep "UseDNS no" /etc/ssh/sshd_config || echo "UseDNS no" | tee -a /etc/ssh/sshd_config
+    sudo sed -i -e "s:^#\?UseDNS yes:UseDNS no:" /etc/ssh/sshd_config
+    grep "UseDNS no" /etc/ssh/sshd_config || echo "UseDNS no" | sudo tee -a /etc/ssh/sshd_config
 fi
 
 #######################
 ## Backup dotfiles and replace with link
 #######################
 
-dotfiles_oldfolder="$SUDOER_HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
+dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
 ( 
 \ls | grep -v "~$\|_dotfiles.bash" | while read file;
 do 
-    target="$SUDOER_HOME/.$file"
+    target="$HOME/.$file"
     [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
     ln -fvs "$(realpath "$file" )" "$target"
 done )
@@ -62,7 +60,7 @@ case $platform in
 esac
 
 linux_check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
-linux_install_pkg() { apt-get install -y $@; }
+linux_install_pkg() { sudo apt-get install -y $@; }
 mac_check_pkg() { brew list -1 | grep -q "^${1}\$"; }
 mac_install_pkg() { brew install $@; }
 
@@ -77,16 +75,13 @@ for P in $packages; do
 done
 [ -n "$install_packages" ] && ${platform}_install_pkg $install_packages
 
-# locale-gen zh_TW.UTF-8 || true
-
-
 #######################
 ## install vim plugins
 #######################
 [ -e vim/bundle/vundle ] && (cd vim/bundle/vundle; git pull)
 [ ! -e vim/bundle/vundle ] && git clone https://github.com/gmarik/vundle.git vim/bundle/vundle
-vim +BundleInstall +qall
-find $SUDOER_HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
+vim +BundleInstall +qa
+find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 #######################
 ## install pyenv
@@ -107,16 +102,20 @@ find $SUDOER_HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 rm -rf ~/.pyenv/
 
 if hash pip 2>/dev/null; then
-	pip install -U pip
+	sudo pip install -U pip
 else
 	# install pip
 	#[[ $platform == 'mac' ]] 
-	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | python
+	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | sudo python
 fi
 
-killall powerline-daemon || true
-pip install `which powerline | grep -v /usr -q && echo --user` powerline-status --upgrade
-pip install argparse
+sudo killall powerline-daemon || true
+if (which powerline | grep /usr -q); then
+	sudo pip install powerline-status --upgrade
+else
+	pip install --user powerline-status --upgrade
+fi
+sudo pip install argparse
 
 
 #######################
@@ -129,10 +128,10 @@ git config branch.master.rebase true
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts
 
 # Daily Update dotfiles repo
-if ! (sudo -u $SUDOER_USER crontab -l | grep -q git_update_dotfiles.bash); then
-	sudo -u $SUDOER_USER crontab -l \
+if ! (crontab -l | grep -q git_update_dotfiles.bash); then
+	crontab -l \
 		| { cat; echo "@daily $current/git_update_dotfiles.bash"; } \
-		| sudo -u $SUDOER_USER crontab - 
+		| crontab - 
 fi
 
 #######################
@@ -140,5 +139,5 @@ fi
 #######################
 rm -rf local
 [ -L ~/.local ] && rm ~/.local
-chown -R $SUDOER_USER:$SUDOER_GROUP $SUDOER_HOME
+sudo chown -R $USER:$USER $HOME
 

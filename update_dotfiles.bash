@@ -8,13 +8,19 @@ cd $current
 
 # Update powerline
 hash powerline-daemon && powerline-daemon -k || true
-pip install `which powerline | grep -v /usr -q && echo --user` powerline-status --upgrade --ignore-installed
+if (which powerline | grep /usr -q); then
+	sudo pip install powerline-status --upgrade
+else
+	pip install --user powerline-status --upgrade
+fi
 
 # Update vim plugins
-pushd vim/bundle/vundle/
-git pull
-popd
-vim +BundleUpdate +qall
+if [ -e vim/bundle/vundle ]; then
+	pushd vim/bundle/vundle/
+	git pull
+	popd
+	vim +BundleUpdate +qall
+fi
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 # Update git-completion.bash

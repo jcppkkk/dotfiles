@@ -110,7 +110,7 @@ else
 	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | sudo python
 fi
 
-sudo killall powerline-daemon || true
+hash powerline-daemon && powerline-daemon -k || true
 if (which powerline | grep /usr -q); then
 	sudo pip install powerline-status --upgrade
 else

@@ -427,3 +427,9 @@ if has('autocmd')
     let git_diff_spawn_mode=2
 
 endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Auto switch to insert mode when git commit
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufReadPost COMMIT_EDITMSG 1
+	\ | start

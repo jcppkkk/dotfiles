@@ -394,6 +394,9 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set rtp+=$HOME/.local/lib/python2.7/site-packages/powerline/bindings/vim/
 
+" Hide the default mode text (e.g. -- INSERT -- below the statusline)
+set noshowmode
+
 " Always show statusline
 set laststatus=2
 

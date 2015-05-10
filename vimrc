@@ -431,8 +431,3 @@ if has('autocmd')
 
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Auto switch to insert mode when git commit
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufReadPost COMMIT_EDITMSG 1
-	\ | start

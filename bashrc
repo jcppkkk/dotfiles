@@ -82,6 +82,11 @@ export  LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 #-------------------------------------------------------------
 # File & string-related functions:
 #-------------------------------------------------------------
+export GREP_OPTIONS="-n --color"
+
+#-------------------------------------------------------------
+# File & string-related functions:
+#-------------------------------------------------------------
 
 # Find a file with a pattern in name:
 function ff() { find . -type f -iname '*'$*'*' -ls ; }

@@ -18,10 +18,15 @@
 			},
 			{
 				"function": "powerline.segments.shell.cwd",
+                                "args": {"use_path_separator":true },
 				"priority": 10
 			},
 			{
 				"function": "powerline.segments.shell.jobnum",
+				"priority": 20
+			},
+			{
+				"function": "powerline.segments.common.vcs.branch",
 				"priority": 20
 			}
 		],

@@ -72,6 +72,7 @@ alias gd='git diff'
 alias gr='git gr'
 alias pull='git pull'
 alias st='git status'
+alias cpick='git cherry-pick'
 
 #-------------------------------------------------------------
 # Admin assistant

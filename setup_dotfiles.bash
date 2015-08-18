@@ -91,8 +91,15 @@ done
 #######################
 ## install vim plugins
 #######################
-[ -e vim/bundle/vundle ] && (cd vim/bundle/vundle; git pull)
-[ ! -e vim/bundle/vundle ] && git clone https://github.com/gmarik/vundle.git vim/bundle/vundle
+pushd vim/bundle
+if [ -e Vundle.vim ];
+    cd Vundle.vim
+    git pull
+else
+    git clone https://github.com/VundleVim/Vundle.vim .
+fi
+popd
+
 vim +BundleInstall +qa
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 

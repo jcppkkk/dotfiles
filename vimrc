@@ -26,9 +26,13 @@ call vundle#begin()
 " required! 
 Plugin 'VundleVim/Vundle.vim'
 
-" original repos on github
+" Testing
 Plugin 'mfukar/robotframework-vim'
+
+" Themes
 Plugin 'altercation/vim-colors-solarized'
+
+" language support
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'Super-Shell-Indent'
@@ -40,15 +44,21 @@ let g:detectindent_preferred_indent = 4
 Plugin 'pangloss/vim-javascript'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'othree/javascript-libraries-syntax.vim'
+Plugin 'ekalinin/Dockerfile.vim'
 
-" " vim-scripts repos
-Plugin 'L9'
+" Editing Tools
+Plugin 'L9'		" required by FuzzyFinder
 Plugin 'FuzzyFinder'
 Plugin 'cuteErrorMarker'
 Plugin 'OmniCppComplete'
-" Bundle 'taglist.vim'
 Plugin 'renamer.vim' 
 Plugin 'AutoTag'
+Plugin 'bling/vim-airline'
+let g:airline_theme='solarized'
+let g:airline_powerline_fonts = 1
+
+call vundle#end()            " required
+filetype plugin indent on    " required
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns
@@ -392,7 +402,6 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set rtp+=$HOME/.local/lib/python2.7/site-packages/powerline/bindings/vim/
 
 " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 set noshowmode

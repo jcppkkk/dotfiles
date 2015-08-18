@@ -23,31 +23,31 @@ call vundle#rc()
 
 " let Vundle manage Vundle
 " required! 
-Bundle 'gmarik/vundle'
+Plugin 'gmarik/vundle'
 
 " original repos on github
-Bundle 'mfukar/robotframework-vim'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'Super-Shell-Indent'
-Bundle 'roryokane/detectindent'
+Plugin 'mfukar/robotframework-vim'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'Super-Shell-Indent'
+Plugin 'roryokane/detectindent'
 autocmd BufReadPost *.jade DetectIndent
 autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1 
 let g:detectindent_preferred_indent = 4 
-Bundle "pangloss/vim-javascript"
-Bundle "digitaltoad/vim-jade"
-Bundle "othree/javascript-libraries-syntax.vim"
+Plugin 'pangloss/vim-javascript'
+Plugin 'digitaltoad/vim-jade'
+Plugin 'othree/javascript-libraries-syntax.vim'
 
 " " vim-scripts repos
-Bundle 'L9'
-Bundle 'FuzzyFinder'
-Bundle 'cuteErrorMarker'
-Bundle 'OmniCppComplete'
+Plugin 'L9'
+Plugin 'FuzzyFinder'
+Plugin 'cuteErrorMarker'
+Plugin 'OmniCppComplete'
 " Bundle 'taglist.vim'
-Bundle 'renamer.vim' 
-Bundle 'AutoTag'
+Plugin 'renamer.vim' 
+Plugin 'AutoTag'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns

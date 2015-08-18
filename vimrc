@@ -17,13 +17,14 @@ if !exists("my_auto_commands_loaded")
     augroup END
 endif
 
-filetype off                   " required!
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set nocompatible		" be iMproved, required
+filetype off			" required!
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
 " let Vundle manage Vundle
 " required! 
-Plugin 'gmarik/vundle'
+Plugin 'VundleVim/Vundle.vim'
 
 " original repos on github
 Plugin 'mfukar/robotframework-vim'
@@ -64,7 +65,6 @@ let c_no_curly_error = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " operational settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set nocompatible                " vim defaults, not vi!
 set hidden                      " allow editing multiple unsaved buffers
 set more                        " the 'more' prompt
 filetype on                     " automatic file type detection

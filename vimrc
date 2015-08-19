@@ -23,7 +23,7 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 " let Vundle manage Vundle
-" required! 
+" required!
 Plugin 'VundleVim/Vundle.vim'
 
 " Testing
@@ -39,8 +39,8 @@ Plugin 'Super-Shell-Indent'
 Plugin 'roryokane/detectindent'
 autocmd BufReadPost *.jade DetectIndent
 autocmd BufReadPost *.coffee DetectIndent
-let g:detectindent_preferred_expandtab = 1 
-let g:detectindent_preferred_indent = 4 
+let g:detectindent_preferred_expandtab = 1
+let g:detectindent_preferred_indent = 4
 Plugin 'pangloss/vim-javascript'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'othree/javascript-libraries-syntax.vim'
@@ -51,7 +51,7 @@ Plugin 'L9'		" required by FuzzyFinder
 Plugin 'FuzzyFinder'
 Plugin 'cuteErrorMarker'
 Plugin 'OmniCppComplete'
-Plugin 'renamer.vim' 
+Plugin 'renamer.vim'
 Plugin 'AutoTag'
 Plugin 'bling/vim-airline'
 let g:airline_theme='solarized'
@@ -105,7 +105,7 @@ map <LocalLeader>cs :source ~/.vimrc<cr>        " quickly source this file
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set cmdheight=1                 " make command line two lines high
 set ruler                       " show the line number on bar
-set number                      " show 
+set number                      " show
 
 map <LocalLeader>w+ 100<C-w>+  " grow by 100
 map <LocalLeader>w- 100<C-w>-  " shrink by 100
@@ -121,7 +121,7 @@ nmap <LocalLeader>p i<S-MiddleMouse><ESC>
 imap <S-Insert> <S-MiddleMouse>
 cmap <S-Insert> <S-MiddleMouse>
 
-" this makes the mouse paste a block of text without formatting it 
+" this makes the mouse paste a block of text without formatting it
 " (good for code)
 map <MouseMiddle> <esc>"*p
 
@@ -203,7 +203,7 @@ nmap <silent> gc xph
 nmap <LocalLeader>w  :wa<cr>:make<cr>
 
 " this is for the find function plugin
-nmap <LocalLeader>ff :let name = FunctionName()<CR> :echo name<CR> 
+nmap <LocalLeader>ff :let name = FunctionName()<CR> :echo name<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  buffer management, note 'set hidden' above
@@ -241,54 +241,54 @@ set background=dark
 set cursorline
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Folding for unified diffs 
+" Folding for unified diffs
 " http://pastey.net/1483, mgedmin on #vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function! DiffFoldLevel(lineno) 
-    let line = getline(a:lineno) 
-    if line =~ '^Index:' 
-        return '>1' 
+function! DiffFoldLevel(lineno)
+    let line = getline(a:lineno)
+    if line =~ '^Index:'
+        return '>1'
     elseif line =~ '^===' || line =~ '^RCS file: ' || line =~ '^retrieving revision '
-        let lvl = foldlevel(a:lineno - 1) 
-        return lvl >= 0 ? lvl : '=' 
-    elseif line =~ '^diff' 
-        return getline(a:lineno - 1) =~ '^retrieving revision ' ? '=' : '>1' 
-    elseif line =~ '^--- ' && getline(a:lineno - 1) !~ '^diff\|^===' 
-        return '>1' 
-    elseif line =~ '^@' 
-        return '>2' 
-    elseif line =~ '^[- +\\]' 
-        let lvl = foldlevel(a:lineno - 1) 
-        return lvl >= 0 ? lvl : '=' 
-    else 
-        return '0' 
-    endif 
-endf 
+        let lvl = foldlevel(a:lineno - 1)
+        return lvl >= 0 ? lvl : '='
+    elseif line =~ '^diff'
+        return getline(a:lineno - 1) =~ '^retrieving revision ' ? '=' : '>1'
+    elseif line =~ '^--- ' && getline(a:lineno - 1) !~ '^diff\|^==='
+        return '>1'
+    elseif line =~ '^@'
+        return '>2'
+    elseif line =~ '^[- +\\]'
+        let lvl = foldlevel(a:lineno - 1)
+        return lvl >= 0 ? lvl : '='
+    else
+        return '0'
+    endif
+endf
 
-function! FT_Diff() 
-    if v:version >= 600 
-        setlocal foldmethod=expr 
-        setlocal foldexpr=DiffFoldLevel(v:lnum) 
-    else 
-    endif 
-endf 
+function! FT_Diff()
+    if v:version >= 600
+        setlocal foldmethod=expr
+        setlocal foldexpr=DiffFoldLevel(v:lnum)
+    else
+    endif
+endf
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " no folds in vimdiff
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! NoFoldsInDiffMode()
-    if &diff 
-        :silent! :%foldopen! 
+    if &diff
+        :silent! :%foldopen!
     endif
 endf
 
-augroup Diffs 
-    autocmd! 
-    autocmd BufRead,BufNewFile *.patch :setf diff 
+augroup Diffs
+    autocmd!
+    autocmd BufRead,BufNewFile *.patch :setf diff
     autocmd BufEnter           *       :call NoFoldsInDiffMode()
-    autocmd FileType           diff    :call FT_Diff() 
+    autocmd FileType           diff    :call FT_Diff()
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -374,7 +374,7 @@ vmap <silent>c<down>    !boxes -t 4 -r<CR>
 
 if &term =~ "putty-256color"
     :set term=xterm-256color
-endif 
+endif
 
 map <F4> :set expandtab!<BAR>set expandtab?<CR>
 map <F5> :wa<CR>
@@ -388,7 +388,7 @@ map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
 
 " <B> <C> this script use to excute make in vim and open quickfix window
-"let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat 
+"let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
 nmap <silent> B :call Do_make__()<cr><cr><cr>
 nmap <silent> C :cclose<cr>
 function! Do_make__()
@@ -400,7 +400,7 @@ endfunction
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" status line 
+" status line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Hide the default mode text (e.g. -- INSERT -- below the statusline)

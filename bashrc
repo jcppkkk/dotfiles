@@ -43,7 +43,7 @@ shopt -s checkwinsize
 #export LC_ALL=zh_TW.UTF-8 LANG=zh_TW LANGUAGE=zh_TW
 
 #-------------------------------------------------------------
-# Change the window title of X terminals 
+# Change the window title of X terminals
 #-------------------------------------------------------------
 #case ${TERM} in
 #	xterm*|rxvt*|Eterm|aterm|kterm|gnome*|interix)
@@ -267,7 +267,7 @@ fi
 #-------------------------------------------------------------
 # Try to keep environment pollution down, EPA loves us.
 #-------------------------------------------------------------
-unset use_color safe_term match_lhs 
+unset use_color safe_term match_lhs
 
 #-------------------------------------------------------------
 # import local setting
@@ -378,7 +378,7 @@ if type -P mintty &>/dev/null;then
 fi
 
 # TMUX
-if [ -z "$TMUX" ]; then 
+if [ -z "$TMUX" ]; then
     [ -f /var/run/motd ] && cat /var/run/motd
 fi
 true

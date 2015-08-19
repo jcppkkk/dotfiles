@@ -37,9 +37,9 @@ fi
 
 dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
-( 
+(
 \ls | grep -v "~$" | while read file;
-do 
+do
     target="$HOME/.$file"
     [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
     [[ "$file" == *_dotfiles.bash* ]] && continue
@@ -52,8 +52,8 @@ done )
 
 packages="git dos2unix wget wget curl"
 
-case $platform in 
-    'linux') 
+case $platform in
+    'linux')
         packages="$packages exuberant-ctags"
         packages="$packages make"
         packages="$packages build-essential"
@@ -79,7 +79,7 @@ mac_install_pkg() { brew install $@; }
 
 install_packages=""
 for P in $packages; do
-    if ${platform}_check_pkg $P; then 
+    if ${platform}_check_pkg $P; then
         echo "$P is installed."
     else
         echo "$P is not installed."
@@ -125,7 +125,7 @@ if hash pip 2>/dev/null; then
 	sudo pip install -U pip
 else
 	# install pip
-	#[[ $platform == 'mac' ]] 
+	#[[ $platform == 'mac' ]]
 	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | sudo python
 fi
 
@@ -151,7 +151,7 @@ git config branch.master.rebase true
 if ! (crontab -l | grep -q git_update_dotfiles.bash); then
 	crontab -l \
 		| { cat; echo "@daily $current/git_update_dotfiles.bash"; } \
-		| crontab - 
+		| crontab -
 fi
 
 #######################

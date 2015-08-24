@@ -31,6 +31,9 @@ Plugin 'mfukar/robotframework-vim'
 
 " Themes
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'bling/vim-airline'
+let g:airline_theme='solarized'
+let g:airline_powerline_fonts = 1
 
 " language support
 Plugin 'vim-ruby/vim-ruby'
@@ -53,9 +56,6 @@ Plugin 'cuteErrorMarker'
 Plugin 'OmniCppComplete'
 Plugin 'renamer.vim'
 Plugin 'AutoTag'
-Plugin 'bling/vim-airline'
-let g:airline_theme='solarized'
-let g:airline_powerline_fonts = 1
 Plugin 'airblade/vim-gitgutter'
 
 call vundle#end()            " required

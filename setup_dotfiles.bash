@@ -91,12 +91,13 @@ done
 #######################
 ## install vim plugins
 #######################
+mkdir -p vim/bundle
 pushd vim/bundle
-if [ -e Vundle.vim ];
+if [ -e Vundle.vim ]; then
     cd Vundle.vim
     git pull
 else
-    git clone https://github.com/VundleVim/Vundle.vim .
+    git clone --depth 1 https://github.com/VundleVim/Vundle.vim
 fi
 popd
 

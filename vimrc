@@ -88,11 +88,12 @@ set noautowrite                 " don't automatically write on :next, etc
 let maplocalleader=','          " all my macros start with ,
 "set lazyredraw                  " don't redraw when running macros
 set ttyfast                     " Speedup for tty
+set updatetime=750		" screen update speed
 set wildmenu                    " : menu has tab completion, etc
-set scrolloff=5                " keep at least 10 lines above/below cursor
+set scrolloff=5                 " keep at least 10 lines above/below cursor
 set sidescrolloff=5             " keep at least 5 columns left/right of cursor
 set history=200                 " remember the last 200 commands
-set showcmd		                " display incomplete commands
+set showcmd		        " display incomplete commands
 set tags=./tags;
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

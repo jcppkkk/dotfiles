@@ -56,6 +56,7 @@ Plugin 'AutoTag'
 Plugin 'bling/vim-airline'
 let g:airline_theme='solarized'
 let g:airline_powerline_fonts = 1
+Plugin 'airblade/vim-gitgutter'
 
 call vundle#end()            " required
 filetype plugin indent on    " required

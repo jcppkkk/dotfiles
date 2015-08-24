@@ -3,11 +3,11 @@
 [core]
 	editor = vim
 	autocrlf = input
-    whitespace = cr-at-eol
+	whitespace = cr-at-eol
 	pager = less -+F
 [color]
 	branch = auto
-    diff = auto
+	diff = auto
 	interactive = auto
 	status = auto
 	ui = true
@@ -18,11 +18,11 @@
 	br = branch
 	last = log -1 HEAD
 	unstage = reset HEAD --
-    gr = "log --all --graph --pretty=format:'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
-    last = !git --no-pager gr -20
+	gr = "log --all --graph --pretty=format:'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+	last = !git --no-pager gr -20
 	d = difftool
 [merge]
-    tool = meld
+	tool = meld
 [branch]
 	autosetuprebase = always
 [push]

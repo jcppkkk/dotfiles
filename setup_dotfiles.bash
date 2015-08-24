@@ -123,7 +123,7 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 rm -rf ~/.pyenv/
 
 if hash pip 2>/dev/null; then
-	sudo pip install -U pip
+	sudo -H pip install -U pip
 else
 	# install pip
 	#[[ $platform == 'mac' ]]
@@ -132,11 +132,11 @@ fi
 
 hash powerline-daemon && powerline-daemon -k || true
 if (which powerline | grep /usr -q); then
-	sudo pip install powerline-status --upgrade
+	sudo -H pip install powerline-status --upgrade
 else
 	pip install --user powerline-status --upgrade
 fi
-sudo pip install argparse
+sudo -H pip install argparse
 
 
 #######################

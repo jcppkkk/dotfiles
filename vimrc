@@ -57,6 +57,7 @@ Plugin 'OmniCppComplete'
 Plugin 'renamer.vim'
 Plugin 'AutoTag'
 Plugin 'airblade/vim-gitgutter'
+let g:gitgutter_escape_grep = 1
 
 call vundle#end()            " required
 filetype plugin indent on    " required

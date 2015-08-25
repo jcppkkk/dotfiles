@@ -50,6 +50,7 @@ if [[ $platform == 'linux' ]]; then
 else
     alias ls='ls -AhG'
 fi
+alias sl='ls'
 alias l="ls -l"
 alias ll="ls -l"
 alias la='ls -a'          # show hidden files

@@ -50,7 +50,7 @@ done )
 ## install packages on new machine
 #######################
 
-packages="git dos2unix wget wget curl"
+packages="git dos2unix wget curl"
 
 case $platform in
     'linux')

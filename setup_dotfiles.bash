@@ -127,7 +127,10 @@ if hash pip 2>/dev/null; then
 else
 	# install pip
 	#[[ $platform == 'mac' ]]
-	[[ $platform == 'linux' ]] && curl https://bootstrap.pypa.io/get-pip.py | sudo python
+        if [[ $platform == 'linux' ]]; then
+            curl https://bootstrap.pypa.io/get-pip.py | sudo python
+            hash -r
+        fi
 fi
 
 hash powerline-daemon && powerline-daemon -k || true

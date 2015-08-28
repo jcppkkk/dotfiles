@@ -27,7 +27,7 @@ mac)
 	;;
 *)
 esac
-(cd "$current"; pwd ; git status -uno)
+(cd "$current"; pwd ; git status -u)
 
 #-------------------------------------------------------------
 # Bash won't get SIGWINCH if another process is in the foreground.

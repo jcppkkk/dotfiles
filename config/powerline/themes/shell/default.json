@@ -28,6 +28,10 @@
 			{
 				"function": "powerline.segments.common.vcs.branch",
 				"priority": 20
+			},
+			{
+				"function": "powerline.segments.shell.last_status",
+				"priority": 10
 			}
 		],
 		"right": [

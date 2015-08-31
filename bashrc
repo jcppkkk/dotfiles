@@ -316,7 +316,7 @@ _bash_history_sync() {
 PROMPT_COMMAND=_bash_history_sync
 
 # Powerline prompt
-if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" = "mac" ]]; then
+if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" = "mac" || "$TMUX" != "" ]]; then
 	for powerline in \
 		~/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
 		/usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh

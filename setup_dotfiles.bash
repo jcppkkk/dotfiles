@@ -40,9 +40,9 @@ dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 (
 \ls | grep -v "~$" | while read file;
 do
+    [[ "$file" =~ _dotfiles.bash ]] && continue
     target="$HOME/.$file"
     [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
-    [[ "$file" == *_dotfiles.bash* ]] && continue
     ln -fvs "$(realpath "$file" )" "$target"
 done )
 

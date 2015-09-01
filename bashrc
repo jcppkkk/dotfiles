@@ -219,7 +219,7 @@ function killps()                 # Kill by process name.
 [[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
 for file in \
     /etc/bash_completion \
-    ~/.git-completion.bash
+    ~/.bash_completion.d/*
 do
     if [ -f $file ]; then
         . $file

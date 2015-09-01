@@ -377,3 +377,4 @@ if [ -z "$TMUX" ]; then
     [ -f /var/run/motd ] && cat /var/run/motd
 fi
 true
+eval $(thefuck --alias)

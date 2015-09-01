@@ -118,3 +118,4 @@ if ($?prompt) then
         bindkey '[6~'  complete-word-fwd   # Page Down
     endif
 endif
+eval `thefuck --alias`

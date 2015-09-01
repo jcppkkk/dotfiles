@@ -24,6 +24,9 @@ fi
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 # Update git-completion.bash
-wget -N https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
 wget -N https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 wget -N https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark
+pushd bash_completion.d/
+wget -N https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+wget -N https://raw.githubusercontent.com/bobthecow/git-flow-completion/master/git-flow-completion.bash
+popd

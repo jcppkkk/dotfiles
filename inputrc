@@ -10,4 +10,3 @@ set completion-ignore-case On
 set visible-stats On
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
-Tab: complete

@@ -32,6 +32,12 @@ if [ -f /etc/ssh/sshd_config ]; then
 fi
 
 #######################
+## Delete dead links
+#######################
+
+find -L ~ -type l -delete
+
+#######################
 ## Backup dotfiles and replace with link
 #######################
 

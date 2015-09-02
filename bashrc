@@ -7,15 +7,6 @@ if [[ $- != *i* && $setupdotfile = "" ]] ; then
 fi
 
 #-------------------------------------------------------------
-# import other scripts
-# ~/.rvm/scripts/rvm    : Load RVM into a shell session *as a function*
-#-------------------------------------------------------------
-for file in /etc/bashrc ~/.bash_aliases ~/.git-prompt.sh ~/.rvm/scripts/rvm ~/.get-platform
-do
-    [ -f $file ] && source $file
-done
-
-#-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
 case "$platform" in
@@ -217,9 +208,12 @@ function killps()                 # Kill by process name.
 #-------------------------------------------------------------
 [[ "$-" = *x* ]] && set +x && x=x # store -x flag when sourcing external resource
 [[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
+shopt -s extglob
 for file in \
+    /etc/bashrc \
     /etc/bash_completion \
-    ~/.bash_completion.d/*
+    ~/.rvm/scripts/rvm \
+    ~/.bashrc.d/!(*~)
 do
     if [ -f $file ]; then
         source $file
@@ -227,6 +221,8 @@ do
 done
 [ "$x" = "x" ] && set -x && unset x # restore -x flag
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
+shopt -u extglob
+
 ## my addition
 __expand_tilde_by_ref()
 {

@@ -23,7 +23,7 @@ realpath() {
 
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
-. ./get-platform
+source bashrc.d/get-platform
 
 # Disable DNS resolution to speedup ssh
 if [ -f /etc/ssh/sshd_config ]; then

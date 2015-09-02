@@ -12,7 +12,7 @@ fi
 #-------------------------------------------------------------
 for file in /etc/bashrc ~/.bash_aliases ~/.git-prompt.sh ~/.rvm/scripts/rvm ~/.get-platform
 do
-    [ -f $file ] && . $file
+    [ -f $file ] && source $file
 done
 
 #-------------------------------------------------------------
@@ -222,7 +222,7 @@ for file in \
     ~/.bash_completion.d/*
 do
     if [ -f $file ]; then
-        . $file
+        source $file
     fi
 done
 [ "$x" = "x" ] && set -x && unset x # restore -x flag
@@ -267,7 +267,7 @@ unset use_color safe_term match_lhs
 #-------------------------------------------------------------
 # import local setting
 #-------------------------------------------------------------
-[ -e ~/.bashrc_local ] && . ~/.bashrc_local
+[ -e ~/.bashrc_local ] && source ~/.bashrc_local
 
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.

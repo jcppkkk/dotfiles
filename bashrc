@@ -209,11 +209,13 @@ function killps()                 # Kill by process name.
 [[ "$-" = *x* ]] && set +x && x=x # store -x flag when sourcing external resource
 [[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
 shopt -s extglob
-for file in \
-    /etc/bashrc \
-    /etc/bash_completion \
-    ~/.rvm/scripts/rvm \
-    ~/.bashrc.d/!(*~)
+list="
+    /etc/bashrc
+    /etc/bash_completion
+    ~/.rvm/scripts/rvm
+    `echo ~/.bashrc.d/!(*~)`"
+shopt -u extglob
+for file in $list
 do
     if [ -f $file ]; then
         source $file
@@ -221,7 +223,6 @@ do
 done
 [ "$x" = "x" ] && set -x && unset x # restore -x flag
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
-shopt -u extglob
 
 ## my addition
 __expand_tilde_by_ref()

@@ -58,6 +58,10 @@ Plugin 'renamer.vim'
 Plugin 'AutoTag'
 Plugin 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
+Plugin 'bling/vim-airline'
+let g:airline_theme='solarized'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -317,8 +321,8 @@ let g:notmuch_debug = 0
 "set notimeout      " don't timeout on mappings
 set ttimeout       " do timeout on terminal key codes
 set timeoutlen=100 " timeout after 100 msec
-map <M-left> :tabprevious<CR>
-map <M-right> :tabnext<CR>
+map <M-left> :bp<CR>
+map <M-right> :bn<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " import other files...

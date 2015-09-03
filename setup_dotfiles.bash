@@ -44,6 +44,7 @@ sudo find -L ~ -type l -delete
 dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
 (
+    unset GREP_OPTIONS
     \ls | grep -v "~$" | while read file;
     do
         [[ "$file" =~ _dotfiles.bash ]] && continue

@@ -290,8 +290,6 @@ if ${use_color} ; then
 			eval $(dircolors -b ~/.dircolors.256dark)
 		fi
 	fi
-	#alias ls='ls --color=auto'
-	#alias grep='grep --colour=auto'
 else
 	if [[ ${EUID} == 0 ]] ; then
 		# show root@ when we don't have colors

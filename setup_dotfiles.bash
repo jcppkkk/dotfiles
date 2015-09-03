@@ -35,7 +35,7 @@ fi
 ## Delete dead links
 #######################
 
-find -L ~ -type l -delete
+sudo find -L ~ -type l -delete
 
 #######################
 ## Backup dotfiles and replace with link
@@ -44,7 +44,7 @@ find -L ~ -type l -delete
 dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
 (
-\ls | grep -v "~$" | while read file;
+\ls | \grep -v "~$" | while read file;
 do
     [[ "$file" =~ _dotfiles.bash ]] && continue
     target="$HOME/.$file"

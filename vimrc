@@ -34,6 +34,7 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'bling/vim-airline'
 let g:airline_theme='solarized'
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
 
 " language support
 Plugin 'vim-ruby/vim-ruby'
@@ -58,10 +59,6 @@ Plugin 'renamer.vim'
 Plugin 'AutoTag'
 Plugin 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
-Plugin 'bling/vim-airline'
-let g:airline_theme='solarized'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
 
 call vundle#end()            " required
 filetype plugin indent on    " required

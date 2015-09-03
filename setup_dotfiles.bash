@@ -44,13 +44,14 @@ sudo find -L ~ -type l -delete
 dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
 (
-\ls | \grep -v "~$" | while read file;
-do
-    [[ "$file" =~ _dotfiles.bash ]] && continue
-    target="$HOME/.$file"
-    [ -e "$target" -a ! -h "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
-    ln -Tfvs "$(realpath "$file" )" "$target"
-done )
+    \ls | grep -v "~$" | while read file;
+    do
+        [[ "$file" =~ _dotfiles.bash ]] && continue
+        target="$HOME/.$file"
+        [ -e "$target" -a ! -h "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
+        ln -Tfvs "$(realpath "$file" )" "$target"
+    done
+)
 
 find "$dotfiles_oldfolder" -type d -empty | xargs rm -rv
 

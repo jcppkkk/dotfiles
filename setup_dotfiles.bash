@@ -48,9 +48,11 @@ dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 do
     [[ "$file" =~ _dotfiles.bash ]] && continue
     target="$HOME/.$file"
-    [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
-    ln -fvs "$(realpath "$file" )" "$target"
+    [ -e "$target" -a ! -h "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
+    ln -Tfvs "$(realpath "$file" )" "$target"
 done )
+
+find "$dotfiles_oldfolder" -type d -empty | xargs rm -rv
 
 #######################
 ## install packages on new machine

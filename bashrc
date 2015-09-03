@@ -9,6 +9,7 @@ fi
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
+source ~/.bashrc.d/get-platform
 case "$platform" in
 linux)
 	current="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
@@ -204,7 +205,7 @@ function killps()                 # Kill by process name.
 }
 
 #-------------------------------------------------------------
-# import completions
+# import scripts
 #-------------------------------------------------------------
 [[ "$-" = *x* ]] && set +x && x=x # store -x flag when sourcing external resource
 [[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
@@ -223,12 +224,6 @@ do
 done
 [ "$x" = "x" ] && set -x && unset x # restore -x flag
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
-
-## my addition
-__expand_tilde_by_ref()
-{
-    return 0;
-}
 
 #-------------------------------------------------------------
 # customize PATH

@@ -11,14 +11,12 @@ fi
 #-------------------------------------------------------------
 source ~/.bashrc.d/get-platform
 case "$platform" in
-linux)
-	current="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
-	;;
-mac)
-	current="$( cd "$( dirname "$( greadlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
-	;;
-*)
+linux)  readlink=readlink ;;
+mac)    readlink=greadlink ;;
+*)      readlink=readlink
 esac
+
+current="$( cd "$( dirname "$( $readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
 (cd "$current"; pwd ; git status -u)
 
 #-------------------------------------------------------------

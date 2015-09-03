@@ -172,5 +172,5 @@ fi
 #######################
 rm -rf local
 [ -L ~/.local ] && rm ~/.local
-sudo chown -R $USER:$USER $HOME
+sudo chown -R $USER:$GROUPS $HOME
 

@@ -9,9 +9,9 @@ cd $current
 # Update powerline
 hash powerline-daemon && powerline-daemon -k || true
 if (which powerline | grep /usr -q); then
-	sudo pip install powerline-status --upgrade
+	sudo pip install powerline-status powerline-gitstatus argparse --upgrade
 else
-	pip install --user powerline-status --upgrade
+	pip install --user powerline-status powerline-gitstatus argparse --upgrade
 fi
 
 # Update vim plugins

@@ -54,7 +54,7 @@ dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
     done
 )
 
-find "$dotfiles_oldfolder" -type d -empty | xargs rm -rv
+find "$dotfiles_oldfolder" -type d -empty | xargs rm -rvf
 
 #######################
 ## install packages on new machine

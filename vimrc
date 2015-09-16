@@ -59,6 +59,7 @@ Plugin 'renamer.vim'
 Plugin 'AutoTag'
 Plugin 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
+Plugin 'chrisbra/csv.vim'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -465,4 +466,4 @@ autocmd FileType jade setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType scss setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType xml setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType css setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType sh setl shiftwidth=4 softtabstop=4 expandtab
+autocmd FileType sh,bash setl tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab

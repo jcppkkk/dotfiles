@@ -62,6 +62,7 @@ TERM screen-256color-italic
 TERM screen-bce
 TERM screen-w
 TERM screen.linux
+TERM screen.xterm-256color
 TERM st
 TERM st-meta
 TERM st-256color
@@ -215,6 +216,7 @@ EXEC 00;38;5;64
 .cc              00;38;5;245
 .sqlite          00;38;5;245
 .go              00;38;5;245
+.sql             00;38;5;245
 
 # "unimportant" files as logs and backups (base01)
 .log        00;38;5;240

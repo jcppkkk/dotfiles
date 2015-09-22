@@ -310,7 +310,7 @@ if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" = "mac" || "$TMUX" != "" ]
 		/usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh
 	do
 		if [ -f "$powerline" ]; then
-			powerline-daemon -q
+			powerline-daemon -q || true
 			POWERLINE_BASH_CONTINUATION=1
 			POWERLINE_BASH_SELECT=1
 			source "$powerline"
@@ -367,4 +367,4 @@ fi
 true
 
 # thefuck
-hash thefuck 2>/dev/null && eval $(thefuck --alias)
+hash thefuck 2>/dev/null && eval $(thefuck --alias) || true

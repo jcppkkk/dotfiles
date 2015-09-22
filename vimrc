@@ -467,3 +467,4 @@ autocmd FileType scss setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType xml setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType css setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType sh,bash setl tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
+autocmd FileType make set tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab

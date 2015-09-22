@@ -15,4 +15,4 @@ else
 fi
 
 (cd ~/dotfiles/vim; mv -f vundle Vundle.vim)
-vim +BundleInstall +qa
+vim +BundleInstall +qa 2> /dev/null

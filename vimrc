@@ -48,7 +48,7 @@ let g:detectindent_preferred_indent = 4
 Plugin 'pangloss/vim-javascript'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'othree/javascript-libraries-syntax.vim'
-Plugin 'ekalinin/Dockerfile.vim'
+Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
 
 " Editing Tools
 Plugin 'L9'		" required by FuzzyFinder

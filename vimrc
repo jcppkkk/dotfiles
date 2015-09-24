@@ -60,6 +60,7 @@ Plugin 'AutoTag'
 Plugin 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
 Plugin 'chrisbra/csv.vim'
+Plugin 'majutsushi/tagbar'
 
 call vundle#end()            " required
 filetype plugin indent on    " required

@@ -30,4 +30,4 @@
 [credential]
 	helper = cache --timeout=86400
 [rerere]
-	enabled = true
+	enabled = 1

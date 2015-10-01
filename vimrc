@@ -61,6 +61,7 @@ Plugin 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
 Plugin 'chrisbra/csv.vim'
 Plugin 'majutsushi/tagbar'
+Plugin 'tpope/vim-fugitive'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -322,6 +323,8 @@ set ttimeout       " do timeout on terminal key codes
 set timeoutlen=100 " timeout after 100 msec
 map <M-left> :bp<CR>
 map <M-right> :bn<CR>
+"nnoremap <C-left> <C-W><C-H>
+"nnoremap <C-right> <C-W><C-L>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " import other files...

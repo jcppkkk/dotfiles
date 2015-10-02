@@ -49,6 +49,8 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
+Plugin 'xolox/vim-misc'
+Plugin 'xolox/vim-easytags'
 
 " Editing Tools
 Plugin 'L9'		" required by FuzzyFinder

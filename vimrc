@@ -147,8 +147,6 @@ set viminfo=%100,'100,/100,h,\"500,:100,n~/.viminfo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " tab indent
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <tab> v>
-nmap <s-tab> v<<esc>
 vmap <tab> >gv
 vmap <s-tab> <gv
 map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z

@@ -18,8 +18,8 @@
 	br = branch
 	last = log -1 HEAD
 	unstage = reset HEAD --
-	gr = "log --graph --pretty=format:'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
-	gra = "log --all --graph --pretty=format:'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+	grc = "log --graph --pretty=format:'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+	gr = "log --all --graph --pretty=format:'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
 	last = !git --no-pager gr -20
 	d = difftool
 [merge]

@@ -51,6 +51,7 @@ Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
+let g:easytags_async = 1
 
 " Editing Tools
 Plugin 'L9'		" required by FuzzyFinder
@@ -396,6 +397,8 @@ map <F8> :set hls!<BAR>set hls?<CR>
 map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
 
+map <C-Up> :cnext<CR>
+map <C-Down> :cprevious<CR>
 " <B> <C> this script use to excute make in vim and open quickfix window
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
 nmap <silent> B :call Do_make__()<cr><cr><cr>

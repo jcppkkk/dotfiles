@@ -35,6 +35,9 @@ Plugin 'bling/vim-airline'
 let g:airline_theme='solarized'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#excludes = []
+let g:airline#extensions#tabline#exclude_preview = 1
 
 " language support
 Plugin 'vim-ruby/vim-ruby'
@@ -52,6 +55,22 @@ Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
 let g:easytags_async = 1
+let g:easytags_on_cursorhold = 0
+let g:easytags_updatetime_min = 4000
+
+Plugin 'Rip-Rip/clang_complete'
+set conceallevel=2
+set concealcursor=vin
+let g:clang_snippets=1
+let g:clang_conceal_snippets=1
+" The single one that works with clang_complete
+let g:clang_snippets_engine='clang_complete'
+" Complete options (disable preview scratch window, longest removed to aways show menu)
+set completeopt=menu,menuone
+" Limit popup menu height
+set pumheight=20
+let g:clang_jumpto_back_key = "<M-T>"
+let g:clang_jumpto_declaration_key = "<M-]>"
 
 " Editing Tools
 Plugin 'L9'		" required by FuzzyFinder

@@ -62,6 +62,8 @@ Plugin 'renamer.vim'
 Plugin 'AutoTag'
 Plugin 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
+nmap <M-Down> <Plug>GitGutterNextHunk
+nmap <M-Up> <Plug>GitGutterPrevHunk
 Plugin 'chrisbra/csv.vim'
 Plugin 'majutsushi/tagbar'
 Plugin 'tpope/vim-fugitive'
@@ -397,8 +399,8 @@ map <F8> :set hls!<BAR>set hls?<CR>
 map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
 
-map <C-Up> :cnext<CR>
-map <C-Down> :cprevious<CR>
+map <C-Down> :cnext<CR>
+map <C-Up> :cprevious<CR>
 " <B> <C> this script use to excute make in vim and open quickfix window
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
 nmap <silent> B :call Do_make__()<cr><cr><cr>

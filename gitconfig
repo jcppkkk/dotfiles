@@ -4,7 +4,7 @@
 	editor = vim
 	autocrlf = input
 	whitespace = cr-at-eol
-	pager = less -+F
+	pager = less -FXRS -x4
 [color]
 	branch = auto
 	diff = auto

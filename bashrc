@@ -58,7 +58,7 @@ fi
 alias more='less'
 export EDITOR=vim
 export PAGER='less'
-export LESS='-i -z-4 -M -X -r'
+export LESS='-i -z-4 -MFXRS -x4 --quit-if-one-screen'
 export  LESSCHARDEF="8bcccbcc18b95.."
 export  LESS_TERMCAP_mb='[1;31m'      # begin blinking
 export  LESS_TERMCAP_md='[4;32m'      # begin bold

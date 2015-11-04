@@ -368,3 +368,7 @@ true
 
 # thefuck
 hash thefuck 2>/dev/null && eval $(thefuck --alias) || true
+
+# kitty intergration
+get() { echo -ne "\033];__pw:${PWD}\007"; for file in $* ; do echo -ne "\033];__rv:${file}\007";done; echo -ne "\033];__ti\007"; }
+winscp() { echo -ne "\033];__ws:${PWD}\007"; }

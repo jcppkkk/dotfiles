@@ -51,7 +51,7 @@ let g:detectindent_preferred_indent = 4
 Plugin 'pangloss/vim-javascript'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'othree/javascript-libraries-syntax.vim'
-Plugin 'docker/docker' , {'rtp': '/contrib/syntax/vim/'}
+Plugin 'ekalinin/Dockerfile.vim'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
 let g:easytags_async = 1

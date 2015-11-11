@@ -24,6 +24,9 @@
 	d = difftool
 [merge]
 	tool = meld
+	conflictstyle = diff3
+[mergetool "mymeld"]
+	cmd = meld --diff $BASE $LOCAL --diff $BASE $REMOTE --diff $LOCAL $BASE $REMOTE $MERGED
 [branch]
 	autosetuprebase = always
 [push]

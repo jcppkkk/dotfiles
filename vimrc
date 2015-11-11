@@ -55,8 +55,9 @@ Plugin 'ekalinin/Dockerfile.vim'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
 let g:easytags_async = 1
-let g:easytags_on_cursorhold = 0
+let g:easytags_on_cursorhold = 1
 let g:easytags_updatetime_min = 4000
+let g:easytags_auto_highlight = 0
 
 Plugin 'Rip-Rip/clang_complete'
 set conceallevel=2
@@ -86,6 +87,8 @@ nmap <M-Up> <Plug>GitGutterPrevHunk
 Plugin 'chrisbra/csv.vim'
 Plugin 'majutsushi/tagbar'
 Plugin 'tpope/vim-fugitive'
+set formatprg=clang-format\ 2>/dev/null
+set equalprg=clang-format\ 2>/dev/null
 
 call vundle#end()            " required
 filetype plugin indent on    " required

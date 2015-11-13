@@ -213,9 +213,9 @@ list="
     /etc/bash_completion
     ~/.rvm/scripts/rvm
     `echo ~/.bashrc.d/!(*~)`"
-shopt -u extglob
 for file in $list
 do
+	shopt -u extglob
     if [ -f $file ]; then
         source $file
     fi

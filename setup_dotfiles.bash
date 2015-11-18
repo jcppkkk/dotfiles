@@ -1,4 +1,8 @@
 #!/bin/bash -ex
+if [[ $EUID -eq 0 ]]; then
+	echo "This script must NOT be run as root" 1>&2
+	exit 1
+fi
 error() {
 	local parent_lineno="$1"
 	local message="$2"
@@ -13,9 +17,11 @@ error() {
 trap 'error ${LINENO}' ERR
 
 # Setup for password-less sudo
-sudo bash -c '
-grep -q "^#includedir.*/etc/sudoers.d" /etc/sudoers || echo "#includedir /etc/sudoers.d" >> /etc/sudoers
-( umask 226 && echo "${SUDO_USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/50_${SUDO_USER}_sh )'
+if [ -n "$USER" -a "$USER" != "root" -a ! -f /etc/sudoers.d/50_${USER}_sh ]; then
+	echo "Add NOPASSWD for user, required by functional test to replace /etc/hcfs.conf"
+	sudo grep -q "^#includedir.*/etc/sudoers.d" /etc/sudoers || (echo "#includedir /etc/sudoers.d" | sudo tee -a /etc/sudoers)
+	( umask 226 && echo "$USER ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/50_${USER}_sh )
+fi
 
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
@@ -35,7 +41,7 @@ fi
 ## Delete dead links
 #######################
 
-find ~ -type l -maxdepth 1 -exec sh -c "file -b {} | grep -q ^broken" \; -print -delete
+sudo find -L ~ -type l -delete
 
 #######################
 ## Backup dotfiles and replace with link
@@ -172,5 +178,7 @@ fi
 #######################
 rm -rf local
 [ -L ~/.local ] && rm ~/.local
-sudo chown -R $USER:$GROUPS $HOME
+if [ -n "$USER" -a "$USER" != "root" ]; then
+	sudo chown -R $USER:$GROUPS $HOME
+fi
 

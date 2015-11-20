@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 error() {
 	local parent_lineno="$1"
 	local message="$2"
@@ -35,7 +35,7 @@ fi
 ## Delete dead links
 #######################
 
-sudo find -L ~ -type l -delete
+find ~ -type l -maxdepth 1 -exec sh -c "file -b {} | grep -q ^broken" \; -print -delete
 
 #######################
 ## Backup dotfiles and replace with link

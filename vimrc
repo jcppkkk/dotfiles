@@ -32,63 +32,108 @@ Plugin 'mfukar/robotframework-vim'
 " Themes
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'bling/vim-airline'
-let g:airline_theme='solarized'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline#extensions#tabline#excludes = []
-let g:airline#extensions#tabline#exclude_preview = 1
+	let g:airline_theme='solarized'
+	let g:airline_powerline_fonts = 1
+	let g:airline#extensions#tabline#enabled = 1
+	let g:airline#extensions#tabline#fnamemod = ':t'
+	let g:airline#extensions#tabline#excludes = []
+	let g:airline#extensions#tabline#exclude_preview = 1
 
 " language support
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'Super-Shell-Indent'
 Plugin 'roryokane/detectindent'
-autocmd BufReadPost *.jade DetectIndent
-autocmd BufReadPost *.coffee DetectIndent
-let g:detectindent_preferred_expandtab = 1
-let g:detectindent_preferred_indent = 4
+	autocmd BufReadPost *.jade DetectIndent
+	autocmd BufReadPost *.coffee DetectIndent
+	let g:detectindent_preferred_expandtab = 1
+	let g:detectindent_preferred_indent = 4
 Plugin 'pangloss/vim-javascript'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'ekalinin/Dockerfile.vim'
+
+""""" language support - C/C++
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
-let g:easytags_async = 1
-let g:easytags_on_cursorhold = 1
-let g:easytags_updatetime_min = 4000
-let g:easytags_auto_highlight = 0
-
+	let g:easytags_async = 1
+	let g:easytags_on_cursorhold = 1
+	let g:easytags_updatetime_min = 4000
+	let g:easytags_auto_highlight = 0
 Plugin 'Rip-Rip/clang_complete'
-set conceallevel=2
-set concealcursor=vin
-let g:clang_snippets=1
-let g:clang_conceal_snippets=1
-" The single one that works with clang_complete
-let g:clang_snippets_engine='clang_complete'
-" Complete options (disable preview scratch window, longest removed to aways show menu)
-set completeopt=menu,menuone
-" Limit popup menu height
-set pumheight=20
-let g:clang_jumpto_back_key = "<M-T>"
-let g:clang_jumpto_declaration_key = "<M-]>"
+	set conceallevel=2
+	set concealcursor=vin
+	let g:clang_snippets=1
+	let g:clang_conceal_snippets=1
+	" The single one that works with clang_complete
+	let g:clang_snippets_engine='clang_complete'
+	let g:clang_complete_macros = 1
+	" Complete options (disable preview scratch window, longest removed to aways show menu)
+	set completeopt=menu,menuone
+	" Limit popup menu height
+	set pumheight=20
+	let g:clang_jumpto_back_key = "<M-T>"
+	let g:clang_jumpto_declaration_key = "<M-]>"
+Plugin 'scrooloose/syntastic'
+	set statusline+=%#warningmsg#
+	set statusline+=%{SyntasticStatuslineFlag()}
+	set statusline+=%*
+	let g:syntastic_always_populate_loc_list = 1
+	let g:syntastic_auto_loc_list = 1
+	let g:syntastic_check_on_open = 1
+	let g:syntastic_check_on_wq = 1
+	let g:syntastic_cpp_checkers = ['cpplint']
+	let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
+	let g:syntastic_c_checkers = ['checkpatch', 'cpplint']
+	let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
+	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
+	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
+	let g:syntastic_aggregate_errors = 1
+	function! <SID>LocationPrevious()
+		try
+			lprev
+		catch /^Vim\%((\a\+)\)\=:E553/
+			llast
+		endtry
+	endfunction
+
+	function! <SID>LocationNext()
+		try
+			lnext
+		catch /^Vim\%((\a\+)\)\=:E553/
+			lfirst
+		endtry
+	endfunction
+
+	nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPrevious()'<CR>
+	nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
+	nmap <silent> <C-Down> <Plug>LocationNext
+	nmap <silent> <C-Up> <Plug>LocationPrevious
+Plugin 'cuteErrorMarker'
+Plugin 'AutoTag'
+Plugin 'majutsushi/tagbar'
+Plugin 'rhysd/vim-clang-format'
+	" map to <Leader>cf in C++ code
+	autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+	autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+Plugin 'gcov.vim'
+
+""""" language support - csv
+Plugin 'chrisbra/csv.vim'
+
+" Tools - Git
+Plugin 'airblade/vim-gitgutter'
+	let g:gitgutter_escape_grep = 1
+	nmap <M-Down> <Plug>GitGutterNextHunk
+	nmap <M-Up> <Plug>GitGutterPrevHunk
+Plugin 'tpope/vim-fugitive'
 
 " Editing Tools
-Plugin 'L9'		" required by FuzzyFinder
-Plugin 'FuzzyFinder'
-Plugin 'cuteErrorMarker'
-Plugin 'OmniCppComplete'
 Plugin 'renamer.vim'
-Plugin 'AutoTag'
-Plugin 'airblade/vim-gitgutter'
-let g:gitgutter_escape_grep = 1
-nmap <M-Down> <Plug>GitGutterNextHunk
-nmap <M-Up> <Plug>GitGutterPrevHunk
-Plugin 'chrisbra/csv.vim'
-Plugin 'majutsushi/tagbar'
-Plugin 'tpope/vim-fugitive'
-set formatprg=clang-format\ 2>/dev/null
-set equalprg=clang-format\ 2>/dev/null
+Plugin 'milkypostman/vim-togglelist'
+	nmap <script> <silent> <leader>l :call ToggleLocationList()<CR>
+	nmap <script> <silent> <leader>q :call ToggleQuickfixList()<CR>
+
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -345,7 +390,7 @@ let g:notmuch_debug = 0
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "set notimeout      " don't timeout on mappings
 set ttimeout       " do timeout on terminal key codes
-set timeoutlen=100 " timeout after 100 msec
+set timeoutlen=1000 " timeout after 100 msec
 map <M-left> :bp<CR>
 map <M-right> :bn<CR>
 "nnoremap <C-left> <C-W><C-H>
@@ -421,8 +466,8 @@ map <F8> :set hls!<BAR>set hls?<CR>
 map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
 
-map <C-Down> :cnext<CR>
-map <C-Up> :cprevious<CR>
+map <S-Down> :cnext<CR>
+map <S-Up> :cprevious<CR>
 " <B> <C> this script use to excute make in vim and open quickfix window
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
 nmap <silent> B :call Do_make__()<cr><cr><cr>

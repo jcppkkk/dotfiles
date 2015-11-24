@@ -84,7 +84,6 @@ Plugin 'scrooloose/syntastic'
 	let g:syntastic_check_on_wq = 1
 	let g:syntastic_cpp_checkers = ['cpplint']
 	let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
-	let g:syntastic_c_checkers = ['checkpatch', 'cpplint']
 	let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
 	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"

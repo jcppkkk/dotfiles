@@ -210,9 +210,9 @@ function killps()                 # Kill by process name.
 shopt -s extglob
 list="
     /etc/bashrc
-    /etc/bash_completion
     ~/.rvm/scripts/rvm
-    `echo ~/.bashrc.d/!(*~)`"
+    `echo ~/.bashrc.d/!(*~)`
+    /etc/bash_completion"
 for file in $list
 do
 	shopt -u extglob

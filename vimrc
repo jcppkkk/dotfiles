@@ -88,6 +88,8 @@ Plugin 'scrooloose/syntastic'
 	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_aggregate_errors = 1
+	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+	nnoremap <F4> :SyntasticToggleMode<CR> :SyntasticCheck<CR>
 	function! <SID>LocationPrevious()
 		try
 			lprev
@@ -454,7 +456,6 @@ if &term =~ "putty-256color"
     :set term=xterm-256color
 endif
 
-map <F4> :set expandtab!<BAR>set expandtab?<CR>
 map <F5> :wa<CR>
 map <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
 

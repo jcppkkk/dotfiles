@@ -41,7 +41,7 @@ fi
 ## Delete dead links
 #######################
 
-sudo find -L ~ -type l -delete
+sudo find -L ~ -maxdepth 1 -type l -print -delete
 
 #######################
 ## Backup dotfiles and replace with link

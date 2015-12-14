@@ -82,7 +82,7 @@ Plugin 'scrooloose/syntastic'
 	let g:syntastic_auto_loc_list = 1
 	let g:syntastic_check_on_open = 1
 	let g:syntastic_check_on_wq = 1
-	let g:syntastic_cpp_checkers = ['cpplint']
+	let g:syntastic_cpp_checkers = ['make', 'cpplint']
 	let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
 	let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
 	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
@@ -113,11 +113,9 @@ Plugin 'scrooloose/syntastic'
 Plugin 'cuteErrorMarker'
 Plugin 'AutoTag'
 Plugin 'majutsushi/tagbar'
-Plugin 'rhysd/vim-clang-format'
-	" map to <Leader>cf in C++ code
-	autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
-	autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 Plugin 'gcov.vim'
+map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
+imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
 
 """"" language support - csv
 Plugin 'chrisbra/csv.vim'
@@ -545,3 +543,5 @@ autocmd FileType css setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType sh,bash setl tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
 autocmd FileType make setl tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
 autocmd FileType c setl textwidth=73 fo=cq wm=0
+" detect gcov filetype
+au BufRead,BufNewFile *.gcov              set filetype=gcov

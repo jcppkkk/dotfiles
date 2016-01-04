@@ -4,7 +4,7 @@
 "\e[B": history-search-forward
 set meta-flag On
 set input-meta On
-set convert-meta Off
+set convert-meta On
 set output-meta On
 set completion-ignore-case On
 set visible-stats On

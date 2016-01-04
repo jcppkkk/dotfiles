@@ -392,6 +392,9 @@ set ttimeout       " do timeout on terminal key codes
 set timeoutlen=1000 " timeout after 100 msec
 map <M-left> :bp<CR>
 map <M-right> :bn<CR>
+" For metas keys in tmux
+map <esc>[1;3D :bp<CR>
+map <esc>[1;3C :bn<CR>
 "nnoremap <C-left> <C-W><C-H>
 "nnoremap <C-right> <C-W><C-L>
 

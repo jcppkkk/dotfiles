@@ -376,3 +376,20 @@ hash thefuck 2>/dev/null && eval $(thefuck --alias) || true
 # kitty intergration
 get() { echo -ne "\033];__pw:${PWD}\007"; for file in $* ; do echo -ne "\033];__rv:${file}\007";done; echo -ne "\033];__ti\007"; }
 winscp() { echo -ne "\033];__ws:${PWD}\007"; }
+
+function timer_start {
+  timer=${timer:-$SECONDS}
+}
+
+function timer_stop {
+  timer_show=$(($SECONDS - $timer))
+  unset timer
+  if [ $timer_show -gt 60 ]; then
+    echo "#### Command Time ($(($timer_show / 60)):$(($timer_show % 60)) (mm:ss)) ####"
+    tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;
+  fi
+}
+
+trap 'timer_start' DEBUG
+PROMPT_COMMAND="$PROMPT_COMMAND
+timer_stop"

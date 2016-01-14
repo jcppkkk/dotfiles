@@ -125,6 +125,8 @@ Plugin 'airblade/vim-gitgutter'
 	let g:gitgutter_escape_grep = 1
 	nmap <M-Down> <Plug>GitGutterNextHunk
 	nmap <M-Up> <Plug>GitGutterPrevHunk
+	nmap <esc>[1;3B <Plug>GitGutterNextHunk
+	nmap <esc>[1;3A <Plug>GitGutterPrevHunk
 Plugin 'tpope/vim-fugitive'
 
 " Editing Tools

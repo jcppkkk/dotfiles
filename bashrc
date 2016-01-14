@@ -230,7 +230,7 @@ path="$path $HOME/bin"
 path="$path $HOME/.bin"
 path="$path $HOME/.local/bin"
 path="$path /android-cts/tools"
-path="$path /android-sdk-linux_x86/tools"
+path="$path $HOME/bin/android-ndk-r10e"
 for a in $path
 do
     [ -d "$a" ] && [ ":$PATH:" = ":${PATH/:$a:/}:" ] &&

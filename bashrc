@@ -382,14 +382,43 @@ function timer_start {
 }
 
 function timer_stop {
-  timer_show=$(($SECONDS - $timer))
-  unset timer
-  if [ $timer_show -gt 60 ]; then
-    echo "#### Command Time ($(($timer_show / 60)):$(($timer_show % 60)) (mm:ss)) ####"
-    tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;
-  fi
+    local tdiff=$(($SECONDS - ${timer:-$SECONDS}))
+    unset timer
+    local ret=$?
+    if [ $tdiff -gt 30 ]; then
+        ((tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;)&)
+        local hours=$(($tdiff / 3600 ))
+        local mins=$((($tdiff % 3600) / 60))
+        local secs=$(($tdiff % 60))
+        local ncolors=$(tput colors 2>/dev/null)
+        if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
+            color_failed="\e[0;31m"
+            color_success="\e[0;32m"
+            color_reset="\e[00m"
+        else
+            color_failed=""
+            color_success=""
+            color_reset=""
+        fi
+        if [ $ret -eq 0 ] ; then
+            echo -n -e "${color_success}#### command completed successfully "
+        else
+            echo -n -e "${color_failed}#### command failed "
+        fi
+        if [ $hours -gt 0 ] ; then
+            printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
+        elif [ $mins -gt 0 ] ; then
+            printf "(%02g:%02g (mm:ss))" $mins $secs
+        elif [ $secs -gt 0 ] ; then
+            printf "(%s seconds)" $secs
+        fi
+        echo -e " ####${color_reset}"
+    fi
+    return $ret
 }
 
 trap 'timer_start' DEBUG
+if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/timer_stop/}" ]; then
 PROMPT_COMMAND="$PROMPT_COMMAND
 timer_stop"
+fi

@@ -3,18 +3,18 @@ if [[ $EUID -eq 0 ]]; then
 	echo "This script must NOT be run as root" 1>&2
 	exit 1
 fi
-error() {
-	local parent_lineno="$1"
-	local message="$2"
-	local code="${3:-1}"
-	if [[ -n "$message" ]] ; then
-		echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
-	else
-		echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
-	fi
-	exit "${code}"
+script_error_report() {
+    local script="$1"
+    local parent_lineno="$2"
+    local message="$3"
+    local code="${4:-1}"
+    echo "Error near ${script} line ${parent_lineno}; exiting with status ${code}"
+    if [[ -n "$message" ]] ; then
+        echo -e "Message: ${message}"
+    fi
+    exit "${code}"
 }
-trap 'error ${LINENO}' ERR
+trap 'script_error_report "${BASH_SOURCE[0]}" ${LINENO}' ERR
 
 # Setup for password-less sudo
 if [ -n "$USER" -a "$USER" != "root" -a ! -f /etc/sudoers.d/50_${USER}_sh ]; then

@@ -459,6 +459,7 @@ if &term =~ "putty-256color"
     :set term=xterm-256color
 endif
 
+map <F2> :bufdo :args ## % <cr>:vimgrep // ##<left><left><left><left>
 map <F5> :wa<CR>
 map <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
 

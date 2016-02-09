@@ -61,6 +61,7 @@ Plugin 'xolox/vim-easytags'
 	let g:easytags_updatetime_min = 4000
 	let g:easytags_auto_highlight = 0
 Plugin 'Rip-Rip/clang_complete'
+	let g:clang_library_path="/usr/lib/llvm-3.6/lib/"
 	set conceallevel=2
 	set concealcursor=vin
 	let g:clang_snippets=1

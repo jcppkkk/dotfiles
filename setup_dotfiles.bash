@@ -150,12 +150,8 @@ else
         fi
 fi
 
-hash powerline-daemon && powerline-daemon -k || true
-if (which powerline | grep /usr -q); then
-	sudo -H pip install powerline-status powerline-gitstatus argparse --upgrade
-else
-	pip install --user powerline-status powerline-gitstatus argparse --upgrade
-fi
+hash powerline-daemon && powerline-daemon -k || :
+sudo -H pip install --upgrade -r requirements_dotfiles.txt
 
 
 #######################

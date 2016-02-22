@@ -22,6 +22,7 @@ alias aa='vim ~/.bashrc && source ~/.bashrc'
 alias as='vim ~/.bashrc.d/bash_aliases && source ~/.bashrc'
 alias an='source ~/.bashrc'
 alias zz='vim ~/.vimrc'
+alias wttr='curl http://wttr.in/taipei'
 
 alias rm='rm -ri'
 alias cp='cp -ri'

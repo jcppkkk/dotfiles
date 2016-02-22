@@ -1,0 +1,4 @@
+powerline-status
+powerline-gitstatus
+argparse
+git-up

@@ -79,7 +79,7 @@ case $platform in
         packages="$packages libreadline-dev"
         packages="$packages libsqlite3-dev"
         packages="$packages vim"
-        packages="$packages libclang-3.6-dev"
+        packages="$packages libclang1-3.6"
         ;;
     'mac')
         brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"

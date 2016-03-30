@@ -311,11 +311,12 @@ if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
 	for powerline in \
 		/home/$SUDO_USER/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
 		$HOME/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
-		/usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh \
-		/usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh
+		/usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
+		/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh
 	do
 		if [ -f "$powerline" ]; then
 			powerline-daemon -q || true
+			POWERLINE_CONFIG_COMMAND=powerline-config
 			POWERLINE_BASH_CONTINUATION=1
 			POWERLINE_BASH_SELECT=1
 			source "$powerline"

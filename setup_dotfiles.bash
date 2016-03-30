@@ -18,6 +18,7 @@ trap 'script_error_report "${BASH_SOURCE[0]}" ${LINENO}' ERR
 
 # Setup for password-less sudo
 if [ -n "$USER" -a "$USER" != "root" -a ! -f /etc/sudoers.d/50_${USER}_sh ]; then
+	sudo mkdir -p /etc/sudoers.d
 	echo "Add NOPASSWD for user, required by functional test to replace /etc/hcfs.conf"
 	sudo grep -q "^#includedir.*/etc/sudoers.d" /etc/sudoers || (echo "#includedir /etc/sudoers.d" | sudo tee -a /etc/sudoers)
 	( umask 226 && echo "$USER ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/50_${USER}_sh )
@@ -55,8 +56,11 @@ dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
     do
         [[ "$file" =~ _dotfiles.bash ]] && continue
         target="$HOME/.$file"
-        [ -e "$target" -a ! -h "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
-        ln -Tfvs "$(realpath "$file" )" "$target"
+        [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
+		case $platform in
+			'linux') FLAG=T ;;
+		esac
+        ln -${FLAG}fvs "$(realpath "$file" )" "$target"
     done
 )
 

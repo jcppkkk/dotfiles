@@ -4,15 +4,15 @@ if [[ $EUID -eq 0 ]]; then
 	exit 1
 fi
 script_error_report() {
-    local script="$1"
-    local parent_lineno="$2"
-    local message="$3"
-    local code="${4:-1}"
-    echo "Error near ${script} line ${parent_lineno}; exiting with status ${code}"
-    if [[ -n "$message" ]] ; then
-        echo -e "Message: ${message}"
-    fi
-    exit "${code}"
+	local script="$1"
+	local parent_lineno="$2"
+	local message="$3"
+	local code="${4:-1}"
+	echo "Error near ${script} line ${parent_lineno}; exiting with status ${code}"
+	if [[ -n "$message" ]] ; then
+		echo -e "Message: ${message}"
+	fi
+	exit "${code}"
 }
 trap 'script_error_report "${BASH_SOURCE[0]}" ${LINENO}' ERR
 
@@ -25,7 +25,7 @@ if [ -n "$USER" -a "$USER" != "root" -a ! -f /etc/sudoers.d/50_${USER}_sh ]; the
 fi
 
 realpath() {
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+	[[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
 
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -34,8 +34,8 @@ source bashrc.d/get-platform
 
 # Disable DNS resolution to speedup ssh
 if [ -f /etc/ssh/sshd_config ]; then
-    sudo sed -i -e "s:^#\?UseDNS yes:UseDNS no:" /etc/ssh/sshd_config
-    grep "UseDNS no" /etc/ssh/sshd_config || echo "UseDNS no" | sudo tee -a /etc/ssh/sshd_config
+	sudo sed -i -e "s:^#\?UseDNS yes:UseDNS no:" /etc/ssh/sshd_config
+	grep "UseDNS no" /etc/ssh/sshd_config || echo "UseDNS no" | sudo tee -a /etc/ssh/sshd_config
 fi
 
 #######################
@@ -51,17 +51,17 @@ sudo find -L ~ -maxdepth 1 -type l -print -delete
 dotfiles_oldfolder="$HOME/.dotfiles_old_`date +%Y%m%d%H%M%S`"
 [ ! -e "$dotfiles_oldfolder" ] && mkdir "$dotfiles_oldfolder"
 (
-    unset GREP_OPTIONS
-    \ls | grep -v "~$" | while read file;
-    do
-        [[ "$file" =~ _dotfiles.bash ]] && continue
-        target="$HOME/.$file"
-        [ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
+	unset GREP_OPTIONS
+	\ls | grep -v "~$" | while read file;
+	do
+		[[ "$file" =~ _dotfiles.bash ]] && continue
+		target="$HOME/.$file"
+		[ -e "$target" ] && mv -f "$target" "$dotfiles_oldfolder/"
 		case $platform in
-			'linux') FLAG=T ;;
-		esac
-        ln -${FLAG}fvs "$(realpath "$file" )" "$target"
-    done
+		'linux') FLAG=T ;;
+	esac
+	ln -${FLAG}fvs "$(realpath "$file" )" "$target"
+done
 )
 
 find "$dotfiles_oldfolder" -type d -empty | xargs rm -rvf
@@ -73,24 +73,24 @@ find "$dotfiles_oldfolder" -type d -empty | xargs rm -rvf
 packages="git dos2unix wget curl"
 
 case $platform in
-    'linux')
-        packages="$packages exuberant-ctags"
-        packages="$packages make"
-        packages="$packages build-essential"
-        packages="$packages libssl-dev"
-        packages="$packages libbz2-dev"
-        packages="$packages zlib1g-dev"
-        packages="$packages libreadline-dev"
-        packages="$packages libsqlite3-dev"
-        packages="$packages vim"
-        packages="$packages libclang1-3.6"
-        ;;
-    'mac')
-        brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        packages="$packages ctags"
-        packages="$packages python"
-        packages="$packages coreutils"
-        ;;
+	'linux')
+		packages="$packages exuberant-ctags"
+		packages="$packages make"
+		packages="$packages build-essential"
+		packages="$packages libssl-dev"
+		packages="$packages libbz2-dev"
+		packages="$packages zlib1g-dev"
+		packages="$packages libreadline-dev"
+		packages="$packages libsqlite3-dev"
+		packages="$packages vim"
+		packages="$packages libclang1-3.6"
+		;;
+	'mac')
+		brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+		packages="$packages ctags"
+		packages="$packages python"
+		packages="$packages coreutils"
+		;;
 esac
 
 linux_check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
@@ -100,12 +100,12 @@ mac_install_pkg() { brew install $@; }
 
 install_packages=""
 for P in $packages; do
-    if ${platform}_check_pkg $P; then
-        echo "$P is installed."
-    else
-        echo "$P is not installed."
-        install_packages="$install_packages $P"
-    fi
+	if ${platform}_check_pkg $P; then
+		echo "$P is installed."
+	else
+		echo "$P is not installed."
+		install_packages="$install_packages $P"
+	fi
 done
 [ -n "$install_packages" ] && ${platform}_install_pkg $install_packages
 
@@ -115,10 +115,10 @@ done
 mkdir -p vim/bundle
 pushd vim/bundle
 if [ -e Vundle.vim ]; then
-    cd Vundle.vim
-    git pull
+	cd Vundle.vim
+	git pull
 else
-    git clone --depth 1 https://github.com/VundleVim/Vundle.vim
+	git clone --depth 1 https://github.com/VundleVim/Vundle.vim
 fi
 popd
 
@@ -142,20 +142,20 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 #######################
 # Remove deprecated pyenv version powerline
 rm -rf ~/.pyenv/
-
+export LANG=C
 if hash pip 2>/dev/null; then
-	sudo -H pip install -U pip
+	sudo -H LANG=C pip install -U pip
 else
 	# install pip
 	#[[ $platform == 'mac' ]]
-        if [[ $platform == 'linux' ]]; then
-            curl https://bootstrap.pypa.io/get-pip.py | sudo python
-            hash -r
-        fi
+	if [[ $platform == 'linux' ]]; then
+		curl https://bootstrap.pypa.io/get-pip.py | sudo python
+		hash -r
+	fi
 fi
 
 hash powerline-daemon && powerline-daemon -k || :
-sudo -H pip install --upgrade -r requirements_dotfiles.txt
+sudo -H LANG=C pip install --upgrade -r requirements_dotfiles.txt
 
 
 #######################

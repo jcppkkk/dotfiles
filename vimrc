@@ -55,12 +55,6 @@ Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'ekalinin/Dockerfile.vim'
 
 """"" language support - C/C++
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-easytags'
-	let g:easytags_async = 1
-	let g:easytags_on_cursorhold = 1
-	let g:easytags_updatetime_min = 4000
-	let g:easytags_auto_highlight = 0
 Plugin 'Rip-Rip/clang_complete'
 	let g:clang_library_path="/usr/lib/llvm-3.6/lib/"
 	set conceallevel=2
@@ -74,8 +68,6 @@ Plugin 'Rip-Rip/clang_complete'
 	set completeopt=menu,menuone
 	" Limit popup menu height
 	set pumheight=20
-	let g:clang_jumpto_back_key = "<M-T>"
-	let g:clang_jumpto_declaration_key = "<M-]>"
 Plugin 'scrooloose/syntastic'
 	set statusline+=%#warningmsg#
 	set statusline+=%{SyntasticStatuslineFlag()}
@@ -97,7 +89,6 @@ Plugin 'scrooloose/syntastic'
 		try
 			lprev
 		catch /^Vim\%((\a\+)\)\=:E553/
-			llast
 		endtry
 	endfunction
 
@@ -105,7 +96,6 @@ Plugin 'scrooloose/syntastic'
 		try
 			lnext
 		catch /^Vim\%((\a\+)\)\=:E553/
-			lfirst
 		endtry
 	endfunction
 
@@ -134,10 +124,36 @@ Plugin 'tpope/vim-fugitive'
 
 " Editing Tools
 Plugin 'renamer.vim'
-Plugin 'milkypostman/vim-togglelist'
-	nmap <script> <silent> <leader>l :call ToggleLocationList()<CR>
-	nmap <script> <silent> <leader>q :call ToggleQuickfixList()<CR>
 
+function! GetBufferList()
+  redir =>buflist
+  silent! ls!
+  redir END
+  return buflist
+endfunction
+
+function! ToggleList(bufname, pfx)
+  let buflist = GetBufferList()
+  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
+    if bufwinnr(bufnum) != -1
+      exec(a:pfx.'close')
+      return
+    endif
+  endfor
+  if a:pfx == 'l' && len(getloclist(0)) == 0
+      echohl ErrorMsg
+      echo "Location List is Empty."
+      return
+  endif
+  let winnr = winnr()
+  exec(a:pfx.'open')
+  if winnr() != winnr
+    wincmd p
+  endif
+endfunction
+
+nmap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
+nmap <silent> <leader>e :call ToggleList("Quickfix List", 'c')<CR>
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -230,7 +246,6 @@ map <F12> mz:set softtabstop=0 shiftwidth=4 tabstop=4 expandtab<CR>'z
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " searching...
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set ignorecase
 set hlsearch                   " enable search highlight globally
 set incsearch                  " show matches as soon as possible
 set showmatch                  " show matching brackets when typing
@@ -397,6 +412,8 @@ set ttimeout       " do timeout on terminal key codes
 set timeoutlen=1000 " timeout after 100 msec
 map <M-left> :bp<CR>
 map <M-right> :bn<CR>
+imap <M-left> <esc>:bp<CR>i
+imap <M-right> <esc>:bn<CR>i
 " For metas keys in tmux
 map <esc>[1;3D :bp<CR>
 map <esc>[1;3C :bn<CR>
@@ -506,6 +523,7 @@ set t_Co=256
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
     filetype plugin indent on
+    set nostartofline
     " jump to last line edited in a given file (based on .viminfo)
     autocmd BufReadPost *
                 \ if line("'\"") > 0|

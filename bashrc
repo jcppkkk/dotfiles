@@ -28,9 +28,13 @@ current="$( cd "$( dirname "$( $readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
 shopt -s checkwinsize
 
 #-------------------------------------------------------------
-# Change language by terminal (local console OR ssh ?)
+# Auto load ssh agent
 #-------------------------------------------------------------
-#export LC_ALL=zh_TW.UTF-8 LANG=zh_TW LANGUAGE=zh_TW
+function check-ssh-agent() {
+	[ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
+}
+check-ssh-agent || export SSH_AUTH_SOCK=~/.tmp/ssh-agent.sock
+check-ssh-agent || eval "$(mkdir -p ~/.tmp && ssh-agent -s -a ~/.tmp/ssh-agent.sock)" > /dev/null
 
 #-------------------------------------------------------------
 # Change the window title of X terminals

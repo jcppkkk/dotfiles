@@ -305,7 +305,6 @@ _bash_history_sync() {
     builtin history -c
     builtin history -r
 }
-PROMPT_COMMAND=_bash_history_sync
 
 # Powerline prompt
 if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
@@ -384,49 +383,76 @@ hash thefuck 2>/dev/null && eval $(thefuck --alias) || true
 get() { echo -ne "\033];__pw:${PWD}\007"; for file in $* ; do echo -ne "\033];__rv:${file}\007";done; echo -ne "\033];__ti\007"; }
 winscp() { echo -ne "\033];__ws:${PWD}\007"; }
 
-function timer_start {
-  timer=${timer:-$SECONDS}
+
+function command_timer_stop {
+	local show_timer_after=30
+    local tdiff=$(($SECONDS - ${command_timer:-$SECONDS}))
+    if [ $tdiff -gt $show_timer_after ]; then
+        ((tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;)&)
+		local hours=$(($tdiff / 3600 ))
+		local mins=$((($tdiff % 3600) / 60))
+		local secs=$(($tdiff % 60))
+		local ncolors=$(tput colors 2>/dev/null)
+		if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
+			if [ $ret -eq 0 ] ; then
+				color_status="\e[0;32m"
+			else
+				color_status="\e[0;31m"
+			fi
+			color_cmd="\e[7m"
+			color_reset="\e[00m"
+		else
+			color_status=""
+			color_cmd=""
+			color_reset=""
+		fi
+		if [ $ret -eq 0 ] ; then
+			echo -n -e "${color_status}#### Command ${color_cmd} $COMMAND_TIMER_CURRENT_CMD ${color_status} success "
+		else
+			echo -n -e "${color_status}#### Command ${color_cmd} $COMMAND_TIMER_CURRENT_CMD ${color_status} failed "
+		fi
+		if [ $hours -gt 0 ] ; then
+			printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
+		elif [ $mins -gt 0 ] ; then
+			printf "(%02g:%02g (mm:ss))" $mins $secs
+		elif [ $secs -gt 0 ] ; then
+			printf "(%s seconds)" $secs
+		fi
+		echo -e " #### ${color_reset}"
+	fi
 }
 
-function timer_stop {
+pre_command () {
+	#[ -n "$COMP_LINE" ] && return  # do nothing if completing
+	[ "${BASH_COMMAND/_powerline_set_prompt}" != "$BASH_COMMAND" ] && return
+	[ "${BASH_COMMAND/post_command}" != "$BASH_COMMAND" ] && return
+	unset AT_PROMPT
+	command_timer=$SECONDS
+	COMMAND_TIMER_CURRENT_CMD=$BASH_COMMAND
+	#echo "Running PreCommand"
+}
+
+FIRST_PROMPT=1
+function post_command {
     local ret=$?
-    local tdiff=$(($SECONDS - ${timer:-$SECONDS}))
-    unset timer
-    if [ $tdiff -gt 30 ]; then
-        ((tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;)&)
-        local hours=$(($tdiff / 3600 ))
-        local mins=$((($tdiff % 3600) / 60))
-        local secs=$(($tdiff % 60))
-        local ncolors=$(tput colors 2>/dev/null)
-        if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
-            color_failed="\e[0;31m"
-            color_success="\e[0;32m"
-            color_reset="\e[00m"
-        else
-            color_failed=""
-            color_success=""
-            color_reset=""
-        fi
-        if [ $ret -eq 0 ] ; then
-            echo -n -e "${color_success}#### command completed successfully "
-        else
-            echo -n -e "${color_failed}#### command failed "
-        fi
-        if [ $hours -gt 0 ] ; then
-            printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
-        elif [ $mins -gt 0 ] ; then
-            printf "(%02g:%02g (mm:ss))" $mins $secs
-        elif [ $secs -gt 0 ] ; then
-            printf "(%s seconds)" $secs
-        fi
-        echo -e " ####${color_reset}"
-    fi
+
+	if [ -n "$AT_PROMPT" ]; then
+		return
+	fi
+	AT_PROMPT=1
+	if [ -n "$FIRST_PROMPT" ]; then
+		unset FIRST_PROMPT
+		return
+	fi
+	command_timer_stop
+	_bash_history_sync
+	#echo "Running PostCommand"
     return $ret
 }
+while trap -p | grep -q pre_command; do trap - DEBUG; done
+trap 'pre_command' DEBUG
 
-trap 'timer_start' DEBUG
-if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/timer_stop/}" ]; then
-PROMPT_COMMAND="timer_stop
-$PROMPT_COMMAND
-"
+if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/post_command/}" -a -n "$PROMPT_COMMAND" ]; then
+	PROMPT_COMMAND="$PROMPT_COMMAND
+post_command"
 fi

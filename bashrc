@@ -434,10 +434,9 @@ pre_command () {
 
 FIRST_PROMPT=1
 function post_command {
-    local ret=$?
-
+	local ret=$?
 	if [ -n "$AT_PROMPT" ]; then
-		return
+		return 0 # Remove remained error code
 	fi
 	AT_PROMPT=1
 	if [ -n "$FIRST_PROMPT" ]; then
@@ -447,12 +446,12 @@ function post_command {
 	command_timer_stop
 	_bash_history_sync
 	#echo "Running PostCommand"
-    return $ret
+	return $ret
 }
 while trap -p | grep -q pre_command; do trap - DEBUG; done
 trap 'pre_command' DEBUG
 
 if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/post_command/}" -a -n "$PROMPT_COMMAND" ]; then
-	PROMPT_COMMAND="$PROMPT_COMMAND
-post_command"
+	PROMPT_COMMAND="post_command
+$PROMPT_COMMAND"
 fi

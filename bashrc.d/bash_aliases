@@ -29,7 +29,7 @@ alias cp='cp -ri'
 alias mv='mv -i'
 # -> Prevents accidentally clobbering files.
 alias mkdir='mkdir -p'
-alias grep='grep --color=auto'
+alias grep='grep --color=auto --binary-files=without-match'
 
 alias h='history'
 alias j='jobs -l'

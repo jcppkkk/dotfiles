@@ -77,6 +77,10 @@ export  LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 # File & string-related functions:
 #-------------------------------------------------------------
 
+function grepvim() {
+	grep -rn "$@" | grep -v '~:' && vim +0,100bd +cfile\ <(grep -rn "$@" | grep -v '~:') +0bd
+}
+
 # Find a file with a pattern in name:
 function ff() { find . -type f -iname '*'$*'*' -ls ; }
 
@@ -345,7 +349,9 @@ export HISTFILESIZE=$HISTSIZE
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
 
 
-# mintty-colors-solarized
+#-------------------------------------------------------------
+# mintty-colors-solarized (for windows::mintty)
+#-------------------------------------------------------------
 if type -P mintty &>/dev/null;then
     echo -ne   '\e]10;#839496\a'  # Foreground   -> base0
     echo -ne   '\e]11;#002B36\a'  # Background   -> base03
@@ -370,19 +376,31 @@ if type -P mintty &>/dev/null;then
     echo -ne '\e]4;15;#FDFDE3\a'  # bold white   -> Base3
 fi
 
+#-------------------------------------------------------------
 # TMUX
+#-------------------------------------------------------------
 if [ -z "$TMUX" ]; then
     [ -f /var/run/motd ] && cat /var/run/motd
 fi
 true
 
+#-------------------------------------------------------------
 # thefuck
+#-------------------------------------------------------------
 hash thefuck 2>/dev/null && eval $(thefuck --alias) || true
 
+#-------------------------------------------------------------
 # kitty intergration
+#-------------------------------------------------------------
 get() { echo -ne "\033];__pw:${PWD}\007"; for file in $* ; do echo -ne "\033];__rv:${file}\007";done; echo -ne "\033];__ti\007"; }
 winscp() { echo -ne "\033];__ws:${PWD}\007"; }
 
+#-------------------------------------------------------------
+# Report command takes long time
+#-------------------------------------------------------------
+function timer_start {
+  timer=${timer:-$SECONDS}
+}
 
 function command_timer_stop {
 	local show_timer_after=30

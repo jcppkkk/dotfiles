@@ -85,6 +85,7 @@ case $platform in
 		packages="$packages vim"
 		packages="$packages libclang-3.6-dev"
 		packages="$packages clang-format-3.6"
+		packages="$packages clang-3.5"
 		;;
 	'mac')
 		brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -109,6 +110,9 @@ for P in $packages; do
 	fi
 done
 [ -n "$install_packages" ] && ${platform}_install_pkg $install_packages
+
+[ -f /usr/bin/clang-3.5 ] && sudo ln -s /usr/bin/clang-3.5 /usr/bin/clang
+[ -f /usr/bin/clang++-3.5 ] && sudo ln -s /usr/bin/clang++-3.5 /usr/bin/clang++
 
 #######################
 ## install vim plugins

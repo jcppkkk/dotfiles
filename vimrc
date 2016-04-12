@@ -64,6 +64,7 @@ Plugin 'Rip-Rip/clang_complete'
 	" The single one that works with clang_complete
 	let g:clang_snippets_engine='clang_complete'
 	let g:clang_complete_macros = 1
+	let g:clang_use_library = 1
 	" Complete options (disable preview scratch window, longest removed to aways show menu)
 	set completeopt=menu,menuone
 	" Limit popup menu height

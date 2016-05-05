@@ -73,6 +73,7 @@ Plugin 'scrooloose/syntastic'
 	set statusline+=%#warningmsg#
 	set statusline+=%{SyntasticStatuslineFlag()}
 	set statusline+=%*
+	"let g:syntastic_reuse_loc_lists = 0
 	let g:syntastic_always_populate_loc_list = 1
 	let g:syntastic_auto_loc_list = 1
 	let g:syntastic_check_on_open = 1
@@ -88,14 +89,14 @@ Plugin 'scrooloose/syntastic'
 	function! <SID>LocationPrevious()
 		try
 			lprev
-		catch /^Vim\%((\a\+)\)\=:E553/
+		catch /^Vim\%((\a\+)\)\=:E553\|^Vim\%((\a\+)\)\=:E926\|^Vim\%((\a\+)\)\=:E42/
 		endtry
 	endfunction
 
 	function! <SID>LocationNext()
 		try
 			lnext
-		catch /^Vim\%((\a\+)\)\=:E553/
+		catch /^Vim\%((\a\+)\)\=:E553\|^Vim\%((\a\+)\)\=:E926\|^Vim\%((\a\+)\)\=:E42/
 		endtry
 	endfunction
 
@@ -124,6 +125,9 @@ Plugin 'tpope/vim-fugitive'
 
 " Editing Tools
 Plugin 'renamer.vim'
+Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'guns/xterm-color-table.vim'
+Plugin 'terryma/vim-multiple-cursors'
 
 function! GetBufferList()
   redir =>buflist
@@ -330,6 +334,12 @@ catch /^Vim\%((\a\+)\)\=:E185/
 endtry
 
 let g:solarized_termcolors=256
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=8
+let g:indent_guides_start_level=2
+let g:indent_guides_guide_size=1
 
 "set background=light
 set background=dark
@@ -481,7 +491,8 @@ endif
 
 map <F2> :bufdo :args ## % <cr>:vimgrep // ##<left><left><left><left>
 map <F5> :wa<CR>
-map <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
+nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
+vnoremap <F6> "hy:%s/\<<C-r>h\>//g<left><left>
 
 " <F8> 會在 searching highlight 及非 highlight 間切換
 map <F8> :set hls!<BAR>set hls?<CR>
@@ -570,5 +581,6 @@ autocmd FileType css setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType sh,bash setl tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
 autocmd FileType make setl tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
 autocmd FileType c setl textwidth=73 fo=cq wm=0
+autocmd FileType make setlocal shiftwidth=2 softtabstop=2 tabstop=8 noexpandtab
 " detect gcov filetype
 au BufRead,BufNewFile *.gcov              set filetype=gcov

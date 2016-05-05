@@ -75,8 +75,9 @@ packages="git dos2unix wget curl"
 case $platform in
 	'linux')
 		packages="$packages exuberant-ctags make build-essential libssl-dev
-		libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev vim
-		libclang-3.6-dev clang-format-3.6 clang-3.5 git tig bmon"
+		libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev vim-nox-py2
+		libclang-3.6-dev clang-format-3.6 clang-3.5 git tig bmon unzip
+		meld apt-file"
 		;;
 	'mac')
 		brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"

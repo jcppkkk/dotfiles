@@ -34,7 +34,7 @@ function check-ssh-agent() {
 	[ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
 }
 check-ssh-agent || export SSH_AUTH_SOCK=~/.tmp/ssh-agent.sock
-check-ssh-agent || eval "$(mkdir -p ~/.tmp && ssh-agent -s -a ~/.tmp/ssh-agent.sock)" > /dev/null
+check-ssh-agent || { mkdir -p ~/.tmp && rm -f ~/.tmp/ssh-agent.sock && eval "$(ssh-agent -s -a ~/.tmp/ssh-agent.sock)"; } > /dev/null
 
 #-------------------------------------------------------------
 # Change the window title of X terminals

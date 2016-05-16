@@ -342,7 +342,7 @@ shopt -s histappend
 shopt -s cmdhist
 
 export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
-export HISTIGNORE="&:ls:[bf]g:exit"
+export HISTIGNORE="&:ls:[bf]g:exit:printf *"
 export HOSTFILE=$HOME/.hosts    # Put list of remote hosts in ~/.hosts ...
 export HISTSIZE=10000
 export HISTFILESIZE=$HISTSIZE

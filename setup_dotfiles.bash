@@ -75,9 +75,14 @@ packages="git dos2unix wget curl"
 case $platform in
 	'linux')
 		packages="$packages exuberant-ctags make build-essential libssl-dev
-		libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev vim-nox-py2
+		libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev
 		libclang-3.6-dev clang-format-3.6 clang-3.5 git tig bmon unzip
 		meld apt-file"
+		if lsb_release -a | grep 14.04; then
+			packages+=" vim"
+		else
+			packages+=" vim-nox-py2"
+		fi
 		;;
 	'mac')
 		brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"

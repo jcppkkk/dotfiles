@@ -5,6 +5,7 @@
 	autocrlf = input
 	whitespace = cr-at-eol
 	pager = less -FXRS -x4
+	excludesfile = /home/jethro/.gitignore_global
 [color]
 	branch = auto
 	diff = auto

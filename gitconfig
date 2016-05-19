@@ -42,3 +42,5 @@
 	all = true
 [diff]
 	noprefix = true
+[git-up "rebase"]
+	arguments = --committer-date-is-author-date

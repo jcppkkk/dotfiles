@@ -108,8 +108,8 @@ for P in $packages; do
 done
 [ -n "$install_packages" ] && ${platform}_install_pkg $install_packages
 
-[ -f /usr/bin/clang-3.5 ] && sudo ln -s /usr/bin/clang-3.5 /usr/bin/clang
-[ -f /usr/bin/clang++-3.5 ] && sudo ln -s /usr/bin/clang++-3.5 /usr/bin/clang++
+[ -f /usr/bin/clang-3.5 ] && sudo ln -fs /usr/bin/clang-3.5 /usr/bin/clang
+[ -f /usr/bin/clang++-3.5 ] && sudo ln -fs /usr/bin/clang++-3.5 /usr/bin/clang++
 
 #######################
 ## install vim plugins

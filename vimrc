@@ -55,6 +55,9 @@ Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'ekalinin/Dockerfile.vim'
 
 """"" language support - C/C++
+Plugin 'xolox/vim-misc'
+Plugin 'xolox/vim-easytags'
+let g:easytags_auto_highlight = 0
 Plugin 'Rip-Rip/clang_complete'
 	let g:clang_library_path="/usr/lib/llvm-3.6/lib/"
 	set conceallevel=2
@@ -69,6 +72,9 @@ Plugin 'Rip-Rip/clang_complete'
 	set completeopt=menu,menuone
 	" Limit popup menu height
 	set pumheight=20
+	let g:clang_jumpto_declaration_key = '<C-p>'
+	let g:clang_jumpto_declaration_in_preview_key = '<C-W>p'
+	let g:clang_jumpto_back_key = '<C-o>'
 Plugin 'scrooloose/syntastic'
 	set statusline+=%#warningmsg#
 	set statusline+=%{SyntasticStatuslineFlag()}

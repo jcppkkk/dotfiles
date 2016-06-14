@@ -91,7 +91,6 @@ Plugin 'scrooloose/syntastic'
 	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_aggregate_errors = 1
 	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
-	nnoremap <F4> :SyntasticToggleMode<CR> :SyntasticCheck<CR>
 	function! <SID>LocationPrevious()
 		try
 			lprev
@@ -113,9 +112,8 @@ Plugin 'scrooloose/syntastic'
 Plugin 'cuteErrorMarker'
 Plugin 'AutoTag'
 Plugin 'majutsushi/tagbar'
+	autocmd VimEnter * nested :call tagbar#autoopen(1)
 Plugin 'gcov.vim'
-map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
-imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
 
 """"" language support - csv
 Plugin 'chrisbra/csv.vim'
@@ -249,9 +247,6 @@ set viminfo=%100,'100,/100,h,\"500,:100,n~/.viminfo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap <tab> >gv
 vmap <s-tab> <gv
-map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z
-map <F11> mz:set softtabstop=0 shiftwidth=4 tabstop=4 noexpandtab<CR>'z
-map <F12> mz:set softtabstop=0 shiftwidth=4 tabstop=4 expandtab<CR>'z
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " searching...
@@ -496,7 +491,14 @@ if &term =~ "putty-256color"
 endif
 
 map <F2> :bufdo :args ## % <cr>:vimgrep // ##<left><left><left><left>
+
+map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
+imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
+
+nnoremap <F4> :SyntasticToggleMode<CR> :SyntasticCheck<CR>
+
 map <F5> :wa<CR>
+
 nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
 vnoremap <F6> "hy:%s/\<<C-r>h\>//g<left><left>
 
@@ -506,6 +508,10 @@ map <F8> :set hls!<BAR>set hls?<CR>
 " <F9> Toggle on/off paste mode
 map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
+
+map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z
+map <F11> mz:set softtabstop=0 shiftwidth=4 tabstop=4 noexpandtab<CR>'z
+map <F12> mz:set softtabstop=0 shiftwidth=4 tabstop=4 expandtab<CR>'z
 
 map <S-Down> :cnext<CR>
 map <S-Up> :cprevious<CR>

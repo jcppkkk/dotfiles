@@ -44,3 +44,5 @@
 	noprefix = true
 [git-up "rebase"]
 	arguments = --committer-date-is-author-date
+[mergetool]
+	keepBackup = false

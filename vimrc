@@ -113,6 +113,7 @@ Plugin 'cuteErrorMarker'
 Plugin 'AutoTag'
 Plugin 'majutsushi/tagbar'
 	autocmd VimEnter * nested :call tagbar#autoopen(1)
+	autocmd FileType qf wincmd J
 Plugin 'gcov.vim'
 
 """"" language support - csv
@@ -245,8 +246,11 @@ set viminfo=%100,'100,/100,h,\"500,:100,n~/.viminfo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " tab indent
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-vmap <tab> >gv
-vmap <s-tab> <gv
+nnoremap <Tab> >>_
+nnoremap <S-Tab> <<_
+inoremap <S-Tab> <C-D>
+vnoremap <Tab> >gv_
+vnoremap <S-Tab> <gv_
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " searching...
@@ -521,7 +525,7 @@ nmap <silent> B :call Do_make__()<cr><cr><cr>
 nmap <silent> C :cclose<cr>
 function! Do_make__()
     up
-    execute "make"
+    execute "make -B"
     execute "cwindow"
 endfunction
 

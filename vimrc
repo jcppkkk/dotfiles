@@ -598,5 +598,6 @@ autocmd FileType sh,bash setl tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
 autocmd FileType make setl tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
 autocmd FileType c setl textwidth=73 fo=cq wm=0
 autocmd FileType make setlocal shiftwidth=2 softtabstop=2 tabstop=8 noexpandtab
+autocmd FileType python set cindent
 " detect gcov filetype
 au BufRead,BufNewFile *.gcov              set filetype=gcov

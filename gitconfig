@@ -6,6 +6,7 @@
 	whitespace = cr-at-eol
 	pager = less -FXRS -x4
 	excludesfile = /home/jethro/.gitignore_global
+	preloadindex = true
 [color]
 	branch = auto
 	diff = auto

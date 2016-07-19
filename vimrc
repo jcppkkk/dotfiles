@@ -503,8 +503,8 @@ endif
 
 map <F2> :bufdo :args ## % <cr>:vimgrep // ##<left><left><left><left>
 
-map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
-imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-3.6.py<cr>
+map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-3.8.py<cr>
+imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-3.8.py<cr>
 
 nnoremap <F4> :SyntasticToggleMode<CR> :SyntasticCheck<CR>
 

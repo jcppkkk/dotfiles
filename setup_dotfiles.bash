@@ -76,7 +76,7 @@ case $platform in
 	'linux')
 		packages="$packages exuberant-ctags make build-essential libssl-dev
 		libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev
-		libclang-3.6-dev clang-format-3.6 clang-3.5 git tig bmon unzip
+		libclang-3.8-dev clang-format-3.8 clang-3.5 git tig bmon unzip
 		meld apt-file"
 		if lsb_release -a | grep 14.04; then
 			packages+=" vim"

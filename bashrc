@@ -78,7 +78,7 @@ export  LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 #-------------------------------------------------------------
 
 function vimgrep() {
-	grep -rn "$@" | grep -v '~:' && vim +0,100bd +cfile\ <(grep -rn "$@" | grep -v '~:') +0bd
+	vim +0,100bd +cfile\ <(grep -rn "$@" | grep -v '~:') +0bd
 }
 
 # Find a file with a pattern in name:

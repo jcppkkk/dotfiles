@@ -18,5 +18,7 @@ else
 	pip install --user powerline-status --upgrade
 fi
 
-(cd ~/dotfiles/vim; mv -f vundle Vundle.vim)
+if [ -d $HOME/.vim/vundle ]; then
+	mv -f $HOME/.vim/{vundle,Vundle.vim}
+fi
 vim +BundleInstall +qa 2> /dev/null

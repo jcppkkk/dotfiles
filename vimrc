@@ -2,19 +2,19 @@
 " Protect large files from sourcing and other overhead.
 " Files become read only
 if !exists("my_auto_commands_loaded")
-    let my_auto_commands_loaded = 1
-    " Large files are > 10M
-    " Set options:
-    " eventignore+=FileType (no syntax highlighting etc
-    " assumes FileType always on)
-    " noswapfile (save copy of file)
-    " bufhidden=unload (save memory when other file is viewed)
-    " buftype=nowritefile (is read-only)
-    " undolevels=-1 (no undo possible)
-    let g:LargeFile = 1024 * 1024 * 10
-    augroup LargeFile
-        autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:LargeFile | set eventignore+=FileType | setlocal noswapfile bufhidden=unload undolevels=-1 | else | set eventignore-=FileType | endif
-    augroup END
+	let my_auto_commands_loaded = 1
+	" Large files are > 10M
+	" Set options:
+	" eventignore+=FileType (no syntax highlighting etc
+	" assumes FileType always on)
+	" noswapfile (save copy of file)
+	" bufhidden=unload (save memory when other file is viewed)
+	" buftype=nowritefile (is read-only)
+	" undolevels=-1 (no undo possible)
+	let g:LargeFile = 1024 * 1024 * 10
+	augroup LargeFile
+		autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:LargeFile | set eventignore+=FileType | setlocal noswapfile bufhidden=unload undolevels=-1 | else | set eventignore-=FileType | endif
+	augroup END
 endif
 
 set nocompatible		" be iMproved, required
@@ -35,6 +35,10 @@ Plugin 'bling/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 	let g:airline_theme='solarized'
 	let g:airline_powerline_fonts = 1
+	" spaces are allowed after tabs, but not in between
+	" this algorithm works well with programming styles that use tabs for
+	" indentation and spaces for alignment
+	let g:airline#extensions#whitespace#mixed_indent_algo = 2
 	let g:airline#extensions#tabline#enabled = 1
 	let g:airline#extensions#tabline#fnamemod = ':t'
 	let g:airline#extensions#tabline#excludes = []
@@ -57,9 +61,10 @@ Plugin 'ekalinin/Dockerfile.vim'
 """"" language support - C/C++
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
-let g:easytags_auto_highlight = 0
+	let g:easytags_auto_highlight = 0
 Plugin 'Rip-Rip/clang_complete'
-	let g:clang_library_path="/usr/lib/llvm-3.6/lib/"
+	let g:clang_auto_select=1
+	let g:clang_library_path="/usr/lib/llvm-3.8/lib/"
 	set conceallevel=2
 	set concealcursor=vin
 	let g:clang_snippets=1
@@ -134,31 +139,33 @@ Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'guns/xterm-color-table.vim'
 Plugin 'terryma/vim-multiple-cursors'
 
+set wildmode=longest,list
+set wildmenu
 function! GetBufferList()
-  redir =>buflist
-  silent! ls!
-  redir END
-  return buflist
+	redir =>buflist
+	silent! ls!
+	redir END
+	return buflist
 endfunction
 
 function! ToggleList(bufname, pfx)
-  let buflist = GetBufferList()
-  for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
-    if bufwinnr(bufnum) != -1
-      exec(a:pfx.'close')
-      return
-    endif
-  endfor
-  if a:pfx == 'l' && len(getloclist(0)) == 0
-      echohl ErrorMsg
-      echo "Location List is Empty."
-      return
-  endif
-  let winnr = winnr()
-  exec(a:pfx.'open')
-  if winnr() != winnr
-    wincmd p
-  endif
+	let buflist = GetBufferList()
+	for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
+		if bufwinnr(bufnum) != -1
+			exec(a:pfx.'close')
+			return
+		endif
+	endfor
+	if a:pfx == 'l' && len(getloclist(0)) == 0
+		echohl ErrorMsg
+		echo "Location List is Empty."
+		return
+	endif
+	let winnr = winnr()
+	exec(a:pfx.'open')
+	if winnr() != winnr
+		wincmd p
+	endif
 endfunction
 
 nmap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
@@ -267,22 +274,22 @@ set diffopt=filler,iwhite       " ignore all whitespace and sync
 " spelling...
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if v:version >= 700
-    let b:lastspelllang='en'
-    function! ToggleSpell()
-        if &spell == 1
-            let b:lastspelllang=&spelllang
-            setlocal spell!
-        elseif b:lastspelllang
-            setlocal spell spelllang=b:lastspelllang
-        else
-            setlocal spell spelllang=en
-        endif
-    endfunction
+	let b:lastspelllang='en'
+	function! ToggleSpell()
+		if &spell == 1
+			let b:lastspelllang=&spelllang
+			setlocal spell!
+		elseif b:lastspelllang
+			setlocal spell spelllang=b:lastspelllang
+		else
+			setlocal spell spelllang=en
+		endif
+	endfunction
 
-    nmap <LocalLeader>ss :call ToggleSpell()<CR>
+	nmap <LocalLeader>ss :call ToggleSpell()<CR>
 
-    setlocal spell spelllang=en
-    setlocal nospell
+	setlocal spell spelllang=en
+	setlocal nospell
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -333,9 +340,9 @@ map <LocalLeader>bb :ls<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax enable                       " syntax on
 try
-    colorscheme solarized
+	colorscheme solarized
 catch /^Vim\%((\a\+)\)\=:E185/
-    " deal with it
+	" deal with it
 endtry
 
 let g:solarized_termcolors=256
@@ -357,32 +364,32 @@ set cursorline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! DiffFoldLevel(lineno)
-    let line = getline(a:lineno)
-    if line =~ '^Index:'
-        return '>1'
-    elseif line =~ '^===' || line =~ '^RCS file: ' || line =~ '^retrieving revision '
-        let lvl = foldlevel(a:lineno - 1)
-        return lvl >= 0 ? lvl : '='
-    elseif line =~ '^diff'
-        return getline(a:lineno - 1) =~ '^retrieving revision ' ? '=' : '>1'
-    elseif line =~ '^--- ' && getline(a:lineno - 1) !~ '^diff\|^==='
-        return '>1'
-    elseif line =~ '^@'
-        return '>2'
-    elseif line =~ '^[- +\\]'
-        let lvl = foldlevel(a:lineno - 1)
-        return lvl >= 0 ? lvl : '='
-    else
-        return '0'
-    endif
+	let line = getline(a:lineno)
+	if line =~ '^Index:'
+		return '>1'
+	elseif line =~ '^===' || line =~ '^RCS file: ' || line =~ '^retrieving revision '
+		let lvl = foldlevel(a:lineno - 1)
+		return lvl >= 0 ? lvl : '='
+	elseif line =~ '^diff'
+		return getline(a:lineno - 1) =~ '^retrieving revision ' ? '=' : '>1'
+	elseif line =~ '^--- ' && getline(a:lineno - 1) !~ '^diff\|^==='
+		return '>1'
+	elseif line =~ '^@'
+		return '>2'
+	elseif line =~ '^[- +\\]'
+		let lvl = foldlevel(a:lineno - 1)
+		return lvl >= 0 ? lvl : '='
+	else
+		return '0'
+	endif
 endf
 
 function! FT_Diff()
-    if v:version >= 600
-        setlocal foldmethod=expr
-        setlocal foldexpr=DiffFoldLevel(v:lnum)
-    else
-    endif
+	if v:version >= 600
+		setlocal foldmethod=expr
+		setlocal foldexpr=DiffFoldLevel(v:lnum)
+	else
+	endif
 endf
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -390,16 +397,16 @@ endf
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function! NoFoldsInDiffMode()
-    if &diff
-        :silent! :%foldopen!
-    endif
+	if &diff
+		:silent! :%foldopen!
+	endif
 endf
 
 augroup Diffs
-    autocmd!
-    autocmd BufRead,BufNewFile *.patch :setf diff
-    autocmd BufEnter           *       :call NoFoldsInDiffMode()
-    autocmd FileType           diff    :call FT_Diff()
+	autocmd!
+	autocmd BufRead,BufNewFile *.patch :setf diff
+	autocmd BufEnter           *       :call NoFoldsInDiffMode()
+	autocmd FileType           diff    :call FT_Diff()
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -408,8 +415,8 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 augroup force-cd-dot
-    autocmd!
-    autocmd BufEnter * :cd .
+	autocmd!
+	autocmd BufEnter * :cd .
 augroup END
 set path=**;/
 
@@ -466,9 +473,9 @@ let Tlist_Close_On_Select = 0 " Close the taglist window when a file or tag is s
 let Tlist_Enable_Fold_Column = 0 " Don't Show the fold indicator column in the taglist window.
 let Tlist_WinWidth = 40
 if has("vms")
-    set nobackup	" do not keep a backup file, use versions instead
+	set nobackup	" do not keep a backup file, use versions instead
 else
-    set backup		" keep a backup file
+	set backup		" keep a backup file
 endif
 
 map Q gq
@@ -491,7 +498,7 @@ vmap <silent>c<down>    !boxes -t 4 -r<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 if &term =~ "putty-256color"
-    :set term=xterm-256color
+	:set term=xterm-256color
 endif
 
 map <F2> :bufdo :args ## % <cr>:vimgrep // ##<left><left><left><left>
@@ -524,9 +531,9 @@ map <S-Up> :cprevious<CR>
 nmap <silent> B :call Do_make__()<cr><cr><cr>
 nmap <silent> C :cclose<cr>
 function! Do_make__()
-    up
-    execute "make -B"
-    execute "cwindow"
+	up
+	execute "make -B"
+	execute "cwindow"
 endfunction
 
 
@@ -549,27 +556,27 @@ set t_Co=256
 " auto load extensions for different file types
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has('autocmd')
-    filetype plugin indent on
-    set nostartofline
-    " jump to last line edited in a given file (based on .viminfo)
-    autocmd BufReadPost *
-                \ if line("'\"") > 0|
-                \       if line("'\"") <= line("$")|
-                \               exe("norm '\"")|
-                \       else|
-                \               exe("norm $")|
-                \       endif|
-                \ endif
+	filetype plugin indent on
+	set nostartofline
+	" jump to last line edited in a given file (based on .viminfo)
+	autocmd BufReadPost *
+				\ if line("'\"") > 0|
+				\       if line("'\"") <= line("$")|
+				\               exe("norm '\"")|
+				\       else|
+				\               exe("norm $")|
+				\       endif|
+				\ endif
 
-    " improve legibility
-    "au BufRead quickfix setlocal nobuflisted wrap number
-    au BufReadPost quickfix  setlocal modifiable
-                \ | silent exe 'g/^/s//\=line(".")." "/'
-                \ | setlocal nomodifiable
+	" improve legibility
+	"au BufRead quickfix setlocal nobuflisted wrap number
+	au BufReadPost quickfix  setlocal modifiable
+				\ | silent exe 'g/^/s//\=line(".")." "/'
+				\ | setlocal nomodifiable
 
 
-    " configure various extenssions
-    let git_diff_spawn_mode=2
+	" configure various extenssions
+	let git_diff_spawn_mode=2
 
 endif
 

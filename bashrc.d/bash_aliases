@@ -38,6 +38,7 @@ alias ..='pushd ..'
 alias ...='pushd ../..'
 alias ....='pushd ../../..'
 alias .....='pushd ../../../..'
+alias ......='pushd ../../../../..'
 alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 

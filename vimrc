@@ -62,6 +62,7 @@ Plugin 'ekalinin/Dockerfile.vim'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
 	let g:easytags_auto_highlight = 0
+	let g:easytags_async = 1
 Plugin 'Rip-Rip/clang_complete'
 	let g:clang_auto_select=1
 	let g:clang_library_path="/usr/lib/llvm-3.8/lib/"
@@ -74,7 +75,7 @@ Plugin 'Rip-Rip/clang_complete'
 	let g:clang_complete_macros = 1
 	let g:clang_use_library = 1
 	" Complete options (disable preview scratch window, longest removed to aways show menu)
-	set completeopt=menu,menuone
+	set completeopt=menu
 	" Limit popup menu height
 	set pumheight=20
 	let g:clang_jumpto_declaration_key = '<C-p>'
@@ -119,6 +120,7 @@ Plugin 'AutoTag'
 Plugin 'majutsushi/tagbar'
 	autocmd VimEnter * nested :call tagbar#autoopen(1)
 	autocmd FileType qf wincmd J
+	"let g:tagbar_width = 60
 Plugin 'gcov.vim'
 
 """"" language support - csv
@@ -138,6 +140,11 @@ Plugin 'renamer.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'guns/xterm-color-table.vim'
 Plugin 'terryma/vim-multiple-cursors'
+Plugin 'junegunn/vim-easy-align'
+	" Start interactive EasyAlign in visual mode (e.g. vipga)
+	xmap ga <Plug>(EasyAlign)
+	" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+	nmap ga <Plug>(EasyAlign)
 
 set wildmode=longest,list
 set wildmenu
@@ -177,7 +184,8 @@ filetype plugin indent on    " required
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set modelines=0         " no modelines [http://www.guninski.com/vim1.html]
+set modelines=5         " no modelines [http://www.guninski.com/vim1.html]
+set modeline
 "let g:secure_modelines_verbose=1 " securemodelines vimscript
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -194,6 +202,8 @@ set more                        " the 'more' prompt
 filetype on                     " automatic file type detection
 set autoread                    " watch for file changes by other programs
 "set visualbell                 " visual beep
+set backupdir=~/.backup,.
+set directory=.,~/.backup
 set backup                      " produce *~ backup files
 set backupext=~                 " add ~ to the end of backup files
 ":set patchmode=~               " only produce *~ if not there
@@ -208,6 +218,8 @@ set sidescrolloff=5             " keep at least 5 columns left/right of cursor
 set history=200                 " remember the last 200 commands
 set showcmd		        " display incomplete commands
 set tags=./tags;
+let &colorcolumn=join(range(81,999),",")
+highlight ColorColumn ctermbg=235 guibg=#2c2d27
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " meta
@@ -501,7 +513,7 @@ if &term =~ "putty-256color"
 	:set term=xterm-256color
 endif
 
-map <F2> :bufdo :args ## % <cr>:vimgrep // ##<left><left><left><left>
+nnoremap <silent> <F2> :TagbarToggle<CR>
 
 map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-3.8.py<cr>
 imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-3.8.py<cr>
@@ -512,6 +524,7 @@ map <F5> :wa<CR>
 
 nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
 vnoremap <F6> "hy:%s/\<<C-r>h\>//g<left><left>
+map <F7> :vim /<c-r>=expand("<cword>")<cr>/ *.c *.h<CR>
 
 " <F8> 會在 searching highlight 及非 highlight 間切換
 map <F8> :set hls!<BAR>set hls?<CR>
@@ -524,16 +537,30 @@ map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z
 map <F11> mz:set softtabstop=0 shiftwidth=4 tabstop=4 noexpandtab<CR>'z
 map <F12> mz:set softtabstop=0 shiftwidth=4 tabstop=4 expandtab<CR>'z
 
-map <S-Down> :cnext<CR>
-map <S-Up> :cprevious<CR>
+map <S-Down> :call Next_err()<cr>
+function! Next_err()
+	try
+		cnext
+	catch /:E553:/
+		clast
+	endtry
+endfunction
+map <S-Up> :call Pre_err()<cr>
+function! Pre_err()
+	try
+		cprevious
+	catch /:E553:/
+		cfirst
+	endtry
+endfunction
+
 " <B> <C> this script use to excute make in vim and open quickfix window
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
-nmap <silent> B :call Do_make__()<cr><cr><cr>
+nmap <silent> B :call Do_make__()<cr>
 nmap <silent> C :cclose<cr>
+set autowrite
 function! Do_make__()
-	up
-	execute "make -B"
-	execute "cwindow"
+	execute "silent make!|cwindow|cc!|redraw!"
 endfunction
 
 
@@ -601,10 +628,11 @@ autocmd FileType jade setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType scss setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType xml setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType css setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType sh,bash setl tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
+"autocmd FileType sh,bash setl tabstop=8 shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType make setl tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
-autocmd FileType c setl textwidth=73 fo=cq wm=0
+autocmd FileType c setl textwidth=73 fo=cq wm=0 formatoptions+=r
 autocmd FileType make setlocal shiftwidth=2 softtabstop=2 tabstop=8 noexpandtab
 autocmd FileType python set cindent
 " detect gcov filetype
 au BufRead,BufNewFile *.gcov              set filetype=gcov
+map <S-Right> :s/struct stat/HCFS_STAT/<cr>\|:s/\<st_//<cr>

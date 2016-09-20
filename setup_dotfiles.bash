@@ -70,47 +70,60 @@ find "$dotfiles_oldfolder" -type d -empty | xargs rm -rvf
 ## install packages on new machine
 #######################
 
+CL_V=4.0
 packages="git dos2unix wget curl"
 
 case $platform in
-	'linux')
-		packages="$packages exuberant-ctags make build-essential libssl-dev
-		libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev
-		libclang-3.8-dev clang-format-3.8 clang-3.5 git tig bmon unzip
-		meld apt-file"
-		if lsb_release -a | grep 14.04; then
-			packages+=" vim"
-		else
-			packages+=" vim-nox-py2"
-		fi
-		;;
-	'mac')
-		brew help > /dev/null || ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-		packages="$packages ctags"
-		packages="$packages python"
-		packages="$packages coreutils"
-		;;
+'linux')
+	check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
+	install_pkg() { sudo apt-get install -y $@; }
+	update_pkg_list() { sudo apt-get update; }
+	# Add clang ${CL_V}
+	source /etc/lsb-release
+	DIST=$DISTRIB_CODENAME
+	cat <<-EOF |
+	deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
+	deb-src http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
+	EOF
+	sudo tee /etc/apt/sources.list.d/llvm.list
+	curl http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+
+	packages="$packages exuberant-ctags make build-essential libssl-dev
+	libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev
+	libclang-${CL_V}-dev clang-format-${CL_V} clang-${CL_V} git tig bmon 
+	unzip meld apt-file"
+	if lsb_release -a | grep 14.04; then
+		packages+=" vim"
+	else
+		packages+=" vim-nox-py2"
+	fi
+	;;
+'mac')
+	check_pkg() { brew list -1 | grep -q "^${1}\$"; }
+	install_pkg() { brew install $@; }
+	update_pkg_list() { :; }
+	if ! brew help > /dev/null; then
+		ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	fi
+	packages="$packages ctags"
+	packages="$packages python"
+	packages="$packages coreutils"
+	;;
 esac
 
-linux_check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
-linux_install_pkg() { sudo apt-get install -y $@; }
-mac_check_pkg() { brew list -1 | grep -q "^${1}\$"; }
-mac_install_pkg() { brew install $@; }
 
-install_packages=""
+list=""
 for P in $packages; do
-	if ${platform}_check_pkg $P; then
-		echo "$P is installed."
-	else
-		echo "$P is not installed."
-		install_packages="$install_packages $P"
+	if ! check_pkg $P; then
+		list+=" $P"
 	fi
 done
-[ -n "$install_packages" ] && ${platform}_install_pkg $install_packages
+[ -n "$list" ] && update_pkg_list && install_pkg $list
 
-[ -f /usr/bin/clang-3.5 ] && sudo ln -fs /usr/bin/clang-3.5 /usr/bin/clang
-[ -f /usr/bin/clang++-3.5 ] && sudo ln -fs /usr/bin/clang++-3.5 /usr/bin/clang++
-
+if [ -f /usr/bin/clang-${CL_V} ]; then
+	sudo ln -fs /usr/bin/clang-${CL_V} /usr/bin/clang
+	sudo ln -fs /usr/bin/clang++-${CL_V} /usr/bin/clang++
+fi
 #######################
 ## install vim plugins
 #######################

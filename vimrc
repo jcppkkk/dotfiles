@@ -13,7 +13,15 @@ if !exists("my_auto_commands_loaded")
 	" undolevels=-1 (no undo possible)
 	let g:LargeFile = 1024 * 1024 * 10
 	augroup LargeFile
-		autocmd BufReadPre * let f=expand("<afile>") | if getfsize(f) > g:LargeFile | set eventignore+=FileType | setlocal noswapfile bufhidden=unload undolevels=-1 | else | set eventignore-=FileType | endif
+		autocmd BufReadPre * let f=expand("<afile>") |
+					\ if getfsize(f) > g:LargeFile |
+					\ set eventignore+=FileType |
+					\ setlocal noswapfile |
+					\ setlocal bufhidden=unload |
+					\ setlocal undolevels=-1 |
+					\ else |
+					\ set eventignore-=FileType |
+					\ endif
 	augroup END
 endif
 
@@ -31,9 +39,9 @@ Plugin 'mfukar/robotframework-vim'
 
 " Themes
 Plugin 'altercation/vim-colors-solarized'
+
 Plugin 'bling/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-	let g:airline_theme='solarized'
 	let g:airline_powerline_fonts = 1
 	" spaces are allowed after tabs, but not in between
 	" this algorithm works well with programming styles that use tabs for
@@ -43,6 +51,7 @@ Plugin 'vim-airline/vim-airline-themes'
 	let g:airline#extensions#tabline#fnamemod = ':t'
 	let g:airline#extensions#tabline#excludes = []
 	let g:airline#extensions#tabline#exclude_preview = 1
+	let g:airline#extensions#tabline#fnametruncate = 8
 
 " language support
 Plugin 'vim-ruby/vim-ruby'
@@ -58,14 +67,20 @@ Plugin 'digitaltoad/vim-jade'
 Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'ekalinin/Dockerfile.vim'
 
+""""" language support - Python
+Plugin 'klen/python-mode'
+	let g:pymode_folding=0
+	let g:pymode_rope = 0
 """"" language support - C/C++
+Plugin 'vim-scripts/valgrind.vim'
+let g:valgrind_arguments=''
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
 	let g:easytags_auto_highlight = 0
 	let g:easytags_async = 1
 Plugin 'Rip-Rip/clang_complete'
 	let g:clang_auto_select=1
-	let g:clang_library_path="/usr/lib/llvm-3.8/lib/"
+	let g:clang_library_path="/usr/lib/llvm-4.0/lib/"
 	set conceallevel=2
 	set concealcursor=vin
 	let g:clang_snippets=1
@@ -85,7 +100,7 @@ Plugin 'scrooloose/syntastic'
 	set statusline+=%#warningmsg#
 	set statusline+=%{SyntasticStatuslineFlag()}
 	set statusline+=%*
-	"let g:syntastic_reuse_loc_lists = 0
+	let g:syntastic_reuse_loc_lists = 0
 	let g:syntastic_always_populate_loc_list = 1
 	let g:syntastic_auto_loc_list = 1
 	let g:syntastic_check_on_open = 1
@@ -96,25 +111,8 @@ Plugin 'scrooloose/syntastic'
 	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_aggregate_errors = 1
-	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
-	function! <SID>LocationPrevious()
-		try
-			lprev
-		catch /^Vim\%((\a\+)\)\=:E553\|^Vim\%((\a\+)\)\=:E926\|^Vim\%((\a\+)\)\=:E42/
-		endtry
-	endfunction
-
-	function! <SID>LocationNext()
-		try
-			lnext
-		catch /^Vim\%((\a\+)\)\=:E553\|^Vim\%((\a\+)\)\=:E926\|^Vim\%((\a\+)\)\=:E42/
-		endtry
-	endfunction
-
-	nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPrevious()'<CR>
-	nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
-	nmap <silent> <C-Down> <Plug>LocationNext
-	nmap <silent> <C-Up> <Plug>LocationPrevious
+	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': []
+				\ ,'passive_filetypes': [] }
 Plugin 'cuteErrorMarker'
 Plugin 'AutoTag'
 Plugin 'majutsushi/tagbar'
@@ -145,6 +143,9 @@ Plugin 'junegunn/vim-easy-align'
 	xmap ga <Plug>(EasyAlign)
 	" Start interactive EasyAlign for a motion/text object (e.g. gaip)
 	nmap ga <Plug>(EasyAlign)
+
+call vundle#end()            " required
+filetype plugin indent on    " required
 
 set wildmode=longest,list
 set wildmenu
@@ -177,9 +178,6 @@ endfunction
 
 nmap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
 nmap <silent> <leader>e :call ToggleList("Quickfix List", 'c')<CR>
-
-call vundle#end()            " required
-filetype plugin indent on    " required
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns
@@ -214,12 +212,10 @@ set ttyfast                     " Speedup for tty
 set updatetime=750		" screen update speed
 set wildmenu                    " : menu has tab completion, etc
 set scrolloff=5                 " keep at least 10 lines above/below cursor
-set sidescrolloff=5             " keep at least 5 columns left/right of cursor
+set sidescrolloff=5             " keep at least 5 columns left/right of cursoraaaaa
 set history=200                 " remember the last 200 commands
 set showcmd		        " display incomplete commands
 set tags=./tags;
-let &colorcolumn=join(range(81,999),",")
-highlight ColorColumn ctermbg=235 guibg=#2c2d27
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " meta
@@ -350,24 +346,21 @@ map <LocalLeader>bb :ls<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup for the visual environment
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-syntax enable                       " syntax on
-try
-	colorscheme solarized
-catch /^Vim\%((\a\+)\)\=:E185/
-	" deal with it
-endtry
-
-let g:solarized_termcolors=256
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=8
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=8
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=0
 let g:indent_guides_start_level=2
 let g:indent_guides_guide_size=1
 
-"set background=light
+if &term =~ "putty-256color" | set term=xterm-256color | endif
+syntax enable
+colorscheme solarized
 set background=dark
-
+let g:solarized_termcolors=256
+let g:airline_theme='solarized'
+highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
+match OverLength /.\%82v.*/
 set cursorline
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -457,8 +450,6 @@ map <esc>[1;3C :bn<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " import other files...
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-let $kernel_version=system('uname -r | tr -d "\n"')
 set dictionary=/usr/share/dict/words            " used with CTRL-X CTRL-K
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -469,21 +460,6 @@ set fileformats=unix,dos
 set showtabline=1                       " auto hide tab title if only 1 tab
 set nobinary
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Tagkist setting
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let Tlist_Show_One_File = 0 " Displaying tags for only one file~
-let Tlist_Exist_OnlyWindow = 1 " if you are the last, kill yourself
-let Tlist_Use_Right_Window = 0 " split to the right side of the screen
-let Tlist_Sort_Type = "order" " sort by order or name
-let Tlist_Display_Prototype = 0 " do not show prototypes and not tags in the taglist window.
-let Tlist_Compart_Format = 1 " Remove extra information and blank lines from the taglist window.
-let Tlist_GainFocus_On_ToggleOpen = 0 " Jump to taglist window on open.
-let Tlist_Display_Tag_Scope = 1 " Show tag scope next to the tag name.
-let Tlist_Close_On_Select = 0 " Close the taglist window when a file or tag is selected.
-let Tlist_Enable_Fold_Column = 0 " Don't Show the fold indicator column in the taglist window.
-let Tlist_WinWidth = 40
 if has("vms")
 	set nobackup	" do not keep a backup file, use versions instead
 else
@@ -509,22 +485,19 @@ vmap <silent>c<down>    !boxes -t 4 -r<CR>
 " Function Keys F1~F12, B, C,
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-if &term =~ "putty-256color"
-	:set term=xterm-256color
-endif
-
 nnoremap <silent> <F2> :TagbarToggle<CR>
 
-map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-3.8.py<cr>
-imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-3.8.py<cr>
+map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<cr>
+imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<cr>
 
-nnoremap <F4> :SyntasticToggleMode<CR> :SyntasticCheck<CR>
+nnoremap <F4> :SyntasticToggleMode\|:silent w<CR>
 
 map <F5> :wa<CR>
 
 nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<cr>\>//g<left><left>
 vnoremap <F6> "hy:%s/\<<C-r>h\>//g<left><left>
-map <F7> :vim /<c-r>=expand("<cword>")<cr>/ *.c *.h<CR>
+nnoremap <F7> :vim /\<<c-r>=expand("<cword>")<cr>\>/ % *.c *.h<CR>
+vnoremap <F7> "hy:vim /<c-r>h/ % *.c *.h<CR>
 
 " <F8> 會在 searching highlight 及非 highlight 間切換
 map <F8> :set hls!<BAR>set hls?<CR>
@@ -533,26 +506,69 @@ map <F8> :set hls!<BAR>set hls?<CR>
 map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
 
-map <F10> mz:set softtabstop=0 shiftwidth=8 tabstop=8 noexpandtab<CR>'z
-map <F11> mz:set softtabstop=0 shiftwidth=4 tabstop=4 noexpandtab<CR>'z
-map <F12> mz:set softtabstop=0 shiftwidth=4 tabstop=4 expandtab<CR>'z
+map <F10> mz:set softtabstop=0 sw=8 tabstop=8 noexpandtab<CR>'z
+map <F11> mz:set softtabstop=0 sw=4 tabstop=4 noexpandtab<CR>'z
+map <F12> mz:set softtabstop=0 sw=4 tabstop=4 expandtab<CR>'z
 
-map <S-Down> :call Next_err()<cr>
+map <silent> <S-Down> :call Next_err()<cr>
 function! Next_err()
 	try
 		cnext
 	catch /:E553:/
 		clast
+	catch /:E42:/
 	endtry
 endfunction
-map <S-Up> :call Pre_err()<cr>
+
+map <silent> <S-Up> :call Pre_err()<cr>
 function! Pre_err()
 	try
 		cprevious
 	catch /:E553:/
 		cfirst
+	catch /:E42:/
 	endtry
 endfunction
+
+nmap <silent> <C-Up> :call <SID>LocationPrevious()<CR>
+nmap <silent> <C-Down> :call <SID>LocationNext()<cr>
+function! <SID>LocationPrevious()
+	try
+		lprev!
+	catch /:E42:/  " E42: No Errors
+	catch /:E776:/ " No location list
+	catch /:E553:/ " End/Start of location list
+		call <SID>LocationLast()
+	catch /:E926:/ " Location list changed
+		ll!
+	endtry
+endfunction
+function! <SID>LocationNext()
+	try
+		lnext!
+	catch /:E42:/  " E42: No Errors
+	catch /:E776:/ " No location list
+	catch /:E553:/ " End/Start of location list
+		call <SID>LocationFirst()
+	catch /:E926:/ " Location list changed
+		call <SID>LocationNext()
+	endtry
+endfunction
+function! <SID>LocationFirst()
+	try
+		lfirst!
+	catch /:E926:/ " Location list changed
+		call <SID>LocationFirst()
+	endtry
+endfunction
+function! <SID>LocationLast()
+	try
+		llast!
+	catch /:E926:/ " Location list changed
+		call <SID>LocationLast()
+	endtry
+endfunction
+
 
 " <B> <C> this script use to excute make in vim and open quickfix window
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
@@ -608,31 +624,30 @@ if has('autocmd')
 endif
 
 
-autocmd BufNewFile,BufReadPost *.coffee setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.rb setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.liquid setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.rake setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost Rakefile setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.js setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.html setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.php setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.hbs setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.erb setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.md setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost Podfile setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.yml setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.json setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.xsd setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.go set noexpandtab tabstop=4 shiftwidth=4
-autocmd FileType jade setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType scss setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType xml setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType css setl shiftwidth=2 softtabstop=2 expandtab
-"autocmd FileType sh,bash setl tabstop=8 shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType make setl tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
+autocmd BufNewFile,BufReadPost *.coffee setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.rb setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.liquid setl sw=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.rake setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost Rakefile setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.js setl sw=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.html setl sw=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.php setl sw=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.hbs setl sw=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.erb setl sw=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.md setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost Podfile setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.yml setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.json setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.xsd setl sw=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.go set noexpandtab tabstop=4 sw=4
+autocmd FileType jade setl sw=2 softtabstop=2 expandtab
+autocmd FileType scss setl sw=2 softtabstop=2 expandtab
+autocmd FileType xml setl sw=2 softtabstop=2 expandtab
+autocmd FileType css setl sw=2 softtabstop=2 expandtab
+"autocmd FileType sh,bash setl tabstop=8 sw=2 softtabstop=2 expandtab
+autocmd FileType make setl tabstop=8 sw=8 softtabstop=0 noexpandtab
 autocmd FileType c setl textwidth=73 fo=cq wm=0 formatoptions+=r
-autocmd FileType make setlocal shiftwidth=2 softtabstop=2 tabstop=8 noexpandtab
+autocmd FileType make setlocal sw=2 softtabstop=2 tabstop=8 noexpandtab
 autocmd FileType python set cindent
 " detect gcov filetype
 au BufRead,BufNewFile *.gcov              set filetype=gcov
-map <S-Right> :s/struct stat/HCFS_STAT/<cr>\|:s/\<st_//<cr>

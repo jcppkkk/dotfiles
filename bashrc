@@ -213,7 +213,6 @@ function killps()                 # Kill by process name.
 #-------------------------------------------------------------
 # import scripts
 #-------------------------------------------------------------
-[[ "$-" = *x* ]] && set +x && x=x # store -x flag when sourcing external resource
 [[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
 shopt -s extglob
 list="

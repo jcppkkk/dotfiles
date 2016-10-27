@@ -72,6 +72,9 @@ Plugin 'klen/python-mode'
 	let g:pymode_folding=0
 	let g:pymode_rope = 0
 """"" language support - C/C++
+Plugin 'scrooloose/nerdcommenter'
+	let g:NERDSpaceDelims = 1
+	let g:NERDTrimTrailingWhitespace = 1
 Plugin 'vim-scripts/valgrind.vim'
 let g:valgrind_arguments=''
 Plugin 'xolox/vim-misc'
@@ -476,8 +479,8 @@ map ZZ :wqa<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " box comments tool
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-vmap <silent>c<right>   !boxes -t 4 -d c-cmt <CR>
-vmap <silent>c<left>    !boxes -t 4 -d c-cmt -r<CR>
+vmap <silent>c<right>   !boxes -t 4 -d c-cmt2 <CR>
+vmap <silent>c<left>    !boxes -t 4 -d c-cmt2 -r<CR>
 vmap <silent>c<up>      !boxes -t 4 <CR>
 vmap <silent>c<down>    !boxes -t 4 -r<CR>
 
@@ -569,6 +572,7 @@ function! <SID>LocationLast()
 	endtry
 endfunction
 
+nmap <silent> <leader>cr [/v]/\c gvkJ\csgvgq
 
 " <B> <C> this script use to excute make in vim and open quickfix window
 "let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat

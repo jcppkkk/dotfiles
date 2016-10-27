@@ -25,23 +25,19 @@ if !exists("my_auto_commands_loaded")
 	augroup END
 endif
 
-set nocompatible		" be iMproved, required
-filetype off			" required!
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-
+call plug#begin()
 " let Vundle manage Vundle
 " required!
-Plugin 'VundleVim/Vundle.vim'
+Plug 'VundleVim/Vundle.vim'
 
 " Testing
-Plugin 'mfukar/robotframework-vim'
+Plug 'mfukar/robotframework-vim'
 
 " Themes
-Plugin 'altercation/vim-colors-solarized'
+Plug 'altercation/vim-colors-solarized'
 
-Plugin 'bling/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 	let g:airline_powerline_fonts = 1
 	" spaces are allowed after tabs, but not in between
 	" this algorithm works well with programming styles that use tabs for
@@ -54,34 +50,34 @@ Plugin 'vim-airline/vim-airline-themes'
 	let g:airline#extensions#tabline#fnametruncate = 8
 
 " language support
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'Super-Shell-Indent'
-Plugin 'roryokane/detectindent'
+Plug 'vim-ruby/vim-ruby'
+Plug 'kchmck/vim-coffee-script'
+Plug 'Super-Shell-Indent'
+Plug 'roryokane/detectindent'
 	autocmd BufReadPost *.jade DetectIndent
 	autocmd BufReadPost *.coffee DetectIndent
 	let g:detectindent_preferred_expandtab = 1
 	let g:detectindent_preferred_indent = 4
-Plugin 'pangloss/vim-javascript'
-Plugin 'digitaltoad/vim-jade'
-Plugin 'othree/javascript-libraries-syntax.vim'
-Plugin 'ekalinin/Dockerfile.vim'
+Plug 'pangloss/vim-javascript'
+Plug 'digitaltoad/vim-jade'
+Plug 'othree/javascript-libraries-syntax.vim'
+Plug 'ekalinin/Dockerfile.vim'
 
 """"" language support - Python
-Plugin 'klen/python-mode'
+Plug 'klen/python-mode'
 	let g:pymode_folding=0
 	let g:pymode_rope = 0
 """"" language support - C/C++
-Plugin 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter'
 	let g:NERDSpaceDelims = 1
 	let g:NERDTrimTrailingWhitespace = 1
-Plugin 'vim-scripts/valgrind.vim'
+Plug 'vim-scripts/valgrind.vim'
 let g:valgrind_arguments=''
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-easytags'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-easytags'
 	let g:easytags_auto_highlight = 0
 	let g:easytags_async = 1
-Plugin 'Rip-Rip/clang_complete'
+Plug 'Rip-Rip/clang_complete'
 	let g:clang_auto_select=1
 	let g:clang_library_path="/usr/lib/llvm-4.0/lib/"
 	set conceallevel=2
@@ -99,7 +95,7 @@ Plugin 'Rip-Rip/clang_complete'
 	let g:clang_jumpto_declaration_key = '<C-p>'
 	let g:clang_jumpto_declaration_in_preview_key = '<C-W>p'
 	let g:clang_jumpto_back_key = '<C-o>'
-Plugin 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 	set statusline+=%#warningmsg#
 	set statusline+=%{SyntasticStatuslineFlag()}
 	set statusline+=%*
@@ -116,39 +112,37 @@ Plugin 'scrooloose/syntastic'
 	let g:syntastic_aggregate_errors = 1
 	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': []
 				\ ,'passive_filetypes': [] }
-Plugin 'cuteErrorMarker'
-Plugin 'AutoTag'
-Plugin 'majutsushi/tagbar'
-	autocmd VimEnter * nested :call tagbar#autoopen(1)
+Plug 'cuteErrorMarker'
+Plug 'AutoTag'
+Plug 'majutsushi/tagbar'
+	autocmd VimEnter * nested :silent! call tagbar#autoopen(1)
 	autocmd FileType qf wincmd J
 	"let g:tagbar_width = 60
-Plugin 'gcov.vim'
+Plug 'gcov.vim'
 
 """"" language support - csv
-Plugin 'chrisbra/csv.vim'
+Plug 'chrisbra/csv.vim'
 
 " Tools - Git
-Plugin 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 	let g:gitgutter_escape_grep = 1
 	nmap <M-Down> <Plug>GitGutterNextHunk
 	nmap <M-Up> <Plug>GitGutterPrevHunk
 	nmap <esc>[1;3B <Plug>GitGutterNextHunk
 	nmap <esc>[1;3A <Plug>GitGutterPrevHunk
-Plugin 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 
 " Editing Tools
-Plugin 'renamer.vim'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'guns/xterm-color-table.vim'
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'junegunn/vim-easy-align'
+Plug 'renamer.vim'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'guns/xterm-color-table.vim'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'junegunn/vim-easy-align'
 	" Start interactive EasyAlign in visual mode (e.g. vipga)
 	xmap ga <Plug>(EasyAlign)
 	" Start interactive EasyAlign for a motion/text object (e.g. gaip)
 	nmap ga <Plug>(EasyAlign)
-
-call vundle#end()            " required
-filetype plugin indent on    " required
+call plug#end()
 
 set wildmode=longest,list
 set wildmenu
@@ -200,7 +194,7 @@ let c_no_curly_error = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hidden                      " allow editing multiple unsaved buffers
 set more                        " the 'more' prompt
-filetype on                     " automatic file type detection
+filetype plugin indent on       " automatic file type detection
 set autoread                    " watch for file changes by other programs
 "set visualbell                 " visual beep
 set backupdir=~/.backup,.
@@ -358,7 +352,7 @@ let g:indent_guides_guide_size=1
 
 if &term =~ "putty-256color" | set term=xterm-256color | endif
 syntax enable
-colorscheme solarized
+silent! colorscheme solarized
 set background=dark
 let g:solarized_termcolors=256
 let g:airline_theme='solarized'

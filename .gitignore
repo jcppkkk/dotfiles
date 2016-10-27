@@ -8,3 +8,5 @@ bashrc_local
 /vim/.netrwhist
 /bashrc.d/locale_env
 /vim/spell/
+/vim/autoload/
+/vim/plugged/

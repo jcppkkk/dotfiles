@@ -127,17 +127,11 @@ fi
 #######################
 ## install vim plugins
 #######################
-mkdir -p vim/bundle
-pushd vim/bundle
-if [ -e Vundle.vim ]; then
-	cd Vundle.vim
-	git pull
-else
-	git clone --depth 1 https://github.com/VundleVim/Vundle.vim
-fi
-popd
+mkdir -p vim/autoload
+curl -fLo vim/autoload/plug.vim --create-dirs \
+	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-vim +BundleInstall +qa
+vim +PlugInstall +qa
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 #######################

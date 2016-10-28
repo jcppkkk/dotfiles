@@ -6,7 +6,7 @@ bashrc_local
 *.pyc
 /local/share
 /vim/.netrwhist
-/bashrc.d/locale_env
+/bashrc.d/local_env
 /vim/spell/
 /vim/autoload/
 /vim/plugged/

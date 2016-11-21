@@ -237,11 +237,14 @@ path="$path $HOME/bin"
 path="$path $HOME/.bin"
 path="$path $HOME/.local/bin"
 path="$path /android-cts/tools"
-path="$path $HOME/bin/android-ndk-r10e"
+path="$path $HOME/bin/android-*"
+path="$path /opt/android-*"
+path="$path /opt/android-sdk*/platform-tools"
 for a in $path
 do
-    [ -d "$a" ] && [ ":$PATH:" = ":${PATH/:$a:/}:" ] &&
-    export PATH="$PATH:$a"
+	if [[ -d "$a" && ! ":$PATH:" == *":$a:"* ]]; then
+		export PATH="$a:$PATH"
+	fi
 done
 unset path
 

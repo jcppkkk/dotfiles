@@ -71,13 +71,14 @@ find "$dotfiles_oldfolder" -type d -empty | xargs rm -rvf
 #######################
 
 CL_V=4.0
-packages="git dos2unix wget curl"
+packages=(git dos2unix wget curl)
 
 case $platform in
 'linux')
 	check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
 	install_pkg() { sudo apt-get install -y $@; }
 	update_pkg_list() { sudo apt-get update; }
+
 	# Add clang ${CL_V}
 	source /etc/lsb-release
 	DIST=$DISTRIB_CODENAME
@@ -87,15 +88,18 @@ case $platform in
 	EOF
 	sudo tee /etc/apt/sources.list.d/llvm.list
 	curl http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+	packages+=(clang-${CL_V} clang-format-${CL_V} libclang-${CL_V}-dev)
 
-	packages="$packages exuberant-ctags make build-essential libssl-dev
-	libbz2-dev zlib1g-dev libreadline-dev libsqlite3-dev
-	libclang-${CL_V}-dev clang-format-${CL_V} clang-${CL_V} git tig bmon 
-	unzip meld apt-file"
+	packages+=(apt-file)
+	packages+=(bmon)
+	packages+=(build-essential)
+	packages+=(exuberant-ctags silversearcher-ag) # Coding tools
+	packages+=(meld tig) # SVC tools
+	packages+=(unzip)
 	if lsb_release -a | grep 14.04; then
-		packages+=" vim"
+		packages+=(vim)
 	else
-		packages+=" vim-nox-py2"
+		packages+=(vim-nox-py2)
 	fi
 	;;
 'mac')
@@ -105,15 +109,15 @@ case $platform in
 	if ! brew help > /dev/null; then
 		ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 	fi
-	packages="$packages ctags"
-	packages="$packages python"
-	packages="$packages coreutils"
+	packages+=(ctags)
+	packages+=(python)
+	packages+=(coreutils)
 	;;
 esac
 
 
 list=""
-for P in $packages; do
+for P in "${packages[@]}"; do
 	if ! check_pkg $P; then
 		list+=" $P"
 	fi

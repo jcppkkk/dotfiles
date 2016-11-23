@@ -96,6 +96,7 @@ case $platform in
 	packages+=(exuberant-ctags silversearcher-ag) # Coding tools
 	packages+=(meld tig) # SVC tools
 	packages+=(unzip)
+	packages+=(cmake) # vim YouCompleteMe
 	if lsb_release -a | grep 14.04; then
 		packages+=(vim)
 	else

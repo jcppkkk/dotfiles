@@ -176,6 +176,12 @@ let g:easy_align_delimiters = { ';': {
 			\	'left_margin': 0
 			\	}
 			\ }
+Plug 'xolox/vim-session'
+let g:session_autoload = "yes"
+let g:session_autosave = "yes"
+
+
+
 call plug#end()
 
 set wildmode=longest,list
@@ -287,7 +293,6 @@ set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
 set updatecount=100             " write swap file to disk every 100 chars
 set complete=.,w,b,u,U,t,i,d    " do lots of scanning on tab completion
-set viminfo=%100,'100,/100,h,\"500,:100,n~/.viminfo
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " tab indent

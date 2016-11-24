@@ -10,3 +10,4 @@ bashrc_local
 /vim/spell/
 /vim/autoload/
 /vim/plugged/
+/vim/sessions/

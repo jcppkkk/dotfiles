@@ -4,6 +4,7 @@ if [[ $EUID -eq 0 ]]; then
 	exit 1
 fi
 script_error_report() {
+	set +x
 	local script="$1"
 	local parent_lineno="$2"
 	local message="$3"
@@ -76,7 +77,8 @@ packages=(git dos2unix wget curl)
 case $platform in
 'linux')
 	check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
-	install_pkg() { sudo apt-get install -y $@; }
+	# aptitude can solve depenency problem for clang-*
+	install_pkg() { sudo aptitude install -y $@; } 
 	update_pkg_list() { sudo apt-get update; }
 
 	# Add clang ${CL_V}

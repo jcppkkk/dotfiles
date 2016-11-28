@@ -176,11 +176,7 @@ let g:easy_align_delimiters = { ';': {
 			\	'left_margin': 0
 			\	}
 			\ }
-Plug 'xolox/vim-session'
-let g:session_autoload = "yes"
-let g:session_autosave = "yes"
-
-
+let g:easy_align_ignore_groups = ['String']
 
 call plug#end()
 

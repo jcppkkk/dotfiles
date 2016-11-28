@@ -98,12 +98,13 @@ case $platform in
 	packages+=(exuberant-ctags silversearcher-ag) # Coding tools
 	packages+=(meld tig) # SVC tools
 	packages+=(unzip)
-	packages+=(cmake) # vim YouCompleteMe
 	if lsb_release -a | grep 14.04; then
 		packages+=(vim)
 	else
 		packages+=(vim-nox-py2)
 	fi
+	packages+=(cmake) # vim YouCompleteMe
+	packages+=(bikeshed)
 	;;
 'mac')
 	check_pkg() { brew list -1 | grep -q "^${1}\$"; }
@@ -131,6 +132,13 @@ if [ -f /usr/bin/clang-${CL_V} ]; then
 	sudo ln -fs /usr/bin/clang-${CL_V} /usr/bin/clang
 	sudo ln -fs /usr/bin/clang++-${CL_V} /usr/bin/clang++
 fi
+
+# auto cleanup old-kernels
+if [[ -n "$(\which purge-old-kernels)" ]]; then
+	sudo ln -fs $(\which purge-old-kernels) /etc/cron.daily/
+fi
+sudo purge-old-kernels
+
 #######################
 ## install vim plugins
 #######################

@@ -528,8 +528,8 @@ map <F5> :wa<CR>
 
 nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
 vnoremap <F6> "hy:%s/\<<C-r>h\>//g<left><left>
-nnoremap <F7> :silent gr "<c-r>=expand("<cword>")<CR>" *.c *.h<CR>
-vnoremap <F7> "hy:silent gr "<c-r>h" *.c *.h<CR>
+nnoremap <F7> :silent gr "<c-r>=expand("<cword>")<CR>" .<CR>
+vnoremap <F7> "hy:silent gr "<c-r>h" .<CR>
 
 " <F8> 會在 searching highlight 及非 highlight 間切換
 map <F8> :set hls!<BAR>set hls?<CR>
@@ -700,7 +700,7 @@ au BufRead,BufNewFile *.gcov              set filetype=gcov
 " The Silver Searcher
 if executable('ag')
 	" Use ag over grep
-	set grepprg=ag\ --nogroup\ --nocolor
+	set grepprg=ag\ --nogroup\ --nocolor\ --ignore=*~
 
 	" Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
 	let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'

@@ -4,7 +4,7 @@
 	editor = vim
 	autocrlf = input
 	whitespace = cr-at-eol
-	pager = less -FXRS -x4
+	pager = sed 's/\\t/        /g' | less -R
 	excludesfile = /home/jethro/.gitignore_global
 	preloadindex = true
 [color]

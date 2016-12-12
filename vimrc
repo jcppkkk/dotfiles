@@ -72,7 +72,9 @@ nmap <leader>cr :call Reformat_comment()<CR>
 function! Reformat_comment()
 	normal k$]/
 	silent! s#^\s*\*/#&#
-	normal [/v]/\c gv=gvJgv\csgvgq
+	normal [/v]/\c gv=gvJgv\cs[/v]/
+	pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
+	normal gv]/gq
 endfunction
 Plug 'vim-scripts/valgrind.vim'
 let g:valgrind_arguments=''

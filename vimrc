@@ -222,12 +222,6 @@ set modeline
 "let g:secure_modelines_verbose=1 " securemodelines vimscript
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" configure other scripts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-let c_no_curly_error = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " operational settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hidden                      " allow editing multiple unsaved buffers

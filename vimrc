@@ -390,6 +390,7 @@ let g:airline_theme='solarized'
 highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
 match OverLength /.\%82v.*/
 set cursorline
+set foldlevelstart=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " force making paths relative to `pwd`

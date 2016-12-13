@@ -505,9 +505,9 @@ endfunction
 map <silent> <S-Down> :call Next_err()<CR>
 function! Next_err()
 	try
-		cnext
+		cnext!
 	catch /:E553:/
-		clast
+		clast!
 	catch /:E42:/
 	endtry
 endfunction
@@ -515,9 +515,9 @@ endfunction
 map <silent> <S-Up> :call Pre_err()<CR>
 function! Pre_err()
 	try
-		cprevious
+		cprevious!
 	catch /:E553:/
-		cfirst
+		cfirst!
 	catch /:E42:/
 	endtry
 endfunction

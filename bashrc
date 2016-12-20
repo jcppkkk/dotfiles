@@ -77,7 +77,7 @@ export  LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 # File & string-related functions:
 #-------------------------------------------------------------
 
-function vimgrep() {
+function vag() {
 	vim +cfile\ <(ag --vimgrep "$@" | grep -v '~:')
 }
 

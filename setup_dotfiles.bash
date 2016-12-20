@@ -84,11 +84,13 @@ case $platform in
 	# Add clang ${CL_V}
 	source /etc/lsb-release
 	DIST=$DISTRIB_CODENAME
-	cat <<-EOF |
-	deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
-	deb-src http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
-	EOF
-	sudo tee /etc/apt/sources.list.d/llvm.list
+	if ! test -f /etc/apt/sources.list.d/llvm.list; then
+		cat <<-EOF |
+		deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
+		deb-src http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
+		EOF
+		sudo tee /etc/apt/sources.list.d/llvm.list
+	fi
 	curl http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 	packages+=(clang-${CL_V} clang-format-${CL_V} libclang-${CL_V}-dev)
 

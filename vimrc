@@ -473,9 +473,9 @@ nnoremap <F4> :SyntasticToggleMode\|:silent w<CR>
 map <F5> :wa<CR>
 
 nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
-vnoremap <F6> "hy:%s/\<<C-r>h\>//g<left><left>
+vnoremap <F6> "hy:silent %s/<C-r>=substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
 nnoremap <F7> :silent gr "<c-r>=expand("<cword>")<CR>" .<CR>
-vnoremap <F7> "hy:silent gr "<c-r>h" .<CR>
+vnoremap <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
 
 " <F8> 會在 searching highlight 及非 highlight 間切換
 map <F8> :set hls!<BAR>set hls?<CR>

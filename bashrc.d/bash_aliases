@@ -70,8 +70,8 @@ alias tree='tree -Csu'     # nice alternative to 'recursive ls'
 # Git alias
 #-------------------------------------------------------------
 alias add='git add'
-alias br='git branch -vv'
-alias bra='git branch -avv'
+alias br='git branch --sort=-committerdate -vv'
+alias bra='git branch --sort=-committerdate -avv'
 alias ci='git commit --verbose'
 alias co='git checkout'
 alias cs='git checkout $(__git_refs | percol)'

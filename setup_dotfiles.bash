@@ -139,8 +139,8 @@ fi
 # auto cleanup old-kernels
 if [[ -n "$(\which purge-old-kernels)" ]]; then
 	sudo ln -fs $(\which purge-old-kernels) /etc/cron.daily/
+	sudo purge-old-kernels
 fi
-sudo purge-old-kernels
 
 #######################
 ## install vim plugins

@@ -47,6 +47,7 @@ let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
 
 " language support
+Plug 'chase/vim-ansible-yaml'
 Plug 'vim-ruby/vim-ruby'
 Plug 'kchmck/vim-coffee-script'
 Plug 'Super-Shell-Indent'

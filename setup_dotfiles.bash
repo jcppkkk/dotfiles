@@ -6,13 +6,15 @@ fi
 script_error_report() {
 	set +x
 	local script="$1"
-	local parent_lineno="$2"
-	local message="$3"
+	local lineno="$2"
 	local code="${4:-1}"
-	echo "Error near ${script} line ${parent_lineno}; exiting with status ${code}"
-	if [[ -n "$message" ]] ; then
-		echo -e "Message: ${message}"
-	fi
+	local printnear=4
+	start=$(($lineno - $printnear))
+	start=$(($start > 0 ? $start : 1))
+	end=$(($lineno + $printnear))
+	echo "Error at file ${script}:${lineno}. Exit code: ${code}"
+	sed -e 's/^/ /' -e $lineno's/^/>/' -e $start,$end'!d;=' "${script}" \
+		| sed -e 'N;s/\(.*\)\n\(.\)/\2\1 /'
 	exit "${code}"
 }
 trap 'script_error_report "${BASH_SOURCE[0]}" ${LINENO}' ERR

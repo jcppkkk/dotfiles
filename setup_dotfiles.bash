@@ -86,8 +86,8 @@ case $platform in
 	DIST=$DISTRIB_CODENAME
 	if ! test -f /etc/apt/sources.list.d/llvm.list; then
 		cat <<-EOF |
-		deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
-		deb-src http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST} main
+		deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST}-${CL_V} main
+		deb-src http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST}-${CL_V} main
 		EOF
 		sudo tee /etc/apt/sources.list.d/llvm.list
 	fi

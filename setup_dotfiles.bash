@@ -34,7 +34,7 @@ source bashrc.d/get-platform
 # Main script
 #
 if ! ansible-playbook --version; then
-	sudo apt install ansible -y
+	sudo apt-get install ansible -y
 fi
 ansible-playbook -i "localhost," -c local setup.yml
 

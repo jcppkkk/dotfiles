@@ -29,13 +29,28 @@ realpath() {
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
 source bashrc.d/get-platform
+source /etc/lsb-release
+DIST=$DISTRIB_CODENAME
 
 #
-# Main script
+# Main script start, install ansible
 #
-if ! ansible-playbook --version; then
+case $platform in
+'linux')
+	if ! test -f /etc/apt/sources.list.d/ansible.list; then
+		cat <<-EOF |
+		deb http://ppa.launchpad.net/ansible/ansible/ubuntu ${DIST} main
+		EOF
+		sudo tee /etc/apt/sources.list.d/ansible.list
+	fi
+	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+	sudo apt-get update
 	sudo apt-get install ansible -y
-fi
+	;;
+'mac')
+	;;
+esac
+
 ansible-playbook -i "localhost," -c local setup.yml
 
 #######################
@@ -71,12 +86,10 @@ case $platform in
 'linux')
 	check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
 	# aptitude can solve depenency problem for clang-*
-	install_pkg() { sudo aptitude install -y $@; } 
+	install_pkg() { sudo aptitude install -y $@; }
 	update_pkg_list() { sudo apt-get update; }
 
 	# Add clang ${CL_V}
-	source /etc/lsb-release
-	DIST=$DISTRIB_CODENAME
 	if ! test -f /etc/apt/sources.list.d/llvm.list; then
 		cat <<-EOF |
 		deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST}-${CL_V} main

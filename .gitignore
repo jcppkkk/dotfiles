@@ -11,3 +11,6 @@ bashrc_local
 /vim/autoload/
 /vim/plugged/
 /vim/sessions/
+
+# ignore ansible temprary file
+setup.retry

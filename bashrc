@@ -314,7 +314,7 @@ _bash_history_sync() {
 
 # Powerline prompt
 if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
-	|| $(who am i) =~ pts/ \
+	|| $(tty) =~ pts/ \
 	|| "$platform" == "mac" \
 	|| "$TMUX" != "" \
 	|| "$SUDO_USER" != "" \

@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -x
 if [[ $EUID -eq 0 ]]; then
 	echo "This script must NOT be run as root" 1>&2
 	exit 1
@@ -6,10 +6,9 @@ fi
 
 ## predefined functions
 script_error_report() {
-	set +x
+	local code="$?"
 	local script="$1"
 	local lineno="$2"
-	local code="${4:-1}"
 	local printnear=4
 	start=$(($lineno - $printnear))
 	start=$(($start > 0 ? $start : 1))
@@ -20,6 +19,7 @@ script_error_report() {
 	exit "${code}"
 }
 trap 'script_error_report "${BASH_SOURCE[0]}" ${LINENO}' ERR
+set -e
 
 realpath() {
 	[[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"

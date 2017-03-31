@@ -13,4 +13,4 @@ bashrc_local
 /vim/sessions/
 
 # ignore ansible temprary file
-setup.retry
+/site.retry

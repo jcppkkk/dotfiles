@@ -51,7 +51,7 @@ case $platform in
 	;;
 esac
 
-ansible-playbook -i "localhost," -c local setup.yml
+ansible-playbook -i "localhost," -c local site.yml
 
 #######################
 ## Backup dotfiles and replace with link

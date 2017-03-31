@@ -2,11 +2,13 @@ vim/bundle
 *~
 *.pyc
 # ignore local setting
-bashrc_local
+/bashrc.d/bashrc_local
+/bashrc.d/local_env
+/.gitconfig
+
 *.pyc
 /local/share
 /vim/.netrwhist
-/bashrc.d/local_env
 /vim/spell/
 /vim/autoload/
 /vim/plugged/

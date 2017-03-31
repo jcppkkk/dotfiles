@@ -196,6 +196,7 @@ sudo -H LANG=C pip install --upgrade -r requirements_dotfiles.txt
 #######################
 # Setup self default using rebase when pull
 git config branch.master.rebase true
+git config --local include.path ../.gitconfig
 
 # patch fonts for powerline
 [ "$1" = "x" ] && get fontconfig && fc-cache -vf ~/.fonts

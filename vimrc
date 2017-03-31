@@ -416,8 +416,8 @@ let g:notmuch_debug = 0
 "set notimeout      " don't timeout on mappings
 set ttimeout       " do timeout on terminal key codes
 set timeoutlen=1000 " timeout after 100 msec
-map <M-left> :bp<CR>
-map <M-right> :bn<CR>
+map <C-S-left> :bp<CR>
+map <C-S-right> :bn<CR>
 imap <M-left> <esc>:bp<CR>i
 imap <M-right> <esc>:bn<CR>i
 " For metas keys in tmux

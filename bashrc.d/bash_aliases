@@ -88,7 +88,7 @@ alias grc='git rebase --continue || git status'
 alias grs='git rebase --skip'
 alias guptag='git tag -l | xargs git tag -d && git fetch'
 alias gltag='git for-each-ref refs/tags/ --format "%(objecttype) %(refname:short)" |  while read ty name; do [ $ty = commit ] && echo $name; done'
-alias gva='(cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | sed -ne "s/^.M //p"))'
+alias gva='(cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | sed -ne "s/^.[M?] //p"))'
 function retag(){ tag=$1; date="$(git show $tag --format=%aD | head -1)"; GIT_COMMITTER_DATE="$date" git tag -a -m $tag -f $tag $tag; }
 
 alias ag='ag --ignore *~'

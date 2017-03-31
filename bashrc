@@ -223,9 +223,9 @@ list="
 for file in $list
 do
 	shopt -u extglob
-    if [ -f $file ]; then
-        source $file
-    fi
+	if [ -f $file ]; then
+		source $file
+	fi
 done
 [ "$x" = "x" ] && set -x && unset x # restore -x flag
 [ "$e" = "e" ] && set -e && unset e # restore -e flag

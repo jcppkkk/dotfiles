@@ -446,8 +446,7 @@ function command_timer_stop {
 
 pre_command () {
 	#[ -n "$COMP_LINE" ] && return  # do nothing if completing
-	[ "${BASH_COMMAND/_powerline_set_prompt}" != "$BASH_COMMAND" ] && return
-	[ "${BASH_COMMAND/post_command}" != "$BASH_COMMAND" ] && return
+	[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ] && return
 	unset AT_PROMPT
 	command_timer=$SECONDS
 	COMMAND_TIMER_CURRENT_CMD=$BASH_COMMAND

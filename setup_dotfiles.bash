@@ -137,6 +137,8 @@ for P in "${packages[@]}"; do
 done
 [ -n "$list" ] && update_pkg_list && install_pkg $list
 
+
+# Clang config
 if [ -f /usr/bin/clang-${CL_V} ]; then
 	sudo ln -fs /usr/bin/clang-${CL_V} /usr/bin/clang
 	sudo ln -fs /usr/bin/clang++-${CL_V} /usr/bin/clang++
@@ -151,6 +153,7 @@ fi
 #######################
 ## install vim plugins
 #######################
+mkdir ~/.backup
 mkdir -p vim/autoload
 curl -fLo vim/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

@@ -147,7 +147,7 @@ let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': []
 Plug 'cuteErrorMarker'
 Plug 'AutoTag'
 Plug 'majutsushi/tagbar'
-autocmd VimEnter * nested :silent! call tagbar#autoopen(1)
+autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
 autocmd FileType qf wincmd J
 "let g:tagbar_width = 60
 Plug 'gcov.vim'

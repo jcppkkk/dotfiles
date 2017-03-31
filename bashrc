@@ -9,7 +9,7 @@ fi
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
-source ~/.bashrc.d/get-platform
+source $HOME/.bashrc.d/get-platform
 case "$platform" in
 linux)  readlink=readlink ;;
 mac)    readlink=greadlink ;;
@@ -33,8 +33,8 @@ shopt -s checkwinsize
 function check-ssh-agent() {
 	[ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
 }
-check-ssh-agent || export SSH_AUTH_SOCK=~/.tmp/ssh-agent.sock
-check-ssh-agent || { mkdir -p ~/.tmp && rm -f ~/.tmp/ssh-agent.sock && eval "$(ssh-agent -s -a ~/.tmp/ssh-agent.sock)"; } > /dev/null
+check-ssh-agent || export SSH_AUTH_SOCK=$HOME/.tmp/ssh-agent.sock
+check-ssh-agent || { mkdir -p $HOME/.tmp && rm -f $HOME/.tmp/ssh-agent.sock && eval "$(ssh-agent -s -a $HOME/.tmp/ssh-agent.sock)"; } > /dev/null
 
 #-------------------------------------------------------------
 # Change the window title of X terminals
@@ -217,8 +217,8 @@ function killps()                 # Kill by process name.
 shopt -s extglob
 list="
     /etc/bashrc
-    ~/.rvm/scripts/rvm
-    `echo ~/.bashrc.d/!(*~)`
+    $HOME/.rvm/scripts/rvm
+    `echo $HOME/.bashrc.d/!(*~)`
     /etc/bash_completion"
 for file in $list
 do
@@ -267,7 +267,7 @@ unset use_color safe_term match_lhs
 #-------------------------------------------------------------
 # import local setting
 #-------------------------------------------------------------
-[ -e ~/.bashrc_local ] && source ~/.bashrc_local
+[ -e $HOME/.bashrc_local ] && source $HOME/.bashrc_local
 
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
@@ -280,17 +280,17 @@ use_color=false
 
 safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
 match_lhs=""
-[[ -f ~/.dircolors.256dark   ]] && match_lhs="$(<~/.dircolors.256dark)"
+[[ -f $HOME/.dircolors.256dark   ]] && match_lhs="$(<$HOME/.dircolors.256dark)"
 [[ -z ${match_lhs}    ]] \
 	&& type -P dircolors >/dev/null \
 	&& match_lhs=$(dircolors --print-database)
 [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
 if ${use_color} ; then
-	# Enable colors for ls, etc.  Prefer ~/.dircolors.256dark #64489
+	# Enable colors for ls, etc.  Prefer $HOME/.dircolors.256dark #64489
 	if type -P dircolors >/dev/null ; then
-		if [[ -f ~/.dircolors.256dark ]] ; then
-			eval $(dircolors -b ~/.dircolors.256dark)
+		if [[ -f $HOME/.dircolors.256dark ]] ; then
+			eval $(dircolors -b $HOME/.dircolors.256dark)
 		fi
 	fi
 else

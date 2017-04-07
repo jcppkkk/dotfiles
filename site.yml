@@ -29,6 +29,9 @@
         path='/etc/sudoers.d/50_{{ lookup('env', 'USER') }}_sh'
 
 # UseDNS no
+    - name: package
+      apt:
+        name: openssh-server
     - name: Update the /etc/ssh/sshd_config file
       lineinfile:
         dest: /etc/ssh/sshd_config

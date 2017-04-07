@@ -30,7 +30,7 @@ current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
 source bashrc.d/get-platform
 source /etc/lsb-release
-DIST=$DISTRIB_CODENAME
+DIST=${DISTRIB_CODENAME/serena/xenial}
 
 #
 # Main script start, install ansible

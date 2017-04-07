@@ -476,7 +476,3 @@ if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/post_command/}" -a -n "$PROMPT_COMMA
 	PROMPT_COMMAND="post_command
 $PROMPT_COMMAND"
 fi
-
-export LANGUAGE="zh_TW.utf8"
-export LANG="zh_TW.utf8"
-export LC_TIME="en_US.utf8"

@@ -476,3 +476,8 @@ if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/post_command/}" -a -n "$PROMPT_COMMA
 	PROMPT_COMMAND="post_command
 $PROMPT_COMMAND"
 fi
+
+# include rbenv
+if hash rbenv; then
+	eval "$(rbenv init -)"
+fi

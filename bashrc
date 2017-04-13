@@ -408,66 +408,64 @@ function timer_start {
 
 function command_timer_stop {
 	local show_timer_after=30
-    local tdiff=$(($SECONDS - ${command_timer:-$SECONDS}))
-    if [ $tdiff -gt $show_timer_after ]; then
-        ((tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;)&)
+	local tdiff=$(($SECONDS - ${command_timer:-$SECONDS}))
+	local DURATION=""
+	if [ $tdiff -gt $show_timer_after ]; then
+		# Sound after slow command
+		((tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;)&)
 		local hours=$(($tdiff / 3600 ))
 		local mins=$((($tdiff % 3600) / 60))
 		local secs=$(($tdiff % 60))
-		local ncolors=$(tput colors 2>/dev/null)
-		if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
-			if [ $ret -eq 0 ] ; then
-				color_status="\e[0;32m"
-			else
-				color_status="\e[0;31m"
-			fi
-			color_cmd="\e[7m"
-			color_reset="\e[00m"
-		else
-			color_status=""
-			color_cmd=""
-			color_reset=""
-		fi
-		if [ $ret -eq 0 ] ; then
-			echo -n -e "${color_status}#### Command ${color_cmd} $COMMAND_TIMER_CURRENT_CMD ${color_status} success "
-		else
-			echo -n -e "${color_status}#### Command ${color_cmd} $COMMAND_TIMER_CURRENT_CMD ${color_status} failed "
-		fi
 		if [ $hours -gt 0 ] ; then
-			printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
+			DURATION=$(printf "(%02g:%02g:%02g (hh:mm:ss)) " $hours $mins $secs)
 		elif [ $mins -gt 0 ] ; then
-			printf "(%02g:%02g (mm:ss))" $mins $secs
+			DURATION=$(printf "(%02g:%02g (mm:ss)) " $mins $secs)
 		elif [ $secs -gt 0 ] ; then
-			printf "(%s seconds)" $secs
+			DURATION=$(printf "(%s seconds) " $secs)
 		fi
-		echo -e " #### ${color_reset}"
 	fi
+	if [ -z "$DURATION" -a $_cmd_rc -eq 0 ] ; then
+		return $_cmd_rc
+	fi
+	# Print on error or wainting too long
+	local ncolors=$(tput colors 2>/dev/null)
+	if [ ${_cmd_rc:=0} -eq 0 ]; then
+		local status=success
+		local color_status="\e[0;32m"
+		local color_cmd="\e[7m"
+	else
+		local color_status="\e[0;31m"
+		local color_cmd="\e[00m\e[3;41m"
+		local status="failed with code ${color_cmd}${_cmd_rc}${color_status}"
+	fi
+	local color_reset="\e[00m"
+	if [ ${ncolors:=0} -lt 8 ]; then
+		color_status=""
+		color_cmd=""
+		color_reset=""
+	fi
+	echo -e "${color_status}#### Command ${color_cmd}$_LAST_CMD${color_status} ${status} $DURATION#### ${color_reset}"
+	unset _LAST_CMD
 }
 
 pre_command () {
-	#[ -n "$COMP_LINE" ] && return  # do nothing if completing
-	[ "$BASH_COMMAND" == "$PROMPT_COMMAND" ] && return
-	unset AT_PROMPT
-	command_timer=$SECONDS
-	COMMAND_TIMER_CURRENT_CMD=$BASH_COMMAND
-	#echo "Running PreCommand"
+	if ! [[ $PROMPT_COMMAND == *"$BASH_COMMAND"* ]]; then
+		unset AT_PROMPT
+		command_timer=$SECONDS
+		_LAST_CMD=$BASH_COMMAND
+	fi
 }
 
-FIRST_PROMPT=1
 function post_command {
-	local ret=$?
+	_cmd_rc=$?
 	if [ -n "$AT_PROMPT" ]; then
-		return 0 # Remove remained error code
+		_cmd_rc=0
+	else
+		command_timer_stop
+		_bash_history_sync
+		AT_PROMPT=1
 	fi
-	AT_PROMPT=1
-	if [ -n "$FIRST_PROMPT" ]; then
-		unset FIRST_PROMPT
-		return
-	fi
-	command_timer_stop
-	_bash_history_sync
-	#echo "Running PostCommand"
-	return $ret
+	return $_cmd_rc
 }
 while trap -p | grep -q pre_command; do trap - DEBUG; done
 trap 'pre_command' DEBUG

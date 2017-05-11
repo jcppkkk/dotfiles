@@ -50,7 +50,7 @@ let g:airline#extensions#tabline#fnametruncate = 8
 Plug 'chase/vim-ansible-yaml'
 Plug 'vim-ruby/vim-ruby'
 Plug 'kchmck/vim-coffee-script'
-Plug 'Super-Shell-Indent'
+Plug 'vim-scripts/Super-Shell-Indent'
 Plug 'roryokane/detectindent'
 autocmd BufReadPost *.jade DetectIndent
 autocmd BufReadPost *.coffee DetectIndent
@@ -60,6 +60,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'digitaltoad/vim-jade'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'ekalinin/Dockerfile.vim'
+Plug 'vim-scripts/Modelines-Bundle'
 
 """"" language support - Python
 Plug 'klen/python-mode'
@@ -83,7 +84,7 @@ Plug 'xolox/vim-misc'
 Plug 'xolox/vim-easytags'
 let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
-Plug 'oblitum/YouCompleteMe'
+"Plug 'oblitum/YouCompleteMe'
 let g:ycm_confirm_extra_conf = 0
 let g:clang_snippets_engine='clang_complete'
 let g:ycm_add_preview_to_completeopt = 1
@@ -144,13 +145,13 @@ let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': []
 			\ ,'passive_filetypes': [] }
-Plug 'cuteErrorMarker'
-Plug 'AutoTag'
+Plug 'vim-scripts/cuteErrorMarker'
+Plug 'vim-scripts/AutoTag'
 Plug 'majutsushi/tagbar'
 autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
 autocmd FileType qf wincmd J
 "let g:tagbar_width = 60
-Plug 'gcov.vim'
+Plug 'vim-scripts/gcov.vim'
 
 """"" language support - csv
 Plug 'chrisbra/csv.vim'
@@ -165,7 +166,7 @@ nmap <esc>[1;3A <Plug>GitGutterPrevHunk
 Plug 'tpope/vim-fugitive'
 
 " Editing Tools
-Plug 'renamer.vim'
+Plug 'vim-scripts/renamer.vim'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'guns/xterm-color-table.vim'
 Plug 'terryma/vim-multiple-cursors'

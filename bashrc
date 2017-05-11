@@ -1,9 +1,11 @@
+# vim: set wrap tabstop=4 shiftwidth=4 softtabstop=0 expandtab :
+# vim: set textwidth=0 filetype=sh foldmethod=manual nospell :
 # Test for an interactive shell.  There is no need to set anything
 # past this point for scp and rcp, and it's important to refrain from
 # outputting anything in those cases.
 if [[ $- != *i* && $setupdotfile = "" ]] ; then
-	# Shell is non-interactive.  Be done now!
-	return
+    # Shell is non-interactive.  Be done now!
+    return
 fi
 
 #-------------------------------------------------------------
@@ -31,7 +33,7 @@ shopt -s checkwinsize
 # Auto load ssh agent
 #-------------------------------------------------------------
 function check-ssh-agent() {
-	[ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
+    [ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
 }
 check-ssh-agent || export SSH_AUTH_SOCK=$HOME/.tmp/ssh-agent.sock
 check-ssh-agent || { mkdir -p $HOME/.tmp && rm -f $HOME/.tmp/ssh-agent.sock && eval "$(ssh-agent -s -a $HOME/.tmp/ssh-agent.sock)"; } > /dev/null
@@ -78,7 +80,7 @@ export  LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 #-------------------------------------------------------------
 
 function vag() {
-	vim +cfile\ <(ag --vimgrep "$@" | grep -v '~:')
+    vim +cfile\ <(ag --vimgrep "$@" | grep -v '~:')
 }
 
 # Find a file with a pattern in name:
@@ -94,247 +96,247 @@ function fstr()
 {
     OPTIND=1
     local case=""
-    local usage="fstr: find string in files.
-Usage: fstr [-i] \"pattern\" [\"filename pattern\"] "
-    while getopts :it opt
-    do
-        case "$opt" in
-        i) case="-i " ;;
-        *) echo "$usage"; return;;
-        esac
-    done
-    shift $(( $OPTIND - 1 ))
-    if [ "$#" -lt 1 ]; then
-        echo "$usage"
-        return;
-    fi
-    find . -type f -name "${2:-*}" -print0 | \
-    xargs -0 egrep --color=always -sn ${case} "$1" 2>&- | more
+        local usage="fstr: find string in files.
+        Usage: fstr [-i] \"pattern\" [\"filename pattern\"] "
+        while getopts :it opt
+        do
+            case "$opt" in
+            i) case="-i " ;;
+                *) echo "$usage"; return;;
+                esac
+            done
+            shift $(( $OPTIND - 1 ))
+            if [ "$#" -lt 1 ]; then
+                echo "$usage"
+                return;
+            fi
+            find . -type f -name "${2:-*}" -print0 | \
+                xargs -0 egrep --color=always -sn ${case} "$1" 2>&- | more
 
-}
+            }
 
-function cuttail() # cut last n lines in file, 10 by default
-{
-    nlines=${2:-10}
-    sed -n -e :a -e "1,${nlines}!{P;N;D;};N;ba" $1
-}
+            function cuttail() # cut last n lines in file, 10 by default
+            {
+                nlines=${2:-10}
+                sed -n -e :a -e "1,${nlines}!{P;N;D;};N;ba" $1
+            }
 
-function lowercase()  # move filenames to lowercase
-{
-    for file ; do
-        filename=${file##*/}
-        case "$filename" in
-        */*) dirname==${file%/*} ;;
-        *) dirname=.;;
-        esac
-        nf=$(echo $filename | tr A-Z a-z)
-        newname="${dirname}/${nf}"
-        if [ "$nf" != "$filename" ]; then
-            mv "$file" "$newname"
-            echo "lowercase: $file --> $newname"
-        else
-            echo "lowercase: $file not changed."
+            function lowercase()  # move filenames to lowercase
+            {
+                for file ; do
+                    filename=${file##*/}
+                    case "$filename" in
+                    */*) dirname==${file%/*} ;;
+                    *) dirname=.;;
+                    esac
+                    nf=$(echo $filename | tr A-Z a-z)
+                    newname="${dirname}/${nf}"
+                    if [ "$nf" != "$filename" ]; then
+                        mv "$file" "$newname"
+                        echo "lowercase: $file --> $newname"
+                    else
+                        echo "lowercase: $file not changed."
+                    fi
+                done
+            }
+
+
+            function swap()  # Swap 2 filenames around, if they exist
+            {                #(from Uzi's bashrc).
+                local TMPFILE=tmp.$$
+
+                [ $# -ne 2 ] && echo "swap: 2 arguments needed" && return 1
+                [ ! -e $1 ] && echo "swap: $1 does not exist" && return 1
+                [ ! -e $2 ] && echo "swap: $2 does not exist" && return 1
+
+                mv "$1" $TMPFILE
+                mv "$2" "$1"
+                mv $TMPFILE "$2"
+            }
+
+            function extract()      # Handy Extract Program.
+            {
+                if [ -f "$1" ] ; then
+                    case "$1" in
+                    *.tar.bz2)   tar xvjf "$1"     ;;
+                    *.tar.gz)    tar xvzf "$1"     ;;
+                    *.bz2)       bunzip2 "$1"      ;;
+                    *.rar)       unrar x "$1"      ;;
+                    *.gz)        gunzip "$1"       ;;
+                    *.tar)       tar xvf "$1"      ;;
+                    *.tbz2)      tar xvjf "$1"     ;;
+                    *.tgz)       tar xvzf "$1"     ;;
+                    *.zip)       unzip "$1"        ;;
+                    *.Z)         uncompress "$1"   ;;
+                    *.7z)        7z x "$1"         ;;
+                    *)           echo "'$1' cannot be extracted via >extract<" ;;
+                    esac
+                else
+                    echo "'$1' is not a valid file"
+                fi
+            }
+
+            function jcrm ()
+            {
+                queue="."
+                while [ -n "$queue" ]
+                do
+                    echo "$queue" | xargs -I'{}' find "{}" -mindepth 1 -maxdepth 1 -type f \
+                        \( -name "*~" -o -name "*.core" -o -name "*.gch" -o -name "*.swp" -o -name "*.orig" -o -regex ".*\.nfs.*$" \) -print -delete
+                    queue=`echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type d`
+                done
+                unset queue
+            }
+            #-------------------------------------------------------------
+            # Process/system related functions:
+            #-------------------------------------------------------------
+
+
+            function my_ps() { ps $@ -u $USER -o "pid,%cpu,%mem,bsdtime,command" ; }
+            function pp() { my_ps f | awk '!/awk/ && $0~var' var=${1:-".*"} ; }
+
+
+            function killps()                 # Kill by process name.
+            {
+                local pid pname sig="-TERM"   # Default signal.
+                if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+                    echo "Usage: killps [-SIGNAL] pattern"
+                    return;
+                fi
+                if [ $# = 2 ]; then sig=$1 ; fi
+                for pid in $(my_ps| awk '!/awk/ && $0~pat { print $1 }' pat=${!#} ) ; do
+                    pname=$(my_ps | awk '$1~var { print $5 }' var=$pid )
+                    if ask "Kill process $pid <$pname> with signal $sig?"
+                    then kill $sig $pid
+                    fi
+                done
+            }
+
+            #-------------------------------------------------------------
+            # import scripts
+            #-------------------------------------------------------------
+            [[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
+            shopt -s extglob
+            list="
+            /etc/bashrc
+            $HOME/.rvm/scripts/rvm
+            `echo $HOME/.bashrc.d/!(*~)`
+            /etc/bash_completion"
+            for file in $list
+            do
+                shopt -u extglob
+                if [ -f $file ]; then
+                    source $file
+                fi
+            done
+            [ "$x" = "x" ] && set -x && unset x # restore -x flag
+            [ "$e" = "e" ] && set -e && unset e # restore -e flag
+
+            #-------------------------------------------------------------
+            # customize PATH
+            #-------------------------------------------------------------
+            path="$path $HOME/bin"
+            path="$path $HOME/.bin"
+            path="$path $HOME/.local/bin"
+            path="$path /android-cts/tools"
+            path="$path $HOME/bin/android-*"
+            path="$path /opt/android-*"
+            path="$path /opt/android-sdk*/platform-tools"
+            for a in $path
+            do
+                if [[ -d "$a" && ! ":$PATH:" == *":$a:"* ]]; then
+                    export PATH="$a:$PATH"
+                fi
+            done
+            unset path
+
+            #-------------------------------------------------------------
+            # Insert pyenv PATH
+            #-------------------------------------------------------------
+            export PYENV_ROOT="${HOME}/.pyenv"
+
+            if [ -d "${PYENV_ROOT}" ]; then
+                export PATH="${PYENV_ROOT}/bin:${PATH}"
+                eval "$(pyenv init -)"
+            fi
+
+
+            #-------------------------------------------------------------
+            # Try to keep environment pollution down, EPA loves us.
+            #-------------------------------------------------------------
+            unset use_color safe_term match_lhs
+
+            #-------------------------------------------------------------
+            # import local setting
+            #-------------------------------------------------------------
+            [ -e $HOME/.bashrc_local ] && source $HOME/.bashrc_local
+
+            #-------------------------------------------------------------
+            # Set colorful PS1 only on colorful terminals.
+            # dircolors --print-database uses its own built-in database
+            # instead of using /etc/DIR_COLORS.  Try to use the external file
+            # first to take advantage of user additions.  Use internal bash
+            # globbing instead of external grep binary.
+            #-------------------------------------------------------------
+            use_color=false
+
+            safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
+        match_lhs=""
+        [[ -f $HOME/.dircolors.256dark   ]] && match_lhs="$(<$HOME/.dircolors.256dark)"
+        [[ -z ${match_lhs}    ]] \
+            && type -P dircolors >/dev/null \
+            && match_lhs=$(dircolors --print-database)
+        [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
+
+            if ${use_color} ; then
+            # Enable colors for ls, etc.  Prefer $HOME/.dircolors.256dark #64489
+            if type -P dircolors >/dev/null ; then
+            if [[ -f $HOME/.dircolors.256dark ]] ; then
+            eval $(dircolors -b $HOME/.dircolors.256dark)
         fi
-    done
-}
-
-
-function swap()  # Swap 2 filenames around, if they exist
-{                #(from Uzi's bashrc).
-    local TMPFILE=tmp.$$
-
-    [ $# -ne 2 ] && echo "swap: 2 arguments needed" && return 1
-    [ ! -e $1 ] && echo "swap: $1 does not exist" && return 1
-    [ ! -e $2 ] && echo "swap: $2 does not exist" && return 1
-
-    mv "$1" $TMPFILE
-    mv "$2" "$1"
-    mv $TMPFILE "$2"
-}
-
-function extract()      # Handy Extract Program.
-{
-     if [ -f "$1" ] ; then
-         case "$1" in
-             *.tar.bz2)   tar xvjf "$1"     ;;
-             *.tar.gz)    tar xvzf "$1"     ;;
-             *.bz2)       bunzip2 "$1"      ;;
-             *.rar)       unrar x "$1"      ;;
-             *.gz)        gunzip "$1"       ;;
-             *.tar)       tar xvf "$1"      ;;
-             *.tbz2)      tar xvjf "$1"     ;;
-             *.tgz)       tar xvzf "$1"     ;;
-             *.zip)       unzip "$1"        ;;
-             *.Z)         uncompress "$1"   ;;
-             *.7z)        7z x "$1"         ;;
-             *)           echo "'$1' cannot be extracted via >extract<" ;;
-         esac
-     else
-         echo "'$1' is not a valid file"
-     fi
-}
-
-function jcrm ()
-{
-    queue="."
-    while [ -n "$queue" ]
-    do
-	echo "$queue" | xargs -I'{}' find "{}" -mindepth 1 -maxdepth 1 -type f \
-            \( -name "*~" -o -name "*.core" -o -name "*.gch" -o -name "*.swp" -o -name "*.orig" -o -regex ".*\.nfs.*$" \) -print -delete
-	queue=`echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type d`
-    done
-    unset queue
-}
-#-------------------------------------------------------------
-# Process/system related functions:
-#-------------------------------------------------------------
-
-
-function my_ps() { ps $@ -u $USER -o "pid,%cpu,%mem,bsdtime,command" ; }
-function pp() { my_ps f | awk '!/awk/ && $0~var' var=${1:-".*"} ; }
-
-
-function killps()                 # Kill by process name.
-{
-    local pid pname sig="-TERM"   # Default signal.
-    if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
-        echo "Usage: killps [-SIGNAL] pattern"
-        return;
     fi
-    if [ $# = 2 ]; then sig=$1 ; fi
-    for pid in $(my_ps| awk '!/awk/ && $0~pat { print $1 }' pat=${!#} ) ; do
-        pname=$(my_ps | awk '$1~var { print $5 }' var=$pid )
-        if ask "Kill process $pid <$pname> with signal $sig?"
-            then kill $sig $pid
-        fi
-    done
-}
-
-#-------------------------------------------------------------
-# import scripts
-#-------------------------------------------------------------
-[[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
-shopt -s extglob
-list="
-    /etc/bashrc
-    $HOME/.rvm/scripts/rvm
-    `echo $HOME/.bashrc.d/!(*~)`
-    /etc/bash_completion"
-for file in $list
-do
-	shopt -u extglob
-	if [ -f $file ]; then
-		source $file
-	fi
-done
-[ "$x" = "x" ] && set -x && unset x # restore -x flag
-[ "$e" = "e" ] && set -e && unset e # restore -e flag
-
-#-------------------------------------------------------------
-# customize PATH
-#-------------------------------------------------------------
-path="$path $HOME/bin"
-path="$path $HOME/.bin"
-path="$path $HOME/.local/bin"
-path="$path /android-cts/tools"
-path="$path $HOME/bin/android-*"
-path="$path /opt/android-*"
-path="$path /opt/android-sdk*/platform-tools"
-for a in $path
-do
-	if [[ -d "$a" && ! ":$PATH:" == *":$a:"* ]]; then
-		export PATH="$a:$PATH"
-	fi
-done
-unset path
-
-#-------------------------------------------------------------
-# Insert pyenv PATH
-#-------------------------------------------------------------
-export PYENV_ROOT="${HOME}/.pyenv"
-
-if [ -d "${PYENV_ROOT}" ]; then
-    export PATH="${PYENV_ROOT}/bin:${PATH}"
-    eval "$(pyenv init -)"
-fi
-
-
-#-------------------------------------------------------------
-# Try to keep environment pollution down, EPA loves us.
-#-------------------------------------------------------------
-unset use_color safe_term match_lhs
-
-#-------------------------------------------------------------
-# import local setting
-#-------------------------------------------------------------
-[ -e $HOME/.bashrc_local ] && source $HOME/.bashrc_local
-
-#-------------------------------------------------------------
-# Set colorful PS1 only on colorful terminals.
-# dircolors --print-database uses its own built-in database
-# instead of using /etc/DIR_COLORS.  Try to use the external file
-# first to take advantage of user additions.  Use internal bash
-# globbing instead of external grep binary.
-#-------------------------------------------------------------
-use_color=false
-
-safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-match_lhs=""
-[[ -f $HOME/.dircolors.256dark   ]] && match_lhs="$(<$HOME/.dircolors.256dark)"
-[[ -z ${match_lhs}    ]] \
-	&& type -P dircolors >/dev/null \
-	&& match_lhs=$(dircolors --print-database)
-[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
-
-if ${use_color} ; then
-	# Enable colors for ls, etc.  Prefer $HOME/.dircolors.256dark #64489
-	if type -P dircolors >/dev/null ; then
-		if [[ -f $HOME/.dircolors.256dark ]] ; then
-			eval $(dircolors -b $HOME/.dircolors.256dark)
-		fi
-	fi
 else
-	if [[ ${EUID} == 0 ]] ; then
-		# show root@ when we don't have colors
-		PS1='\u@\h \W \# '
-	else
-		PS1='\u@\h \w \$ '
-	fi
+    if [[ ${EUID} == 0 ]] ; then
+    # show root@ when we don't have colors
+    PS1='\u@\h \W \# '
+else
+    PS1='\u@\h \w \$ '
+fi
 fi
 
 #-------------------------------------------------------------
 # Prompt_command
 #-------------------------------------------------------------
 _bash_history_sync() {
-    builtin history -a
-    HISTFILESIZE=$HISTSIZE
-    builtin history -c
-    builtin history -r
+builtin history -a
+HISTFILESIZE=$HISTSIZE
+builtin history -c
+builtin history -r
 }
 
 # Powerline prompt
 if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
-	|| $(tty) =~ pts/ \
-	|| "$platform" == "mac" \
-	|| "$TMUX" != "" \
-	|| "$SUDO_USER" != "" \
-	|| $enable_local_powerline == 1 ]]; then
-	for powerline in \
-		/home/$SUDO_USER/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
-		$HOME/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
-		/usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh \
-		/usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
-		/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh
-	do
-		if [ -f "$powerline" ]; then
-			powerline-daemon -q || true
-			POWERLINE_CONFIG_COMMAND=powerline-config
-			POWERLINE_BASH_CONTINUATION=1
-			POWERLINE_BASH_SELECT=1
-			source "$powerline"
-			break
-		fi
-	done
+|| $(tty) =~ pts/ \
+|| "$platform" == "mac" \
+    || "$TMUX" != "" \
+    || "$SUDO_USER" != "" \
+    || $enable_local_powerline == 1 ]]; then
+for powerline in \
+    /home/$SUDO_USER/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
+    $HOME/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
+    /usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh \
+    /usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh \
+    /Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh
+do
+    if [ -f "$powerline" ]; then
+        powerline-daemon -q || true
+        POWERLINE_CONFIG_COMMAND=powerline-config
+        POWERLINE_BASH_CONTINUATION=1
+        POWERLINE_BASH_SELECT=1
+        source "$powerline"
+        break
+    fi
+done
 fi
 
 #-------------------------------------------------------------
@@ -403,79 +405,87 @@ winscp() { echo -ne "\033];__ws:${PWD}\007"; }
 # Report command takes long time
 #-------------------------------------------------------------
 function timer_start {
-  timer=${timer:-$SECONDS}
+    timer=${timer:-$SECONDS}
 }
-
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    SESSION_TYPE=remote/ssh
+else
+    case $(ps -o comm= -p $PPID) in
+        (sshd|*/sshd) SESSION_TYPE=remote/ssh
+        ;;
+    esac
+fi
 function command_timer_stop {
-	local show_timer_after=30
-	local tdiff=$(($SECONDS - ${command_timer:-$SECONDS}))
-	local DURATION=""
-	if [ $tdiff -gt $show_timer_after ]; then
-		# Sound after slow command
-		((tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;sleep 0.5; tput bel;)&)
-		local hours=$(($tdiff / 3600 ))
-		local mins=$((($tdiff % 3600) / 60))
-		local secs=$(($tdiff % 60))
-		if [ $hours -gt 0 ] ; then
-			DURATION=$(printf "(%02g:%02g:%02g (hh:mm:ss)) " $hours $mins $secs)
-		elif [ $mins -gt 0 ] ; then
-			DURATION=$(printf "(%02g:%02g (mm:ss)) " $mins $secs)
-		elif [ $secs -gt 0 ] ; then
-			DURATION=$(printf "(%s seconds) " $secs)
-		fi
-	fi
-	if [ -z "$DURATION" -a $_cmd_rc -eq 0 ] ; then
-		return $_cmd_rc
-	fi
-	# Print on error or wainting too long
-	local ncolors=$(tput colors 2>/dev/null)
-	if [ ${_cmd_rc:=0} -eq 0 ]; then
-		local status=success
-		local color_status="\e[0;32m"
-		local color_cmd="\e[7m"
-	else
-		local color_status="\e[0;31m"
-		local color_cmd="\e[00m\e[3;41m"
-		local status="failed with code ${color_cmd}${_cmd_rc}${color_status}"
-	fi
-	local color_reset="\e[00m"
-	if [ ${ncolors:=0} -lt 8 ]; then
-		color_status=""
-		color_cmd=""
-		color_reset=""
-	fi
-	echo -e "${color_status}#### Command ${color_cmd}$_LAST_CMD${color_status} ${status} $DURATION#### ${color_reset}"
-	unset _LAST_CMD
+    local show_timer_after=30
+    local tdiff=$(($SECONDS - ${command_timer:-$SECONDS}))
+    local DURATION=""
+    if [ $tdiff -gt $show_timer_after ]; then
+        # Sound after slow command
+
+        ({ for i in {1..8}; do play -q -n synth 0.2 sine 800 vol 0.8; sleep 0.2; done }&)
+        local hours=$(($tdiff / 3600 ))
+        local mins=$((($tdiff % 3600) / 60))
+        local secs=$(($tdiff % 60))
+        if [ $hours -gt 0 ] ; then
+            DURATION=$(printf "(%02g:%02g:%02g (hh:mm:ss)) " $hours $mins $secs)
+        elif [ $mins -gt 0 ] ; then
+            DURATION=$(printf "(%02g:%02g (mm:ss)) " $mins $secs)
+        elif [ $secs -gt 0 ] ; then
+            DURATION=$(printf "(%s seconds) " $secs)
+        fi
+    fi
+    if [ -z "$DURATION" -a $_cmd_rc -eq 0 ] ; then
+        return $_cmd_rc
+    fi
+    # Print on error or wainting too long
+    local ncolors=$(tput colors 2>/dev/null)
+    if [ ${_cmd_rc:=0} -eq 0 ]; then
+        local status=success
+        local color_status="\e[0;32m"
+        local color_cmd="\e[7m"
+    else
+        local color_status="\e[0;31m"
+        local color_cmd="\e[00m\e[3;41m"
+        local status="failed with code ${color_cmd}${_cmd_rc}${color_status}"
+    fi
+    local color_reset="\e[00m"
+    if [ ${ncolors:=0} -lt 8 ]; then
+        color_status=""
+        color_cmd=""
+        color_reset=""
+    fi
+    echo -e "${color_status}#### Command ${color_cmd}$_LAST_CMD${color_status} ${status} $DURATION#### ${color_reset}"
+    unset _LAST_CMD
 }
 
 pre_command () {
-	if ! [[ $PROMPT_COMMAND == *"$BASH_COMMAND"* ]]; then
-		unset AT_PROMPT
-		command_timer=$SECONDS
-		_LAST_CMD=$BASH_COMMAND
-	fi
+    if ! [[ $PROMPT_COMMAND == *"$BASH_COMMAND"* ]]; then
+        unset AT_PROMPT
+        command_timer=$SECONDS
+        _LAST_CMD=$BASH_COMMAND
+    fi
 }
 
 function post_command {
-	_cmd_rc=$?
-	if [ -n "$AT_PROMPT" ]; then
-		_cmd_rc=0
-	else
-		command_timer_stop
-		_bash_history_sync
-		AT_PROMPT=1
-	fi
-	return $_cmd_rc
+    _cmd_rc=$?
+    if [ -n "$AT_PROMPT" ]; then
+        _cmd_rc=0
+    else
+        command_timer_stop
+        _bash_history_sync
+        AT_PROMPT=1
+    fi
+    return $_cmd_rc
 }
 while trap -p | grep -q pre_command; do trap - DEBUG; done
 trap 'pre_command' DEBUG
 
 if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/post_command/}" -a -n "$PROMPT_COMMAND" ]; then
-	PROMPT_COMMAND="post_command
-$PROMPT_COMMAND"
+    PROMPT_COMMAND="post_command
+    $PROMPT_COMMAND"
 fi
 
 # include rbenv
 if hash rbenv; then
-	eval "$(rbenv init -)"
+    eval "$(rbenv init -)"
 fi

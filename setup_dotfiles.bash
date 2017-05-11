@@ -153,8 +153,7 @@ fi
 #######################
 ## install vim plugins
 #######################
-mkdir ~/.backup
-mkdir -p vim/autoload
+mkdir -p ~/.backup vim/autoload
 curl -fLo vim/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 

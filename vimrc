@@ -484,7 +484,6 @@ map <F8> :set hls!<BAR>set hls?<CR>
 map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
 
-map <F10> mz:set softtabstop=0 sw=8 tabstop=8 noexpandtab<CR>'z
 map <F12> :call Switch_indent()<CR>
 
 let g:indent_mod = 2

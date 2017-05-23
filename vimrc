@@ -484,6 +484,7 @@ map <F8> :set hls!<BAR>set hls?<CR>
 map <F9> :set paste!<BAr>set paste?<CR>
 set pastetoggle=<F9>
 
+map <F10> :set spell spelllang=en_us<CR>
 map <F12> :call Switch_indent()<CR>
 
 let g:indent_mod = 2

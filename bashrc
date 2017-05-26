@@ -489,3 +489,6 @@ fi
 if hash rbenv; then
     eval "$(rbenv init -)"
 fi
+export LANGUAGE="zh_TW.UTF-8"
+export LANG="zh_TW.UTF-8"
+export LC_TIME="en_US.utf8"

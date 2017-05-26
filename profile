@@ -8,6 +8,9 @@
 # for ssh logins, install and configure the libpam-umask package.
 umask 022
 
+export TZ='Asia/Taipei'
+export LANG="en_US.utf8"
+export LANGUAGE="en"
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 # if running bash

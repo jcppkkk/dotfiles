@@ -417,24 +417,23 @@ else
 fi
 function command_timer_stop {
     local show_timer_after=30
-    local tdiff=$(($SECONDS - ${command_timer:-$SECONDS}))
-    local DURATION=""
-    if [ $tdiff -gt $show_timer_after ]; then
+    local duration=$(($SECONDS - ${command_timer:-$SECONDS}))
+    local str_dur=""
+    if [ $duration -gt $show_timer_after ]; then
         # Sound after slow command
-
         ({ for i in {1..8}; do play -q -n synth 0.2 sine 800 vol 0.8; sleep 0.2; done }&)
-        local hours=$(($tdiff / 3600 ))
-        local mins=$((($tdiff % 3600) / 60))
-        local secs=$(($tdiff % 60))
-        if [ $hours -gt 0 ] ; then
-            DURATION=$(printf "(%02g:%02g:%02g (hh:mm:ss)) " $hours $mins $secs)
-        elif [ $mins -gt 0 ] ; then
-            DURATION=$(printf "(%02g:%02g (mm:ss)) " $mins $secs)
-        elif [ $secs -gt 0 ] ; then
-            DURATION=$(printf "(%s seconds) " $secs)
+        local hours=$(($duration / 3600 ))
+        local mins=$((($duration % 3600) / 60))
+        local secs=$(($duration % 60))
+        if (( $duration >= 3600 )) ; then
+            str_dur=$(printf "(%02g:%02g:%02g (hh:mm:ss)) " $hours $mins $secs)
+        elif (( $duration >= 60 )); then
+            str_dur=$(printf "(%02g:%02g (mm:ss)) " $mins $secs)
+        else
+            str_dur=$(printf "(%s seconds) " $secs)
         fi
     fi
-    if [ -z "$DURATION" -a $_cmd_rc -eq 0 ] ; then
+    if [ -z "$str_dur" -a $_cmd_rc -eq 0 ] ; then
         return $_cmd_rc
     fi
     # Print on error or wainting too long
@@ -454,7 +453,7 @@ function command_timer_stop {
         color_cmd=""
         color_reset=""
     fi
-    echo -e "${color_status}#### Command ${color_cmd}$_LAST_CMD${color_status} ${status} $DURATION#### ${color_reset}"
+    echo -e "${color_status}#### Command ${color_cmd}$_LAST_CMD${color_status} ${status} $str_dur#### ${color_reset}"
     unset _LAST_CMD
 }
 

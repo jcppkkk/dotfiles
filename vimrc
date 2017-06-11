@@ -32,10 +32,14 @@ Plug 'mfukar/robotframework-vim'
 
 " Themes
 Plug 'altercation/vim-colors-solarized'
+syntax enable
+set background=dark
+silent! colorscheme solarized
 
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_powerline_fonts = 1
+let g:airline_theme='solarized'
 " spaces are allowed after tabs, but not in between
 " this algorithm works well with programming styles that use tabs for
 " indentation and spaces for alignment
@@ -47,6 +51,9 @@ let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
 
 " language support
+
+Plug 'shougo/denite.nvim'
+Plug 'kopischke/unite-spell-suggest'
 Plug 'chase/vim-ansible-yaml'
 Plug 'vim-ruby/vim-ruby'
 Plug 'kchmck/vim-coffee-script'
@@ -384,11 +391,6 @@ let g:indent_guides_start_level=2
 let g:indent_guides_guide_size=1
 
 if &term =~ "putty-256color" | set term=xterm-256color | endif
-syntax enable
-silent! colorscheme solarized
-set background=dark
-let g:solarized_termcolors=256
-let g:airline_theme='solarized'
 highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
 match OverLength /.\%82v.*/
 set cursorline

@@ -636,9 +636,9 @@ autocmd FileType scss setl sw=2 softtabstop=2 expandtab
 autocmd FileType xml setl sw=2 softtabstop=2 expandtab
 autocmd FileType css setl sw=2 softtabstop=2 expandtab
 "autocmd FileType sh,bash setl tabstop=8 sw=2 softtabstop=2 expandtab
-autocmd FileType make setl tabstop=8 sw=8 softtabstop=0 noexpandtab
 autocmd FileType c setl textwidth=73 fo=cq wm=0 formatoptions+=r
-autocmd FileType make setlocal sw=2 softtabstop=2 tabstop=8 noexpandtab
+autocmd FileType make setl sw=2 softtabstop=2 tabstop=8 noexpandtab
+autocmd FileType Dockerfile setl sw=2 softtabstop=2 tabstop=8 noexpandtab
 autocmd FileType python set cindent
 " detect gcov filetype
 au BufRead,BufNewFile *.gcov              set filetype=gcov

@@ -28,178 +28,143 @@ endif
 call plug#begin()
 
 " Testing
-Plug 'mfukar/robotframework-vim'
-
+	Plug 'mfukar/robotframework-vim'
 " Themes
-Plug 'altercation/vim-colors-solarized'
-syntax enable
-set background=dark
-silent! colorscheme solarized
+	Plug 'altercation/vim-colors-solarized'
+	syntax enable
+	set background=dark
+	silent! colorscheme solarized
 
-Plug 'bling/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-let g:airline_powerline_fonts = 1
-let g:airline_theme='solarized'
-" spaces are allowed after tabs, but not in between
-" this algorithm works well with programming styles that use tabs for
-" indentation and spaces for alignment
-let g:airline#extensions#whitespace#mixed_indent_algo = 2
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline#extensions#tabline#excludes = []
-let g:airline#extensions#tabline#exclude_preview = 1
-let g:airline#extensions#tabline#fnametruncate = 8
+	Plug 'bling/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
+	let g:airline_powerline_fonts = 1
+	let g:airline_theme='solarized'
+	" spaces are allowed after tabs, but not in between
+	" this algorithm works well with programming styles that use tabs for
+	" indentation and spaces for alignment
+	let g:airline#extensions#whitespace#mixed_indent_algo = 2
+	let g:airline#extensions#tabline#enabled = 1
+	let g:airline#extensions#tabline#fnamemod = ':t'
+	let g:airline#extensions#tabline#excludes = []
+	let g:airline#extensions#tabline#exclude_preview = 1
+	let g:airline#extensions#tabline#fnametruncate = 8
+" General programming
+	Plug 'vim-scripts/AutoTag'
+" format / indent
+	Plug 'roryokane/detectindent'
+	autocmd BufReadPost *.jade DetectIndent
+	autocmd BufReadPost *.coffee DetectIndent
+	let g:detectindent_preferred_expandtab = 1
+	let g:detectindent_preferred_indent = 4
+" syntax checker
+	Plug 'scrooloose/syntastic'
+	set statusline+=%#warningmsg#
+	set statusline+=%{SyntasticStatuslineFlag()}
+	set statusline+=%*
+	let g:syntastic_reuse_loc_lists = 0
+	let g:syntastic_always_populate_loc_list = 1
+	let g:syntastic_auto_loc_list = 1
+	let g:syntastic_check_on_open = 1
+	let g:syntastic_check_on_wq = 1
+	let g:syntastic_cpp_checkers = ['make', 'cpplint']
+	let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
+	let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
+	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
+	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
+	let g:syntastic_aggregate_errors = 1
+	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': []
+				\ ,'passive_filetypes': [] }
 
-" language support
-
-Plug 'shougo/denite.nvim'
-Plug 'kopischke/unite-spell-suggest'
-Plug 'chase/vim-ansible-yaml'
-Plug 'vim-ruby/vim-ruby'
-Plug 'kchmck/vim-coffee-script'
-Plug 'vim-scripts/Super-Shell-Indent'
-Plug 'roryokane/detectindent'
-autocmd BufReadPost *.jade DetectIndent
-autocmd BufReadPost *.coffee DetectIndent
-let g:detectindent_preferred_expandtab = 1
-let g:detectindent_preferred_indent = 4
-Plug 'pangloss/vim-javascript'
-Plug 'digitaltoad/vim-jade'
-Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'vim-scripts/Modelines-Bundle'
-
-""""" language support - Python
-Plug 'klen/python-mode'
-let g:pymode_folding=0
-let g:pymode_rope = 0
-""""" language support - C/C++
-Plug 'scrooloose/nerdcommenter'
-let g:NERDSpaceDelims = 1
-let g:NERDTrimTrailingWhitespace = 1
-nmap <leader>cr :call Reformat_comment()<CR>
-function! Reformat_comment()
-	normal k$]/
-	silent! s#^\s*\*/#&#
-	normal [/v]/\c gv=gvJgv\cs[/v]/
-	pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
-	normal gv]/gq
-endfunction
-Plug 'vim-scripts/valgrind.vim'
-let g:valgrind_arguments=''
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
-let g:easytags_auto_highlight = 0
-let g:easytags_async = 1
-"Plug 'oblitum/YouCompleteMe'
-let g:ycm_confirm_extra_conf = 0
-let g:clang_snippets_engine='clang_complete'
-let g:ycm_add_preview_to_completeopt = 1
-"let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_use_ultisnips_completer = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-Plug 'SirVer/ultisnips'
-let g:UltiSnipsExpandTrigger = "<C-c>"
-
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-let g:ycm_filetype_blacklist = {
-			\ 'tagbar' : 1,
-			\ 'qf' : 1,
-			\ 'notes' : 1,
-			\ 'markdown' : 1,
-			\ 'unite' : 1,
-			\ 'text' : 1,
-			\ 'vimwiki' : 1,
-			\ 'pandoc' : 1,
-			\ 'infolog' : 1,
-			\ 'mail' : 1
-			\}
-let g:ycm_show_diagnostics_ui = 0
-nnoremap <C-p> :YcmCompleter GoTo<CR>
-"Plug 'Rip-Rip/clang_complete'
-"	let g:clang_auto_select=1
-"	let g:clang_library_path="/usr/lib/llvm-4.0/lib/"
-"	set conceallevel=2
-"	set concealcursor=vin
-"	let g:clang_snippets=1
-"	let g:clang_conceal_snippets=1
-"	" The single one that works with clang_complete
-"	let g:clang_snippets_engine='clang_complete'
-"	let g:clang_complete_macros = 1
-"	let g:clang_use_library = 1
-"	" Complete options (disable preview scratch window, longest removed to aways show menu)
-"	set completeopt=menu,menuone
-"	" Limit popup menu height
-"	set pumheight=20
-"	let g:clang_jumpto_declaration_key = '<C-p>'
-"	let g:clang_jumpto_declaration_in_preview_key = '<C-W>p'
-"	let g:clang_jumpto_back_key = '<C-o>'
-Plug 'scrooloose/syntastic'
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_reuse_loc_lists = 0
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
-let g:syntastic_cpp_checkers = ['make', 'cpplint']
-let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
-let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
-let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
-let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': []
-			\ ,'passive_filetypes': [] }
-Plug 'vim-scripts/cuteErrorMarker'
-Plug 'vim-scripts/AutoTag'
-Plug 'majutsushi/tagbar'
-autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
-autocmd FileType qf wincmd J
-"let g:tagbar_width = 60
-Plug 'vim-scripts/gcov.vim'
-
-""""" language support - csv
-Plug 'chrisbra/csv.vim'
+" language support - others
+	Plug 'chase/vim-ansible-yaml'
+	Plug 'vim-ruby/vim-ruby'
+	Plug 'kchmck/vim-coffee-script'
+" language support - Shell
+	Plug 'chrisbra/vim-sh-indent'
+" language support - Docker
+	Plug 'ekalinin/Dockerfile.vim'
+" language support - Python
+	Plug 'klen/python-mode'
+	let g:pymode_folding=0
+	let g:pymode_rope = 0
+" language support - C/C++
+	Plug 'scrooloose/nerdcommenter'
+	let g:NERDSpaceDelims = 1
+	let g:NERDTrimTrailingWhitespace = 1
+	nmap <leader>cr :call Reformat_comment()<CR>
+	function! Reformat_comment()
+		normal k$]/
+		silent! s#^\s*\*/#&#
+		normal [/v]/\c gv=gvJgv\cs[/v]/
+		pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
+		normal gv]/gq
+	endfunction
+	Plug 'vim-scripts/valgrind.vim'
+	let g:valgrind_arguments=''
+	Plug 'xolox/vim-misc'
+	Plug 'xolox/vim-easytags'
+	let g:easytags_auto_highlight = 0
+	let g:easytags_async = 1
+	" Plug 'oblitum/YouCompleteMe'
+	" let g:ycm_confirm_extra_conf = 0
+	" let g:clang_snippets_engine='clang_complete'
+	" let g:ycm_add_preview_to_completeopt = 1
+	" let g:ycm_autoclose_preview_window_after_insertion = 1
+	" let g:ycm_use_ultisnips_completer = 1
+	" let g:ycm_seed_identifiers_with_syntax = 1
+	" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+	" let g:ycm_filetype_blacklist = { 'tagbar':1,'qf':1,'notes':1,'markdown':1,'unite':1,'text':1,'vimwiki':1,'pandoc':1,'infolog':1,'mail':1 }
+	" let g:ycm_show_diagnostics_ui = 0
+	" nnoremap <C-p> :YcmCompleter GoTo<CR>
+	Plug 'vim-scripts/cuteErrorMarker'
+	Plug 'majutsushi/tagbar'
+	autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
+	autocmd FileType qf wincmd J
+	"let g:tagbar_width = 60
+	Plug 'vim-scripts/gcov.vim'
+" language support - csv
+	Plug 'chrisbra/csv.vim'
 
 " Tools - Git
-Plug 'airblade/vim-gitgutter'
-let g:gitgutter_escape_grep = 1
-nmap <M-Down> <Plug>GitGutterNextHunk
-nmap <M-Up> <Plug>GitGutterPrevHunk
-nmap <esc>[1;3B <Plug>GitGutterNextHunk
-nmap <esc>[1;3A <Plug>GitGutterPrevHunk
-Plug 'tpope/vim-fugitive'
+	Plug 'airblade/vim-gitgutter'
+	let g:gitgutter_escape_grep = 1
+	nmap <M-Down> <Plug>GitGutterNextHunk
+	nmap <M-Up> <Plug>GitGutterPrevHunk
+	nmap <esc>[1;3B <Plug>GitGutterNextHunk
+	nmap <esc>[1;3A <Plug>GitGutterPrevHunk
+	Plug 'tpope/vim-fugitive'
 
 " Editing Tools
-Plug 'vim-scripts/renamer.vim'
-Plug 'nathanaelkane/vim-indent-guides'
-Plug 'guns/xterm-color-table.vim'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'junegunn/vim-easy-align'
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
-let g:easy_align_delimiters = { ';': {
-			\	'pattern': ';;\|;',
-			\	'left_margin': 0
-			\	}
-			\ }
-let g:easy_align_ignore_groups = ['String']
+	Plug 'vim-scripts/renamer.vim'
+	Plug 'nathanaelkane/vim-indent-guides'
+	Plug 'guns/xterm-color-table.vim'
+	Plug 'terryma/vim-multiple-cursors'
+	Plug 'junegunn/vim-easy-align'
+	" Start interactive EasyAlign in visual mode (e.g. vipga)
+	xmap ga <Plug>(EasyAlign)
+	" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+	nmap ga <Plug>(EasyAlign)
+	let g:easy_align_delimiters = { ';': {
+				\	'pattern': ';;\|;',
+				\	'left_margin': 0
+				\	}
+				\ }
+	let g:easy_align_ignore_groups = ['String']
 
 call plug#end()
-
 set wildmode=longest,list
 set wildmenu
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" git changes navigation
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! GetBufferList()
 	redir =>buflist
 	silent! ls!
 	redir END
 	return buflist
 endfunction
-
 function! ToggleList(bufname, pfx)
 	let buflist = GetBufferList()
 	for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
@@ -219,7 +184,6 @@ function! ToggleList(bufname, pfx)
 		wincmd p
 	endif
 endfunction
-
 nmap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
 nmap <silent> <leader>e :call ToggleList("Quickfix List", 'c')<CR>
 
@@ -228,7 +192,7 @@ nmap <silent> <leader>e :call ToggleList("Quickfix List", 'c')<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set modelines=5         " no modelines [http://www.guninski.com/vim1.html]
 set modeline
-"let g:secure_modelines_verbose=1 " securemodelines vimscript
+let g:secure_modelines_verbose=1 " securemodelines vimscript
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " operational settings
@@ -245,7 +209,7 @@ set backupext=~                 " add ~ to the end of backup files
 ":set patchmode=~               " only produce *~ if not there
 set noautowrite                 " don't automatically write on :next, etc
 let maplocalleader=','          " all my macros start with ,
-"set lazyredraw                  " don't redraw when running macros
+set lazyredraw                  " don't redraw when running macros
 set ttyfast                     " Speedup for tty
 set updatetime=750		" screen update speed
 set wildmenu                    " : menu has tab completion, etc
@@ -392,7 +356,7 @@ let g:indent_guides_guide_size=1
 
 if &term =~ "putty-256color" | set term=xterm-256color | endif
 highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
-match OverLength /.\%82v.*/
+"match OverLength /.\%82v.*/
 set cursorline
 set foldlevelstart=1
 
@@ -475,7 +439,7 @@ nnoremap <F4> :SyntasticToggleMode\|:silent w<CR>
 map <F5> :wa<CR>
 
 nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
-vnoremap <F6> "hy:silent %s/<C-r>=substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
+vnoremap <F6> "hy:silent %s/<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
 nnoremap <F7> :silent gr "<c-r>=expand("<cword>")<CR>" .<CR>
 vnoremap <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
 
@@ -616,34 +580,32 @@ if has('autocmd')
 
 endif
 
-
-autocmd BufNewFile,BufReadPost *.coffee setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.rb setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.liquid setl sw=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.rake setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost Rakefile setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.js setl sw=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.html setl sw=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.php setl sw=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.hbs setl sw=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.erb setl sw=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.md setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost Podfile setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.yml setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.json setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.xsd setl sw=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.go set noexpandtab tabstop=4 sw=4
-autocmd FileType jade setl sw=2 softtabstop=2 expandtab
-autocmd FileType scss setl sw=2 softtabstop=2 expandtab
-autocmd FileType xml setl sw=2 softtabstop=2 expandtab
-autocmd FileType css setl sw=2 softtabstop=2 expandtab
-"autocmd FileType sh,bash setl tabstop=8 sw=2 softtabstop=2 expandtab
-autocmd FileType c setl textwidth=73 fo=cq wm=0 formatoptions+=r
-autocmd FileType make setl sw=2 softtabstop=2 tabstop=8 noexpandtab
-autocmd FileType Dockerfile setl sw=2 softtabstop=2 tabstop=8 noexpandtab
-autocmd FileType python set cindent
-" detect gcov filetype
-au BufRead,BufNewFile *.gcov              set filetype=gcov
+autocmd BufNewFile,BufReadPost *.coffee   setl shiftwidth=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.erb      setl shiftwidth=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.gcov     set  filetype=gcov
+autocmd BufNewFile,BufReadPost *.go       set  shiftwidth=4 noexpandtab   tabstop=4
+autocmd BufNewFile,BufReadPost *.hbs      setl shiftwidth=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.js       setl shiftwidth=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
+autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               Dockerfile setl shiftwidth=2 softtabstop=2 tabstop=8
+autocmd FileType               Podfile    setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               Rakefile   setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               c          setl fo=cq        wm=0          formatoptions+=r
+autocmd FileType               css        setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               gitcommit  call setpos('.',  [0,           1, 1, 0])
+autocmd FileType               html       setl shiftwidth=4 softtabstop=4 expandtab
+autocmd FileType               jade       setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabstop=8
+autocmd FileType               markdown   setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               php        setl shiftwidth=4 softtabstop=4 expandtab
+autocmd FileType               python     set  cindent
+autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 tabstop=4
 
 " The Silver Searcher
 if executable('ag')

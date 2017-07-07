@@ -74,7 +74,7 @@ alias bra='git branch --sort=-committerdate -avv'
 alias ci='git commit --verbose'
 alias co='git checkout'
 alias cs='git checkout $(__git_refs | percol)'
-alias gd='git diff --relative'
+alias gd='git diff'
 alias gr='git gr'
 alias gra='git gr --all'
 alias gp='git pull'
@@ -97,6 +97,9 @@ alias ag='ag --ignore *~'
 #-------------------------------------------------------------
 alias ai='sudo apt-get install'
 
+#-------------------------------------------------------------
+# Docker
+#-------------------------------------------------------------
 # Delete all stopped containers.
 alias dcleanc='printf "\n>>> Deleting stopped containers\n\n" && docker rm $(docker ps -a -q)'
 # Delete all untagged images.
@@ -108,3 +111,8 @@ alias dr='docker run'
 alias dp='docker push'
 alias dip='docker inspect --format "{{.NetworkSettings.IPAddress}}"'
 alias rmi='docker rmi'
+
+#-------------------------------------------------------------
+# tmux
+#-------------------------------------------------------------
+alias tmux='TERM=xterm-256color tmux'

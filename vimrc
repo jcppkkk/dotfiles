@@ -72,8 +72,10 @@ call plug#begin()
 	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
 	let g:syntastic_aggregate_errors = 1
-	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': []
-				\ ,'passive_filetypes': [] }
+	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
+	let g:syntastic_python_checkers=['flake8']
+	let g:syntastic_python_flake8_args='--ignore=E501'
+	let g:syntastic_sh_checkers = ['shellcheck']
 
 " language support - others
 	Plug 'chase/vim-ansible-yaml'
@@ -87,6 +89,8 @@ call plug#begin()
 	Plug 'klen/python-mode'
 	let g:pymode_folding=0
 	let g:pymode_rope = 0
+	let g:pymode_lint_checkers = ['pyflakes', 'pep8']
+	let g:pymode_lint_ignore = "E501,E221"
 " language support - C/C++
 	Plug 'scrooloose/nerdcommenter'
 	let g:NERDSpaceDelims = 1
@@ -349,8 +353,6 @@ map <LocalLeader>bb :ls<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=8
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=0
 let g:indent_guides_start_level=2
 let g:indent_guides_guide_size=1
 
@@ -380,6 +382,7 @@ let g:notmuch_debug = 0
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " termcaps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set notitle
 "set notimeout      " don't timeout on mappings
 set ttimeout       " do timeout on terminal key codes
 set timeoutlen=1000 " timeout after 100 msec
@@ -416,7 +419,7 @@ nmap [1~ ^
 imap OH <esc>^i
 nmap OH ^
 
-map ZZ :wqa<CR>
+map ZZ :wqa!<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " box comments tool
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -435,8 +438,11 @@ map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
 imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
 
 nnoremap <F4> :SyntasticToggleMode\|:silent w<CR>
-
-map <F5> :wa<CR>
+fun! SuperWrite()
+        silent write !sudo tee % >/dev/null
+        edit!
+endfun
+map <F5>  :silent wa \|\| silent call SuperWrite()<CR>
 
 nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
 vnoremap <F6> "hy:silent %s/<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>

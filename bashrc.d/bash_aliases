@@ -15,8 +15,6 @@
 # Personnal Aliases
 #-------------------
 
-[ -f ~/.get-platform ] && . ~/.get-platform
-
 alias ssh='LC_ALL=en_US.UTF-8 ssh'
 alias aa='vim ~/.bashrc && source ~/.bashrc'
 alias as='vim ~/.bashrc.d/bash_aliases && source ~/.bashrc'
@@ -34,6 +32,7 @@ alias grep='grep --color=auto --binary-files=without-match'
 alias h='history'
 alias j='jobs -l'
 alias which='type -a'
+alias cdd='cd $(\ls -a -d .. * | percol --prompt-bottom --result-bottom-up);ls'
 alias ..='pushd ..'
 alias ...='pushd ../..'
 alias ....='pushd ../../..'
@@ -45,10 +44,13 @@ alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias du='du -kh'       # Makes a more readable output.
 alias df='df -kTh'
 
+set_title() { printf '\e]2;%s\a' "$*"; }
+alias tt='set_title'
+
 #-------------------------------------------------------------
 # The 'ls' family (this assumes you use a recent GNU ls)
 #-------------------------------------------------------------
-if [[ $platform == 'linux' ]]; then
+if [[ $(uname) == 'Linux' ]]; then
     alias ls='ls -h -F --color=auto'
 else
     alias ls='ls -AhG'
@@ -77,12 +79,14 @@ alias cs='git checkout $(__git_refs | percol)'
 alias gd='git diff'
 alias gr='git gr'
 alias gra='git gr --all'
+alias gre='git remote'
 alias gp='git pull'
 alias st='git status'
 alias gcp='git cherry-pick'
 alias push='git push'
 alias gu='git up'
-alias gm='git mergetool'
+alias gm='git merge'
+alias gmt='git mergetool'
 alias grc='git rebase --continue || git status'
 alias grs='git rebase --skip'
 alias guptag='git tag -l | xargs git tag -d && git fetch'
@@ -95,7 +99,7 @@ alias ag='ag --ignore *~'
 #-------------------------------------------------------------
 # Admin assistant
 #-------------------------------------------------------------
-alias ai='sudo apt-get install'
+alias adu='sudo apt-get update && sudo apt-get dist-upgrade --auto-remove --purge -f -y'
 
 #-------------------------------------------------------------
 # Docker

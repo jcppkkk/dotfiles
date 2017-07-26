@@ -3,7 +3,7 @@
 # Test for an interactive shell.  There is no need to set anything
 # past this point for scp and rcp, and it's important to refrain from
 # outputting anything in those cases.
-if [[ $- != *i* && $setupdotfile = "" ]] ; then
+if [[ $- != *i* && ${setupdotfile:-} = "" ]] ; then
     # Shell is non-interactive.  Be done now!
     return
 fi
@@ -11,16 +11,6 @@ fi
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
-platform='unknown'
-unamestr=`uname`
-if [[ "$unamestr" == 'Linux' ]]; then
-    platform='linux'
-elif [[ "$unamestr" == 'FreeBSD' ]]; then
-    platform='freebsd'
-elif [[ "$unamestr" == 'Darwin' ]]; then
-    platform='mac'
-fi
-
 if hash greadlink 2>/dev/null; then readlink=greadlink; fi
 if hash readlink 2>/dev/null; then readlink=readlink; fi
 
@@ -40,11 +30,11 @@ shopt -s checkwinsize
 #-------------------------------------------------------------
 # Auto load ssh agent
 #-------------------------------------------------------------
-function check-ssh-agent() {
+check-ssh-agent() {
     [ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
 }
 check-ssh-agent || export SSH_AUTH_SOCK=$HOME/.tmp/ssh-agent.sock
-check-ssh-agent || { mkdir -p $HOME/.tmp && rm -f $HOME/.tmp/ssh-agent.sock && eval "$(ssh-agent -s -a $HOME/.tmp/ssh-agent.sock)"; } > /dev/null
+check-ssh-agent || { mkdir -p "$HOME/.tmp" && rm -f "$HOME/.tmp/ssh-agent.sock" && eval "$(ssh-agent -s -a "$HOME/.tmp/ssh-agent.sock")"; } > /dev/null
 
 #-------------------------------------------------------------
 # Set Default keybinding
@@ -74,57 +64,31 @@ export  LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 # File & string-related functions:
 #-------------------------------------------------------------
 
-function vgrep() {
+vgrep() {
     vim +cfile\ <(ag --vimgrep "$@" | grep -v '~:')
 }
 
 # Find a file with a pattern in name:
-function ff() { find . -type f -iname '*'$*'*' -ls ; }
+ff() { find . -type f -iname '*'"$*"'*' -ls ; }
 
 # Find a file with pattern $1 in name and Execute $2 on it:
-function fe()
-{ find . -type f -iname '*'${1:-}'*' -exec ${2:-file} {} \;  ; }
+fe()
+{ find . -type f -iname '*'"${1:-}"'*' -exec "${2:-file}" {} \;  ; }
 
-function cuttail() # cut last n lines in file, 10 by default
-{
-    nlines=${2:-10}
-    sed -n -e :a -e "1,${nlines}!{P;N;D;};N;ba" $1
-}
-
-function lowercase()  # move filenames to lowercase
-{
-    for file ; do
-        filename=${file##*/}
-        case "$filename" in
-            */*) dirname==${file%/*} ;;
-            *) dirname=.;;
-        esac
-        nf=$(echo $filename | tr A-Z a-z)
-        newname="${dirname}/${nf}"
-        if [ "$nf" != "$filename" ]; then
-            mv "$file" "$newname"
-            echo "lowercase: $file --> $newname"
-        else
-            echo "lowercase: $file not changed."
-        fi
-    done
-}
-
-
-function swap()  # Swap 2 filenames around, if they exist
+swap()  # Swap 2 filenames around, if they exist
 {                #(from Uzi's bashrc).
     local TMPFILE=tmp.$$
 
     [ $# -ne 2 ] && echo "swap: 2 arguments needed" && return 1
-    [ ! -e $1 ] && echo "swap: $1 does not exist" && return 1
-    [ ! -e $2 ] && echo "swap: $2 does not exist" && return 1
+    [ ! -e "$1" ] && echo "swap: $1 does not exist" && return 1
+    [ ! -e "$2" ] && echo "swap: $2 does not exist" && return 1
 
     mv "$1" $TMPFILE
     mv "$2" "$1"
     mv $TMPFILE "$2"
 }
 
-function extract()      # Handy Extract Program.
+extract()      # Handy Extract Program.
 {
     if [ -f "$1" ] ; then
         case "$1" in
@@ -146,40 +110,16 @@ function extract()      # Handy Extract Program.
     fi
 }
 
-function jcrm ()
+jcrm ()
 {
     queue="."
     while [ -n "$queue" ]
     do
         echo "$queue" | xargs -I'{}' find "{}" -mindepth 1 -maxdepth 1 -type f \
             \( -name "*~" -o -name "*.core" -o -name "*.gch" -o -name "*.swp" -o -name "*.orig" -o -regex ".*\.nfs.*$" \) -print -delete
-        queue=`echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type d`
+        queue=$(echo "$queue" | xargs -I'{}' find {} -mindepth 1 -maxdepth 1 -type d)
     done
     unset queue
-}
-#-------------------------------------------------------------
-# Process/system related functions:
-#-------------------------------------------------------------
-
-
-function my_ps() { ps $@ -u $USER -o "pid,%cpu,%mem,bsdtime,command" ; }
-function pp() { my_ps f | awk '!/awk/ && $0~var' var=${1:-".*"} ; }
-
-
-function killps()                 # Kill by process name.
-{
-    local pid pname sig="-TERM"   # Default signal.
-    if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
-        echo "Usage: killps [-SIGNAL] pattern"
-        return;
-    fi
-    if [ $# = 2 ]; then sig=$1 ; fi
-    for pid in $(my_ps| awk '!/awk/ && $0~pat { print $1 }' pat=${!#} ) ; do
-        pname=$(my_ps | awk '$1~var { print $5 }' var=$pid )
-        if ask "Kill process $pid <$pname> with signal $sig?"
-        then kill $sig $pid
-        fi
-    done
 }
 
 #-------------------------------------------------------------
@@ -187,19 +127,20 @@ function killps()                 # Kill by process name.
 #-------------------------------------------------------------
 [[ "$-" = *e* ]] && set +e && e=e # store -e flag when sourcing external resource
 shopt -s extglob
-list="
-/etc/bashrc
-$HOME/.rvm/scripts/rvm
-`echo $HOME/.bashrc.d/!(*~)`
-/etc/bash_completion"
-for file in $list
+list=()
+list+=(/etc/bashrc)
+list+=($HOME/.rvm/scripts/rvm)
+list+=($HOME/.bashrc.d/!(*~))
+list+=(/etc/bash_completion)
+list+=(/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh)
+for file in "${list[@]}"
 do
     shopt -u extglob
-    if [ -f $file ]; then
-        source $file
+    if [ -f "$file" ]; then
+        source "$file"
     fi
 done
-[ "$x" = "x" ] && set -x && unset x # restore -x flag
+unset list
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
 
 #-------------------------------------------------------------
@@ -232,46 +173,14 @@ fi
 
 
 #-------------------------------------------------------------
-# Try to keep environment pollution down, EPA loves us.
-#-------------------------------------------------------------
-unset use_color safe_term match_lhs
-
-#-------------------------------------------------------------
 # import local setting
 #-------------------------------------------------------------
-[ -e $HOME/.bashrc_local ] && source $HOME/.bashrc_local
+[ -e "$HOME/.bashrc_local" ] && source "$HOME/.bashrc"_local
 
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
-# dircolors --print-database uses its own built-in database
-# instead of using /etc/DIR_COLORS.  Try to use the external file
-# first to take advantage of user additions.  Use internal bash
-# globbing instead of external grep binary.
 #-------------------------------------------------------------
-use_color=false
-
-safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
-match_lhs=""
-[[ -f $HOME/.dircolors.256dark   ]] && match_lhs="$(<$HOME/.dircolors.256dark)"
-[[ -z ${match_lhs}    ]] \
-    && type -P dircolors >/dev/null \
-    && match_lhs=$(dircolors --print-database)
-[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
-if ${use_color} ; then
-    # Enable colors for ls, etc.  Prefer $HOME/.dircolors.256dark #64489
-    if type -P dircolors >/dev/null ; then
-        if [[ -f $HOME/.dircolors.256dark ]] ; then
-            eval $(dircolors -b $HOME/.dircolors.256dark)
-        fi
-    fi
-else
-    if [[ ${EUID} == 0 ]] ; then
-        # show root@ when we don't have colors
-        PS1='\u@\h \W \# '
-    else
-        PS1='\u@\h \w \$ '
-    fi
-fi
+eval "$(dircolors -b "$HOME/.dircolors.256dark")" || :
 
 #-------------------------------------------------------------
 # Prompt_command
@@ -285,26 +194,27 @@ _bash_history_sync() {
 
 # Powerline prompt
 
-if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || $(tty) =~ pts/ || "$platform" == "mac" || "$TMUX" != "" || "$SUDO_USER" != "" || $enable_local_powerline == 1 ]]; then
+while true
+do
     srcfiles=()
     srcfiles+=(/home/$SUDO_USER/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh)
     srcfiles+=($HOME/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh)
     srcfiles+=(/usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh)
-    srcfiles+=(/usr/local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh)
     srcfiles+=(/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh)
-    for powerline in ${srcfiles[@]}
+    for powerline in "${srcfiles[@]}"
     do
         if [ -f "$powerline" ]; then
-            echo $powerline
             powerline-daemon -q || true
-            POWERLINE_CONFIG_COMMAND=powerline-config
-            POWERLINE_BASH_CONTINUATION=1
-            POWERLINE_BASH_SELECT=1
+            export POWERLINE_CONFIG_COMMAND="powerline-config"
+            export POWERLINE_BASH_CONTINUATION=1
+            export POWERLINE_BASH_SELECT=1
             source "$powerline"
             break
         fi
     done
-fi
+    break
+done
+unset srcfiles powerline
 
 #-------------------------------------------------------------
 # History
@@ -358,7 +268,9 @@ true
 #-------------------------------------------------------------
 # thefuck
 #-------------------------------------------------------------
-hash thefuck 2>/dev/null && eval $(thefuck --alias) || true
+if hash thefuck 2>/dev/null; then
+    eval "$(thefuck --alias)"
+fi
 
 #-------------------------------------------------------------
 # kitty intergration
@@ -369,7 +281,7 @@ winscp() { echo -ne "\033];__ws:${PWD}\007"; }
 #-------------------------------------------------------------
 # Report command takes long time
 #-------------------------------------------------------------
-function timer_start {
+timer_start() {
     timer=${timer:-$SECONDS}
 }
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
@@ -380,7 +292,7 @@ else
             ;;
     esac
 fi
-function command_timer_stop {
+command_timer_stop() {
     local show_timer_after=30
     local duration=$(($SECONDS - ${command_timer:-$SECONDS}))
     local str_dur=""
@@ -432,7 +344,7 @@ pre_command () {
     fi
 }
 
-function post_command {
+post_command() {
     _cmd_rc=$?
     if [ -n "$AT_PROMPT" ]; then
         _cmd_rc=0

@@ -129,14 +129,16 @@ jcrm ()
 shopt -s extglob
 list=()
 list+=(/etc/bashrc)
-list+=($HOME/.rvm/scripts/rvm)
-list+=($HOME/.bashrc.d/!(*~))
 list+=(/etc/bash_completion)
+list+=($HOME/.rvm/scripts/rvm)
 list+=(/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh)
+# /etc/bashrc need to run after bashrc.d
+list+=($HOME/.bashrc.d/!(*~))
+list+=($HOME/.bashrc_local)
 for file in "${list[@]}"
 do
-    shopt -u extglob
     if [ -f "$file" ]; then
+        echo "$file"
         source "$file"
     fi
 done
@@ -173,11 +175,6 @@ fi
 
 
 #-------------------------------------------------------------
-# import local setting
-#-------------------------------------------------------------
-[ -e "$HOME/.bashrc_local" ] && source "$HOME/.bashrc"_local
-
-#-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
 #-------------------------------------------------------------
 eval "$(dircolors -b "$HOME/.dircolors.256dark")" || :
@@ -187,7 +184,6 @@ eval "$(dircolors -b "$HOME/.dircolors.256dark")" || :
 #-------------------------------------------------------------
 _bash_history_sync() {
     builtin history -a
-    HISTFILESIZE=$HISTSIZE
     builtin history -c
     builtin history -r
 }
@@ -225,9 +221,9 @@ shopt -s histappend
 shopt -s cmdhist
 
 export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
-export HISTIGNORE="&:ls:[bf]g:exit:printf *"
+export HISTIGNORE="&:ls:[bf]g:exit"
 export HOSTFILE=$HOME/.hosts    # Put list of remote hosts in ~/.hosts ...
-export HISTSIZE=10000
+export HISTSIZE=100000
 export HISTFILESIZE=$HISTSIZE
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
 
@@ -336,15 +332,22 @@ command_timer_stop() {
     unset _LAST_CMD
 }
 
-pre_command () {
-    if ! [[ $PROMPT_COMMAND == *"$BASH_COMMAND"* ]]; then
+set_screen_title ()
+{
+    echo -ne "\ek$1\e\\"
+}
+PRE_COMMAND () {
+    if [[ "$PROMPT_COMMAND" != *$BASH_COMMAND* ]]; then
         unset AT_PROMPT
         command_timer=$SECONDS
         _LAST_CMD=$BASH_COMMAND
+        echo -ne "\033]0;${_LAST_CMD:(-15)}\007"
+    else
+        echo -ne "\033]0;${PWD:(-10)}@${HOSTNAME:(-7)}\007"
     fi
 }
 
-post_command() {
+POST_COMMAND() {
     _cmd_rc=$?
     if [ -n "$AT_PROMPT" ]; then
         _cmd_rc=0
@@ -355,12 +358,11 @@ post_command() {
     fi
     return $_cmd_rc
 }
-while trap -p | grep -q pre_command; do trap - DEBUG; done
-trap 'pre_command' DEBUG
+while trap -p | grep -q PRE_COMMAND; do trap - DEBUG; done
+trap 'PRE_COMMAND' DEBUG
 
-if  [ "$PROMPT_COMMAND" = "${PROMPT_COMMAND/post_command/}" -a -n "$PROMPT_COMMAND" ]; then
-    PROMPT_COMMAND="post_command
-    $PROMPT_COMMAND"
+if [[ "$PROMPT_COMMAND" != *POST_COMMAND* ]]; then
+    PROMPT_COMMAND="POST_COMMAND"$'\n'"$PROMPT_COMMAND"
 fi
 
 # include rbenv
@@ -372,3 +374,6 @@ export LANG="zh_TW.UTF-8"
 export LC_TIME="en_US.utf8"
 
 export PATH="$HOME/.yarn/bin:$PATH"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

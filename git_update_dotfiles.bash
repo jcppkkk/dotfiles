@@ -8,7 +8,9 @@ if (which git-up); then
 	git-up
 else
 	git fetch --all --prune
+	git stash
 	git pull --rebase
+	git stash pop
 fi
 
 hash powerline-daemon && powerline-daemon -k || true

@@ -30,6 +30,4 @@ hardstatus alwayslastline
 hardstatus string '%{= kG} %H [%{= kw}%= %-Lw%{ck}(%n*%f%t%?(%u)%?)%{-}%+Lw %=%{-}] %{Y}%l %{W}%m/%d %0c '
 vbell off
 
-#screen -t top 0 vim
-#split -v
-#split
+screen -t htop  0 sh -c "htop"

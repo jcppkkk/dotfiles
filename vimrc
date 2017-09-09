@@ -29,25 +29,6 @@ call plug#begin()
 
 " Testing
 	Plug 'mfukar/robotframework-vim'
-" Themes
-	Plug 'altercation/vim-colors-solarized'
-	syntax enable
-	set background=dark
-	silent! colorscheme solarized
-
-	Plug 'bling/vim-airline'
-	Plug 'vim-airline/vim-airline-themes'
-	let g:airline_powerline_fonts = 1
-	let g:airline_theme='solarized'
-	" spaces are allowed after tabs, but not in between
-	" this algorithm works well with programming styles that use tabs for
-	" indentation and spaces for alignment
-	let g:airline#extensions#whitespace#mixed_indent_algo = 2
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#fnamemod = ':t'
-	let g:airline#extensions#tabline#excludes = []
-	let g:airline#extensions#tabline#exclude_preview = 1
-	let g:airline#extensions#tabline#fnametruncate = 8
 " General programming
 	Plug 'vim-scripts/AutoTag'
 " format / indent
@@ -74,13 +55,15 @@ call plug#begin()
 	let g:syntastic_aggregate_errors = 1
 	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
 	let g:syntastic_python_checkers=['flake8']
-	let g:syntastic_python_flake8_args='--ignore=E501'
+	let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241'
 	let g:syntastic_sh_checkers = ['shellcheck']
 
 " language support - others
 	Plug 'chase/vim-ansible-yaml'
 	Plug 'vim-ruby/vim-ruby'
 	Plug 'kchmck/vim-coffee-script'
+	Plug 'PProvost/vim-ps1'
+	Plug 'vim-scripts/Improved-AnsiEsc'
 " language support - Shell
 	Plug 'chrisbra/vim-sh-indent'
 " language support - Docker
@@ -91,6 +74,7 @@ call plug#begin()
 	let g:pymode_rope = 0
 	let g:pymode_lint_checkers = ['pyflakes', 'pep8']
 	let g:pymode_lint_ignore = "E501,E221"
+	let g:pymode_lint = 1
 " language support - C/C++
 	Plug 'scrooloose/nerdcommenter'
 	let g:NERDSpaceDelims = 1
@@ -107,7 +91,7 @@ call plug#begin()
 	let g:valgrind_arguments=''
 	Plug 'xolox/vim-misc'
 	Plug 'xolox/vim-easytags'
-	let g:easytags_auto_highlight = 0
+	let g:easytags_auto_highlight = 1
 	let g:easytags_async = 1
 	" Plug 'oblitum/YouCompleteMe'
 	" let g:ycm_confirm_extra_conf = 0
@@ -141,6 +125,10 @@ call plug#begin()
 " Editing Tools
 	Plug 'vim-scripts/renamer.vim'
 	Plug 'nathanaelkane/vim-indent-guides'
+	let g:indent_guides_enable_on_vim_startup = 1
+	let g:indent_guides_auto_colors = 0
+	let g:indent_guides_start_level=2
+	let g:indent_guides_guide_size=1
 	Plug 'guns/xterm-color-table.vim'
 	Plug 'terryma/vim-multiple-cursors'
 	Plug 'junegunn/vim-easy-align'
@@ -155,9 +143,30 @@ call plug#begin()
 				\ }
 	let g:easy_align_ignore_groups = ['String']
 
+" Themes
+	Plug 'altercation/vim-colors-solarized'
+	syntax enable
+	set background=dark
+	let g:solarized_diffmode="low"
+
+	Plug 'bling/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
+	let g:airline_powerline_fonts = 1
+	let g:airline_theme='solarized'
+	" spaces are allowed after tabs, but not in between
+	" this algorithm works well with programming styles that use tabs for
+	" indentation and spaces for alignment
+	let g:airline#extensions#whitespace#mixed_indent_algo = 2
+	let g:airline#extensions#tabline#enabled = 1
+	let g:airline#extensions#tabline#fnamemod = ':t'
+	let g:airline#extensions#tabline#excludes = []
+	let g:airline#extensions#tabline#exclude_preview = 1
+	let g:airline#extensions#tabline#fnametruncate = 8
 call plug#end()
 set wildmode=longest,list
 set wildmenu
+" load colorscheme out of plug section 
+colorscheme solarized
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -221,7 +230,7 @@ set scrolloff=5                 " keep at least 10 lines above/below cursor
 set sidescrolloff=5             " keep at least 5 columns left/right of cursoraaaaa
 set history=200                 " remember the last 200 commands
 set showcmd		        " display incomplete commands
-set tags=./tags;
+set tags=./.tags;,~/.vimtags
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " meta
@@ -351,11 +360,6 @@ map <LocalLeader>bb :ls<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup for the visual environment
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_auto_colors = 0
-let g:indent_guides_start_level=2
-let g:indent_guides_guide_size=1
-
 if &term =~ "putty-256color" | set term=xterm-256color | endif
 highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
 "match OverLength /.\%82v.*/
@@ -419,7 +423,6 @@ nmap [1~ ^
 imap OH <esc>^i
 nmap OH ^
 
-map ZZ :wqa!<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " box comments tool
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -437,15 +440,23 @@ nnoremap <silent> <F2> :TagbarToggle<CR>
 map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
 imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
 
-nnoremap <F4> :SyntasticToggleMode\|:silent w<CR>
-fun! SuperWrite()
-        silent write !sudo tee % >/dev/null
-        edit!
+map <F4> :SyntasticToggleMode\|:silent w<CR>
+map! <F4> <Esc><F4>a
+map <F5>  :w<CR>
+map! <F5>  <Esc>:w<CR>i
+function! SaveAllExit()
+	try
+		wqa!
+	catch
+		write !sudo tee % >/dev/null
+		edit!
+		wqa!
+	endtry
 endfun
-map <F5>  :silent wa \|\| silent call SuperWrite()<CR>
+map ZZ :silent call SaveAllExit()<CR>
 
-nnoremap <F6> :%s/\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
-vnoremap <F6> "hy:silent %s/<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
+nnoremap <F6> :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
+vnoremap <F6> "hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
 nnoremap <F7> :silent gr "<c-r>=expand("<cword>")<CR>" .<CR>
 vnoremap <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
 
@@ -494,8 +505,13 @@ function! Pre_err()
 	endtry
 endfunction
 
-nmap <silent> <C-Up> :call <SID>LocationPrevious()<CR>
-nmap <silent> <C-Down> :call <SID>LocationNext()<CR>
+" Bind for terminator
+map [1;5A <C-Up>
+map [1;5B <C-Down>
+map <silent> <C-Up> :call <SID>LocationPrevious()<CR>
+map <silent> <C-Down> :call <SID>LocationNext()<CR>
+map! <silent> <C-Up> <Esc><C-Up>i
+map! <silent> <C-Down> <Esc><C-Down>i
 function! <SID>LocationPrevious()
 	try
 		lprev!
@@ -595,12 +611,12 @@ autocmd BufNewFile,BufReadPost *.js       setl shiftwidth=4 softtabstop=4 expand
 autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost log        AnsiEsc
 autocmd FileType               Dockerfile setl shiftwidth=2 softtabstop=2 tabstop=8
 autocmd FileType               Podfile    setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               Rakefile   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               c          setl fo=cq        wm=0          formatoptions+=r
 autocmd FileType               css        setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               gitcommit  call setpos('.',  [0,           1, 1, 0])
 autocmd FileType               html       setl shiftwidth=4 softtabstop=4 expandtab
 autocmd FileType               jade       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabstop=8
@@ -612,6 +628,8 @@ autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expand
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 tabstop=4
+autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])
+autocmd FileType               gitcommit  set spell spelllang=en_us
 
 " The Silver Searcher
 if executable('ag')
@@ -625,7 +643,10 @@ if executable('ag')
 	" ag is fast enough that CtrlP doesn't need to cache
 	let g:ctrlp_use_caching = 0
 endif
+
+" Exclude quickfix buffer from `:bnext` `:bprevious`
 augroup qf
 	autocmd!
 	autocmd FileType qf set nobuflisted
 augroup END
+

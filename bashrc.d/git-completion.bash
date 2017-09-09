@@ -28,6 +28,14 @@
 # completion style.  For example '!f() { : git commit ; ... }; f' will
 # tell the completion to use commit completion.  This also works with aliases
 # of form "!sh -c '...'".  For example, "!sh -c ': git commit ; ... '".
+#
+# You can set the following environment variables to influence the behavior of
+# the completion routines:
+#
+#   GIT_COMPLETION_CHECKOUT_NO_GUESS
+#
+#     When set to "1", do not include "DWIM" suggestions in git-checkout
+#     completion (e.g., completing "foo" when "origin/foo" exists).
 
 case "$COMP_WORDBREAKS" in
 *:*) : great ;;
@@ -1249,7 +1257,8 @@ _git_checkout ()
 		# check if --track, --no-track, or --no-guess was specified
 		# if so, disable DWIM mode
 		local flags="--track --no-track --no-guess" track_opt="--track"
-		if [ -n "$(__git_find_on_cmdline "$flags")" ]; then
+		if [ "$GIT_COMPLETION_CHECKOUT_NO_GUESS" = "1" ] ||
+		   [ -n "$(__git_find_on_cmdline "$flags")" ]; then
 			track_opt=''
 		fi
 		__git_complete_refs $track_opt
@@ -1310,6 +1319,7 @@ _git_clone ()
 			--template=
 			--depth
 			--single-branch
+			--no-tags
 			--branch
 			--recurse-submodules
 			--no-single-branch
@@ -2326,14 +2336,23 @@ _git_config ()
 	esac
 	__gitcomp "
 		add.ignoreErrors
+		advice.amWorkDir
 		advice.commitBeforeMerge
 		advice.detachedHead
 		advice.implicitIdentity
-		advice.pushNonFastForward
+		advice.pushAlreadyExists
+		advice.pushFetchFirst
+		advice.pushNeedsForce
+		advice.pushNonFFCurrent
+		advice.pushNonFFMatching
+		advice.pushUpdateRejected
 		advice.resolveConflict
+		advice.rmHints
 		advice.statusHints
+		advice.statusUoption
 		alias.
 		am.keepcr
+		am.threeWay
 		apply.ignorewhitespace
 		apply.whitespace
 		branch.autosetupmerge
@@ -2378,19 +2397,26 @@ _git_config ()
 		color.status.added
 		color.status.changed
 		color.status.header
+		color.status.localBranch
 		color.status.nobranch
+		color.status.remoteBranch
 		color.status.unmerged
 		color.status.untracked
 		color.status.updated
 		color.ui
+		commit.cleanup
+		commit.gpgSign
 		commit.status
 		commit.template
+		commit.verbose
 		core.abbrev
 		core.askpass
 		core.attributesfile
 		core.autocrlf
 		core.bare
 		core.bigFileThreshold
+		core.checkStat
+		core.commentChar
 		core.compression
 		core.createObject
 		core.deltaBaseCacheLimit
@@ -2400,6 +2426,8 @@ _git_config ()
 		core.fileMode
 		core.fsyncobjectfiles
 		core.gitProxy
+		core.hideDotFiles
+		core.hooksPath
 		core.ignoreStat
 		core.ignorecase
 		core.logAllRefUpdates
@@ -2407,20 +2435,30 @@ _git_config ()
 		core.notesRef
 		core.packedGitLimit
 		core.packedGitWindowSize
+		core.packedRefsTimeout
 		core.pager
+		core.precomposeUnicode
 		core.preferSymlinkRefs
 		core.preloadindex
+		core.protectHFS
+		core.protectNTFS
 		core.quotepath
 		core.repositoryFormatVersion
 		core.safecrlf
 		core.sharedRepository
 		core.sparseCheckout
+		core.splitIndex
+		core.sshCommand
 		core.symlinks
 		core.trustctime
 		core.untrackedCache
 		core.warnAmbiguousRefs
 		core.whitespace
 		core.worktree
+		credential.helper
+		credential.useHttpPath
+		credential.username
+		credentialCache.ignoreSIGHUP
 		diff.autorefreshindex
 		diff.external
 		diff.ignoreSubmodules
@@ -2452,15 +2490,19 @@ _git_config ()
 		format.thread
 		format.to
 		gc.
+		gc.aggressiveDepth
 		gc.aggressiveWindow
 		gc.auto
+		gc.autoDetach
 		gc.autopacklimit
+		gc.logExpiry
 		gc.packrefs
 		gc.pruneexpire
 		gc.reflogexpire
 		gc.reflogexpireunreachable
 		gc.rerereresolved
 		gc.rerereunresolved
+		gc.worktreePruneExpire
 		gitcvs.allbinary
 		gitcvs.commitmsgannotation
 		gitcvs.dbTableNamePrefix
@@ -2599,6 +2641,8 @@ _git_config ()
 		sendemail.thread
 		sendemail.to
 		sendemail.validate
+		sendemail.smtpbatchsize
+		sendemail.smtprelogindelay
 		showbranch.default
 		status.relativePaths
 		status.showUntrackedFiles
@@ -2801,7 +2845,7 @@ _git_show_branch ()
 _git_stash ()
 {
 	local save_opts='--all --keep-index --no-keep-index --quiet --patch --include-untracked'
-	local subcommands='save list show apply clear drop pop create branch'
+	local subcommands='push save list show apply clear drop pop create branch'
 	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		case "$cur" in
@@ -2816,6 +2860,9 @@ _git_stash ()
 		esac
 	else
 		case "$subcommand,$cur" in
+		push,--*)
+			__gitcomp "$save_opts --message"
+			;;
 		save,--*)
 			__gitcomp "$save_opts"
 			;;

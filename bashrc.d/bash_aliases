@@ -15,13 +15,13 @@
 # Personnal Aliases
 #-------------------
 
-alias ssh='LC_ALL=en_US.UTF-8 ssh'
+alias ssh='export LC_ALL=en_US.UTF-8; ssh'
 alias aa='vim ~/.bashrc && source ~/.bashrc'
 alias as='vim ~/.bashrc.d/bash_aliases && source ~/.bashrc'
 alias an='source ~/.bashrc'
 alias zz='vim ~/.vimrc'
-alias wttr='curl http://wttr.in/taipei'
 
+alias wttr='curl "wttr.in/taipei?1p&lang=zh"'
 alias rm='rm -ri'
 alias cp='cp -ri'
 alias mv='mv -i'
@@ -72,13 +72,15 @@ alias lr='ls -lR'          # recursive ls
 #-------------------------------------------------------------
 alias add='git add'
 alias br='git branch --sort=-committerdate -vv'
-alias bra='git branch --sort=-committerdate -avv'
+alias bra='br -a'
+
 alias ci='git commit --verbose'
 alias co='git checkout'
 alias cs='git checkout $(__git_refs | percol)'
 alias gd='git diff'
-alias gr='git gr'
-alias gra='git gr --all'
+alias gr=$'git log --graph --pretty=format:\'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\' --abbrev-commit --date=relative'
+alias gra='gr --all'
+
 alias gre='git remote'
 alias gp='git pull'
 alias st='git status'
@@ -89,10 +91,35 @@ alias gm='git merge'
 alias gmt='git mergetool'
 alias grc='git rebase --continue || git status'
 alias grs='git rebase --skip'
+
 alias guptag='git tag -l | xargs git tag -d && git fetch'
 alias gltag='git for-each-ref refs/tags/ --format "%(objecttype) %(refname:short)" |  while read ty name; do [ $ty = commit ] && echo $name; done'
 alias gva='(cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | sed -ne "s#.* ##p"))'
-function retag(){ tag=$1; date="$(git show $tag --format=%aD | head -1)"; GIT_COMMITTER_DATE="$date" git tag -a -m $tag -f $tag $tag; }
+alias gt='git tag'
+
+touchtag(){ tag=$1; export GIT_COMMITTER_DATE="$(git show $tag --format=%aD | head -1)"; git tag -a -m $tag -f $tag $tag; }
+deltag() {
+	git tag -d $1
+	git push -d origin $1
+}
+delbr() {
+	git branch -d $1
+	git push -d origin $1
+}
+mvtag() {
+	git tag $2 $1
+	git tag -d $1
+	git push -d origin $1&
+	git push origin $2&
+	wait
+}
+mvbr() {
+	git branch -m $1 $2
+	git push -d origin $1&
+	git push origin $2&
+	wait
+}
+remote_tag(){ git tag -f $1; git push -f origin $1; }
 
 alias ag='ag --ignore *~'
 
@@ -104,19 +131,9 @@ alias adu='sudo apt-get update && sudo apt-get dist-upgrade --auto-remove --purg
 #-------------------------------------------------------------
 # Docker
 #-------------------------------------------------------------
-# Delete all stopped containers.
-alias dcleanc='printf "\n>>> Deleting stopped containers\n\n" && docker rm $(docker ps -a -q)'
-# Delete all untagged images.
-alias dcleani='printf "\n>>> Deleting untagged images\n\n" && docker rmi $(docker images -q -f dangling=true)'
-# Delete all stopped containers and untagged images.
-alias dclean='dcleanc || true && dcleani'
+alias dclean='docker ps -a -q|xargs -r docker rm; docker images -q -f dangling=true|xargs -r docker rmi; docker volume ls -qf dangling=true|xargs -r docker volume rm'
 alias dt='docker run --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz images -t'
 alias dr='docker run'
 alias dp='docker push'
 alias dip='docker inspect --format "{{.NetworkSettings.IPAddress}}"'
 alias rmi='docker rmi'
-
-#-------------------------------------------------------------
-# tmux
-#-------------------------------------------------------------
-alias tmux='TERM=xterm-256color tmux'

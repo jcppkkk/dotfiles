@@ -5,8 +5,8 @@
 	autocrlf = input
 	whitespace = cr-at-eol
 	pager = sed 's/\\t/        /g' | less -R
-	excludesfile = $HOME/.gitignore_global
 	preloadindex = true
+	excludesfile = ~/.gitignore_global
 [color]
 	branch = auto
 	diff = auto

@@ -117,9 +117,8 @@ mvbr() {
 	git branch -m $1 $2
 	git push -d origin $1&
 	git push origin $2&
-	wait
 }
-remote_tag(){ git tag -f $1; git push -f origin $1; }
+remote_tag(){ git tag -f $1 $2; git push -f origin $1; }
 
 alias ag='ag --ignore *~'
 

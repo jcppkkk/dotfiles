@@ -130,7 +130,6 @@ shopt -s extglob
 list=()
 list+=(/etc/bashrc)
 list+=(/etc/bash_completion)
-list+=($HOME/.rvm/scripts/rvm)
 list+=(/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh)
 # /etc/bashrc need to run after bashrc.d
 list+=($HOME/.bashrc.d/!(*~))
@@ -374,6 +373,3 @@ export LANG="zh_TW.UTF-8"
 export LC_TIME="en_US.utf8"
 
 export PATH="$HOME/.yarn/bin:$PATH"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"

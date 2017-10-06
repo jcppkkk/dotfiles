@@ -75,6 +75,9 @@ call plug#begin()
 	let g:pymode_lint_checkers = ['pyflakes', 'pep8']
 	let g:pymode_lint_ignore = "E501,E221"
 	let g:pymode_lint = 1
+	let g:pymode_folding=0
+	"Plug 'davidhalter/jedi-vim'
+	"let g:jedi#completions_enabled = 0
 " language support - C/C++
 	Plug 'scrooloose/nerdcommenter'
 	let g:NERDSpaceDelims = 1
@@ -91,8 +94,9 @@ call plug#begin()
 	let g:valgrind_arguments=''
 	Plug 'xolox/vim-misc'
 	Plug 'xolox/vim-easytags'
-	let g:easytags_auto_highlight = 1
+	let g:easytags_auto_highlight = 0
 	let g:easytags_async = 1
+	"let g:easytags_dynamic_files = 2
 	" Plug 'oblitum/YouCompleteMe'
 	" let g:ycm_confirm_extra_conf = 0
 	" let g:clang_snippets_engine='clang_complete'
@@ -120,6 +124,7 @@ call plug#begin()
 	nmap <M-Up> <Plug>GitGutterPrevHunk
 	nmap <esc>[1;3B <Plug>GitGutterNextHunk
 	nmap <esc>[1;3A <Plug>GitGutterPrevHunk
+	let g:gitgutter_max_signs = 5000
 	Plug 'tpope/vim-fugitive'
 
 " Editing Tools
@@ -142,6 +147,9 @@ call plug#begin()
 				\	}
 				\ }
 	let g:easy_align_ignore_groups = ['String']
+	Plug 'Valloric/ListToggle'
+	let g:lt_location_list_toggle_map = '<leader>l'
+	let g:lt_quickfix_list_toggle_map = '<leader>q'
 
 " Themes
 	Plug 'altercation/vim-colors-solarized'
@@ -167,38 +175,6 @@ set wildmode=longest,list
 set wildmenu
 " load colorscheme out of plug section 
 colorscheme solarized
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" git changes navigation
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! GetBufferList()
-	redir =>buflist
-	silent! ls!
-	redir END
-	return buflist
-endfunction
-function! ToggleList(bufname, pfx)
-	let buflist = GetBufferList()
-	for bufnum in map(filter(split(buflist, '\n'), 'v:val =~ "'.a:bufname.'"'), 'str2nr(matchstr(v:val, "\\d\\+"))')
-		if bufwinnr(bufnum) != -1
-			exec(a:pfx.'close')
-			return
-		endif
-	endfor
-	if a:pfx == 'l' && len(getloclist(0)) == 0
-		echohl ErrorMsg
-		echo "Location List is Empty."
-		return
-	endif
-	let winnr = winnr()
-	exec(a:pfx.'open')
-	if winnr() != winnr
-		wincmd p
-	endif
-endfunction
-nmap <silent> <leader>l :call ToggleList("Location List", 'l')<CR>
-nmap <silent> <leader>e :call ToggleList("Quickfix List", 'c')<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns
@@ -604,8 +580,8 @@ endif
 
 autocmd BufNewFile,BufReadPost *.coffee   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.erb      setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.gcov     set  filetype=gcov
-autocmd BufNewFile,BufReadPost *.go       set  shiftwidth=4 noexpandtab   tabstop=4
+autocmd BufNewFile,BufReadPost *.gcov     setl filetype=gcov
+autocmd BufNewFile,BufReadPost *.go       setl shiftwidth=4 noexpandtab   tabstop=4
 autocmd BufNewFile,BufReadPost *.hbs      setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.js       setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
@@ -622,7 +598,7 @@ autocmd FileType               jade       setl shiftwidth=2 softtabstop=2 expand
 autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabstop=8
 autocmd FileType               markdown   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               php        setl shiftwidth=4 softtabstop=4 expandtab
-autocmd FileType               python     set  cindent
+autocmd FileType               python     setl shiftwidth=4 softtabstop=4 expandtab cindent
 autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
@@ -650,3 +626,4 @@ augroup qf
 	autocmd FileType qf set nobuflisted
 augroup END
 
+set clipboard="unnamedplus\|linux"

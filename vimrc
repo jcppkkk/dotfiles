@@ -69,45 +69,42 @@ call plug#begin()
 " language support - Docker
 	Plug 'ekalinin/Dockerfile.vim'
 " language support - Python
-	Plug 'klen/python-mode'
-	let g:pymode_folding=0
-	let g:pymode_rope = 0
-	let g:pymode_lint_checkers = ['pyflakes', 'pep8']
-	let g:pymode_lint_ignore = "E501,E221"
-	let g:pymode_lint = 1
-	let g:pymode_folding=0
-	"Plug 'davidhalter/jedi-vim'
-	"let g:jedi#completions_enabled = 0
+	"Plug 'klen/python-mode'
+	"let g:pymode_folding=0
+	"let g:pymode_rope = 0
+	"let g:pymode_lint_checkers = ['pyflakes', 'pep8']
+	"let g:pymode_lint_ignore = "E501,E221"
+	"let g:pymode_lint = 1
+	"let g:pymode_folding=0
+	" Track the engine.
+	Plug 'SirVer/ultisnips'
+	" Snippets are separated from the engine. Add this if you want them:
+	Plug 'honza/vim-snippets'
+		" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+		let g:UltiSnipsExpandTrigger="<tab>"
+		let g:UltiSnipsJumpForwardTrigger="<c-b>"
+		let g:UltiSnipsJumpBackwardTrigger="<c-x>"
+		" If you want :UltiSnipsEdit to split your window.
+		let g:UltiSnipsEditSplit="vertical"
 " language support - C/C++
 	Plug 'scrooloose/nerdcommenter'
-	let g:NERDSpaceDelims = 1
-	let g:NERDTrimTrailingWhitespace = 1
-	nmap <leader>cr :call Reformat_comment()<CR>
-	function! Reformat_comment()
-		normal k$]/
-		silent! s#^\s*\*/#&#
-		normal [/v]/\c gv=gvJgv\cs[/v]/
-		pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
-		normal gv]/gq
-	endfunction
+		let g:NERDSpaceDelims = 1
+		let g:NERDTrimTrailingWhitespace = 1
+		nmap <leader>cr :call Reformat_comment()<CR>
+		function! Reformat_comment()
+			normal k$]/
+			silent! s#^\s*\*/#&#
+			normal [/v]/\c gv=gvJgv\cs[/v]/
+			pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
+			normal gv]/gq
+		endfunction
 	Plug 'vim-scripts/valgrind.vim'
-	let g:valgrind_arguments=''
+		let g:valgrind_arguments=''
 	Plug 'xolox/vim-misc'
 	Plug 'xolox/vim-easytags'
-	let g:easytags_auto_highlight = 0
-	let g:easytags_async = 1
-	"let g:easytags_dynamic_files = 2
-	" Plug 'oblitum/YouCompleteMe'
-	" let g:ycm_confirm_extra_conf = 0
-	" let g:clang_snippets_engine='clang_complete'
-	" let g:ycm_add_preview_to_completeopt = 1
-	" let g:ycm_autoclose_preview_window_after_insertion = 1
-	" let g:ycm_use_ultisnips_completer = 1
-	" let g:ycm_seed_identifiers_with_syntax = 1
-	" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-	" let g:ycm_filetype_blacklist = { 'tagbar':1,'qf':1,'notes':1,'markdown':1,'unite':1,'text':1,'vimwiki':1,'pandoc':1,'infolog':1,'mail':1 }
-	" let g:ycm_show_diagnostics_ui = 0
-	" nnoremap <C-p> :YcmCompleter GoTo<CR>
+		let g:easytags_auto_highlight = 0
+		let g:easytags_async = 1
+		"let g:easytags_dynamic_files = 2
 	Plug 'vim-scripts/cuteErrorMarker'
 	Plug 'majutsushi/tagbar'
 	autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
@@ -394,10 +391,6 @@ else
 endif
 
 map Q gq
-imap [1~ <esc>^i
-nmap [1~ ^
-imap OH <esc>^i
-nmap OH ^
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " box comments tool
@@ -581,6 +574,7 @@ endif
 autocmd BufNewFile,BufReadPost *.coffee   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.erb      setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.gcov     setl filetype=gcov
+autocmd BufNewFile,BufReadPost Rockerfile setl filetype=Dockerfile
 autocmd BufNewFile,BufReadPost *.go       setl shiftwidth=4 noexpandtab   tabstop=4
 autocmd BufNewFile,BufReadPost *.hbs      setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.js       setl shiftwidth=4 softtabstop=4 expandtab
@@ -627,3 +621,8 @@ augroup qf
 augroup END
 
 set clipboard="unnamedplus\|linux"
+imap [1~ <esc>^i
+nmap [1~ ^
+imap OH <esc>^i
+nmap OH ^
+

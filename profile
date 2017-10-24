@@ -11,7 +11,6 @@ umask 022
 export TZ='Asia/Taipei'
 export LANG="en_US.utf8"
 export LANGUAGE="en"
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then

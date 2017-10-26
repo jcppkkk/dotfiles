@@ -81,7 +81,7 @@ call plug#begin()
 	" Snippets are separated from the engine. Add this if you want them:
 	Plug 'honza/vim-snippets'
 		" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-		let g:UltiSnipsExpandTrigger="<tab>"
+		let g:UltiSnipsExpandTrigger="<c-tab>"
 		let g:UltiSnipsJumpForwardTrigger="<c-b>"
 		let g:UltiSnipsJumpBackwardTrigger="<c-x>"
 		" If you want :UltiSnipsEdit to split your window.

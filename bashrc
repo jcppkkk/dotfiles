@@ -8,6 +8,10 @@ if [[ $- != *i* && ${setupdotfile:-} = "" ]] ; then
     return
 fi
 
+export LANGUAGE="zh_TW.UTF-8"
+export LANG="zh_TW.UTF-8"
+export LC_TIME="en_US.utf8"
+export LC_CTYPE="zh_TW.UTF-8"
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
@@ -15,8 +19,8 @@ if hash greadlink 2>/dev/null; then readlink=greadlink; fi
 if hash readlink 2>/dev/null; then readlink=readlink; fi
 
 if ! [[ ${BASH_SOURCE[0]} == *"/dev/fd/"* ]]; then
-    current="$( cd "$( dirname "$( $readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
-    (cd "$current"; pwd ; git status -u)
+    current="$( cd "$( dirname "$( $readlink -f "${BASH_SOURCE[0]}" )" )"; pwd )"
+    (cd "$current"; pwd ; git diff --stat)
 fi
 
 #-------------------------------------------------------------
@@ -65,6 +69,9 @@ export  LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 #-------------------------------------------------------------
 
 vgrep() {
+    if [[ $1 == -rn ]];then
+        shift
+    fi
     vim +cfile\ <(ag --vimgrep "$@" | grep -v '~:')
 }
 
@@ -130,14 +137,13 @@ shopt -s extglob
 list=()
 list+=(/etc/bashrc)
 list+=(/etc/bash_completion)
-list+=(/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh)
 # /etc/bashrc need to run after bashrc.d
 list+=($HOME/.bashrc.d/!(*~))
 list+=($HOME/.bashrc_local)
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 for file in "${list[@]}"
 do
     if [ -f "$file" ]; then
-        echo "$file"
         source "$file"
     fi
 done
@@ -172,11 +178,10 @@ if [ -d "${PYENV_ROOT}" ]; then
     eval "$(pyenv init -)"
 fi
 
-
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
 #-------------------------------------------------------------
-eval "$(dircolors -b "$HOME/.dircolors.256dark")" || :
+eval "$(dircolors -b "$HOME/.dircolors.ansi-universal")" || :
 
 #-------------------------------------------------------------
 # Prompt_command
@@ -220,12 +225,11 @@ shopt -s histappend
 shopt -s cmdhist
 
 export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
-export HISTIGNORE="&:ls:[bf]g:exit"
+export HISTIGNORE='&:ls:[bf]g:exit:printf "\\033*'
 export HOSTFILE=$HOME/.hosts    # Put list of remote hosts in ~/.hosts ...
 export HISTSIZE=100000
 export HISTFILESIZE=$HISTSIZE
 export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
-
 
 #-------------------------------------------------------------
 # mintty-colors-solarized (for windows::mintty)
@@ -307,19 +311,19 @@ command_timer_stop() {
             str_dur=$(printf "(%s seconds) " $secs)
         fi
     fi
-    if [ -z "$str_dur" -a $_cmd_rc -eq 0 ] ; then
-        return $_cmd_rc
+    if [ -z "$str_dur" -a $1 -eq 0 ] ; then
+        return $1
     fi
     # Print on error or wainting too long
     local ncolors=$(tput colors 2>/dev/null)
-    if [ ${_cmd_rc:=0} -eq 0 ]; then
+    if [ $1 -eq 0 ]; then
         local status=success
         local color_status="\e[0;32m"
         local color_cmd="\e[7m"
     else
         local color_status="\e[0;31m"
         local color_cmd="\e[00m\e[3;41m"
-        local status="failed with code ${color_cmd}${_cmd_rc}${color_status}"
+        local status="failed with code ${color_cmd}${1}${color_status}"
     fi
     local color_reset="\e[00m"
     if [ ${ncolors:=0} -lt 8 ]; then
@@ -327,49 +331,49 @@ command_timer_stop() {
         color_cmd=""
         color_reset=""
     fi
-    echo -e "${color_status}#### Command ${color_cmd}$_LAST_CMD${color_status} ${status} $str_dur#### ${color_reset}"
-    unset _LAST_CMD
+    echo -e "${color_status}#### Command ${color_cmd}$_cmd${color_status} ${status} $str_dur#### ${color_reset}"
 }
 
 set_screen_title ()
 {
     echo -ne "\ek$1\e\\"
 }
-PRE_COMMAND () {
-    if [[ "$PROMPT_COMMAND" != *$BASH_COMMAND* ]]; then
-        unset AT_PROMPT
-        command_timer=$SECONDS
-        _LAST_CMD=$BASH_COMMAND
-        echo -ne "\033]0;${_LAST_CMD:(-15)}\007"
-    else
-        echo -ne "\033]0;${PWD:(-10)}@${HOSTNAME:(-7)}\007"
+
+BEBUG_TRAP () {
+    if [[ "$PROMPT_COMMAND" == *"$BASH_COMMAND"* || "$BASH_SUBSHELL" != 0 ]]; then
+        return
     fi
+    command_timer=$SECONDS
+    _cmd="$BASH_COMMAND"
+    echo -ne "\033]0;${_cmd::20}\007"
 }
+while trap -p | grep -q BEBUG_TRAP; do trap - DEBUG; done
+trap 'BEBUG_TRAP' DEBUG
 
 POST_COMMAND() {
-    _cmd_rc=$?
-    if [ -n "$AT_PROMPT" ]; then
-        _cmd_rc=0
-    else
-        command_timer_stop
-        _bash_history_sync
-        AT_PROMPT=1
-    fi
-    return $_cmd_rc
-}
-while trap -p | grep -q PRE_COMMAND; do trap - DEBUG; done
-trap 'PRE_COMMAND' DEBUG
+    local r=$?
 
-if [[ "$PROMPT_COMMAND" != *POST_COMMAND* ]]; then
-    PROMPT_COMMAND="POST_COMMAND"$'\n'"$PROMPT_COMMAND"
+    if [[ -n "$_cmd" ]]; then
+        command_timer_stop $r
+        _bash_history_sync
+        _cmd=
+    else
+        r=0
+    fi
+    echo -ne "\033]0;${HOSTNAME}\007"
+    _last_cmd=$_cmd
+    _last_r=$r
+
+    return $r
+}
+
+if [[ -z "$PROMPT_COMMAND" ]]; then
+    PROMPT_COMMAND="POST_COMMAND"
+elif [[ "$PROMPT_COMMAND" != *"POST_COMMAND"* ]]; then
+    PROMPT_COMMAND="POST_COMMAND;$PROMPT_COMMAND"
 fi
 
 # include rbenv
 if hash rbenv 2>/dev/null; then
     eval "$(rbenv init -)"
 fi
-export LANGUAGE="zh_TW.UTF-8"
-export LANG="zh_TW.UTF-8"
-export LC_TIME="en_US.utf8"
-
-export PATH="$HOME/.yarn/bin:$PATH"

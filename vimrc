@@ -55,10 +55,11 @@ call plug#begin()
 	let g:syntastic_aggregate_errors = 1
 	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
 	let g:syntastic_python_checkers=['flake8']
-	let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241'
+	let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241,E221'
 	let g:syntastic_sh_checkers = ['shellcheck']
 
 " language support - others
+	Plug 'tell-k/vim-autopep8'
 	Plug 'chase/vim-ansible-yaml'
 	Plug 'vim-ruby/vim-ruby'
 	Plug 'kchmck/vim-coffee-script'

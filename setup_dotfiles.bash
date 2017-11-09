@@ -31,6 +31,7 @@ cd $current
 source bashrc.d/get-platform
 source /etc/lsb-release
 DIST=${DISTRIB_CODENAME/serena/xenial}
+DIST=${DIST/sonya/xenial}
 
 #
 # Main script start, install ansible
@@ -39,7 +40,7 @@ case $platform in
 'linux')
 	if ! test -f /etc/apt/sources.list.d/ansible.list; then
 		cat <<-EOF |
-		deb http://ppa.launchpad.net/ansible/ansible/ubuntu ${DIST} main
+		deb http://ppa.launchpad.net/ansible/ansible/ubuntu $DIST main
 		EOF
 		sudo tee /etc/apt/sources.list.d/ansible.list
 	fi

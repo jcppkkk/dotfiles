@@ -2,6 +2,7 @@
 set -x
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
+PATH=$PATH:/usr/local/bin
 
 # Clean old files
 [ -d local ] && echo The local folder for powerline is not needed anymore, remove? && \rm -ri local

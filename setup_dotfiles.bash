@@ -25,6 +25,14 @@ realpath() {
 	[[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
 
+retry_root() {
+	cmd=$(command -v $1)
+	shift
+	if ! $cmd $@; then
+		sudo -H LANG=C $cmd $@
+	fi
+}
+
 # setup env and location
 PATH="$PATH:/usr/local/bin"
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -38,16 +46,13 @@ DIST=${DIST/sonya/xenial}
 ## install pips & powerline
 #######################
 # Remove deprecated pyenv version powerline
-rm -rf ~/.pyenv/
-if ! hash pip2.7 2>/dev/null; then
-	curl https://bootstrap.pypa.io/get-pip.py | sudo -H python
-fi
-
-if hash powerline-daemon 2>/dev/null; then
+if command -v powerline-daemon 2>/dev/null; then
 	powerline-daemon -k || true
 fi
-sudo -H LANG=C $(hash -t pip2.7) install -U pip
-sudo -H LANG=C $(hash -t pip2.7) install -U -r requirements_dotfiles.txt
+
+retry_root python <(wget https://bootstrap.pypa.io/get-pip.py -q -O-)
+retry_root pip2.7 install -U pip
+retry_root pip2.7 install -U -r requirements_dotfiles.txt
 
 #
 # Main script start, install ansible

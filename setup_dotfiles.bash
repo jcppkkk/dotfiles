@@ -33,10 +33,23 @@ source /etc/lsb-release
 DIST=${DISTRIB_CODENAME/serena/xenial}
 DIST=${DIST/sonya/xenial}
 
+#######################
+## install pips & powerline
+#######################
+# Remove deprecated pyenv version powerline
+rm -rf ~/.pyenv/
+if ! hash pip2.7 2>/dev/null; then
+	curl https://bootstrap.pypa.io/get-pip.py | sudo -H python
+fi
+
+if hash powerline-daemon 2>/dev/null; then
+	powerline-daemon -k || true
+fi
+sudo -H LANG=C pip2.7 install -U -r requirements_dotfiles.txt
+
 #
 # Main script start, install ansible
 #
-sudo -H pip install -U ansible pyOpenSSL
 ansible-playbook -i "localhost," -c local site.yml
 
 #######################
@@ -145,26 +158,6 @@ curl -fLo vim/autoload/plug.vim --create-dirs \
 
 vim +PlugInstall +qa
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
-
-#######################
-## install pips & powerline
-#######################
-# Remove deprecated pyenv version powerline
-rm -rf ~/.pyenv/
-export LANG=C
-if hash pip 2>/dev/null; then
-	sudo -H LANG=C pip install -U pip
-else
-	# install pip
-	#[[ $platform == 'mac' ]]
-	if [[ $platform == 'linux' ]]; then
-		curl https://bootstrap.pypa.io/get-pip.py | sudo python
-		hash -r
-	fi
-fi
-
-hash powerline-daemon && powerline-daemon -k || :
-sudo -H LANG=C pip install --upgrade -r requirements_dotfiles.txt
 
 
 #######################

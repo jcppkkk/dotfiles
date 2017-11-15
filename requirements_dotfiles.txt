@@ -4,3 +4,5 @@ argparse
 git-up
 percol
 pyOpenSSL
+ansible
+pip

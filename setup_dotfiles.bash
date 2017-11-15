@@ -26,6 +26,7 @@ realpath() {
 }
 
 # setup env and location
+PATH="$PATH:/usr/local/bin"
 current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $current
 source bashrc.d/get-platform

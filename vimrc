@@ -172,7 +172,7 @@ call plug#end()
 set wildmode=longest,list
 set wildmenu
 " load colorscheme out of plug section 
-colorscheme solarized
+silent! colorscheme solarized " ignore error on first initialize
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns

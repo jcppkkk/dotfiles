@@ -3,3 +3,4 @@ powerline-gitstatus
 argparse
 git-up
 percol
+pyOpenSSL

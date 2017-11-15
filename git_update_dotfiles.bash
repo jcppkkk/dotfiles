@@ -1,5 +1,9 @@
 #!/bin/bash
-exec > /dev/null
+clean_up() {
+	echo "Error: Script $(basename $BASH_SOURCE) Line $1"
+}
+trap 'clean_up $LINENO' INT ERR
+set -e
 hash git || exit
 hash vim || exit
 
@@ -13,7 +17,8 @@ else
 	git stash pop
 fi
 
-hash powerline-daemon && powerline-daemon -k || true
+PATH=$PATH:/usr/local/bin
+hash powerline-daemon 2>/dev/null && powerline-daemon -k || true
 if (which powerline | grep /usr -q); then
 	sudo -H pip install powerline-status --upgrade
 else

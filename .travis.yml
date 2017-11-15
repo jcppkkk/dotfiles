@@ -1,5 +1,11 @@
-language: ruby
+language: python
 
+cache:
+  apt: true
+  pip: true
+  directories:
+    - /var/cache/apt/archives
+    - $HOME/.cache/pip
 matrix:
   include:
     - os: linux

@@ -7,6 +7,7 @@ fi
 ## predefined functions
 script_error_report() {
 	local code="$?"
+	set +x >/dev/null
 	local script="$1"
 	local lineno="$2"
 	local printnear=4
@@ -50,9 +51,15 @@ if command -v powerline-daemon 2>/dev/null; then
 	powerline-daemon -k || true
 fi
 
-retry_root python <(wget https://bootstrap.pypa.io/get-pip.py -q -O-)
+if ! command -v pip2.7; then
+	wget https://bootstrap.pypa.io/get-pip.py -q -O get-pip.py
+	retry_root python get-pip.py
+fi
 retry_root pip2.7 install -U pip
 retry_root pip2.7 install -U -r requirements_dotfiles.txt
+if command -v pyenv; then
+	pyenv rehash
+fi
 
 #
 # Main script start, install ansible

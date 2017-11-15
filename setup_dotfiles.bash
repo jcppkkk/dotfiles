@@ -36,22 +36,7 @@ DIST=${DIST/sonya/xenial}
 #
 # Main script start, install ansible
 #
-case $platform in
-'linux')
-	if ! test -f /etc/apt/sources.list.d/ansible.list; then
-		cat <<-EOF |
-		deb http://ppa.launchpad.net/ansible/ansible/ubuntu $DIST main
-		EOF
-		sudo tee /etc/apt/sources.list.d/ansible.list
-	fi
-	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
-	sudo apt-get update
-	sudo apt-get install ansible -y
-	;;
-'mac')
-	;;
-esac
-
+sudo -H pip install -U ansible pyOpenSSL
 ansible-playbook -i "localhost," -c local site.yml
 
 #######################
@@ -162,19 +147,7 @@ vim +PlugInstall +qa
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
 #######################
-## install pyenv
-#######################
-#CFLAGS='-g -O2'
-#curl -L https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
-#export setupdotfile=yes
-#set +e
-#source ~/.bashrc
-#set -e
-#pyenv versions | grep -q 2.7.7 || pyenv install 2.7.7
-#pyenv global 2.7.7
-
-#######################
-## install powerline
+## install pips & powerline
 #######################
 # Remove deprecated pyenv version powerline
 rm -rf ~/.pyenv/

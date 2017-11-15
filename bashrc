@@ -156,10 +156,7 @@ unset list
 path="$path $HOME/bin"
 path="$path $HOME/.bin"
 path="$path $HOME/.local/bin"
-path="$path /android-cts/tools"
-path="$path $HOME/bin/android-*"
-path="$path /opt/android-*"
-path="$path /opt/android-sdk*/platform-tools"
+path="$path /usr/local/bin"
 for a in $path
 do
     if [[ -d "$a" && ! ":$PATH:" == *":$a:"* ]]; then

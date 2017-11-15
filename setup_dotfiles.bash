@@ -45,6 +45,7 @@ fi
 if hash powerline-daemon 2>/dev/null; then
 	powerline-daemon -k || true
 fi
+sudo -H LANG=C $(hash -t pip2.7) install -U pip
 sudo -H LANG=C $(hash -t pip2.7) install -U -r requirements_dotfiles.txt
 
 #

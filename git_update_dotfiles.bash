@@ -28,4 +28,4 @@ fi
 if [ -d $HOME/.vim/vundle ]; then
 	mv -f $HOME/.vim/{vundle,Vundle.vim}
 fi
-vim +BundleInstall +qa 2> /dev/null
+vim +PlugUpdate +qa 2> /dev/null

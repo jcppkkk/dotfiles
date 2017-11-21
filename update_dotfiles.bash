@@ -16,7 +16,7 @@ if [ -e vim/bundle/vundle ]; then
 	pushd vim/bundle/vundle/
 	git pull
 	popd
-	vim +BundleUpdate +qall
+	vim +PlugUpdate +qall
 fi
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 

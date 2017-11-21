@@ -136,7 +136,6 @@ jcrm ()
 shopt -s extglob
 list=()
 list+=(/etc/bashrc)
-list+=(/etc/bash_completion)
 # /etc/bashrc need to run after bashrc.d
 list+=($HOME/.bashrc.d/!(*~))
 list+=($HOME/.bashrc_local)
@@ -149,6 +148,17 @@ do
 done
 unset list
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
 
 #-------------------------------------------------------------
 # customize PATH

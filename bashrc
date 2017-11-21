@@ -8,10 +8,10 @@ if [[ $- != *i* && ${setupdotfile:-} = "" ]] ; then
     return
 fi
 
-export LANGUAGE="zh_TW.UTF-8"
-export LANG="zh_TW.UTF-8"
+#export LANGUAGE="zh_TW.UTF-8"
+#export LANG="zh_TW.UTF-8"
 export LC_TIME="en_US.utf8"
-export LC_CTYPE="zh_TW.UTF-8"
+#export LC_CTYPE="zh_TW.UTF-8"
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------

@@ -105,7 +105,8 @@ call plug#begin()
 	Plug 'xolox/vim-easytags'
 		let g:easytags_auto_highlight = 0
 		let g:easytags_async = 1
-		"let g:easytags_dynamic_files = 2
+		let g:easytags_dynamic_files = 1
+		let g:easytags_events = ['BufReadPost']
 	Plug 'vim-scripts/cuteErrorMarker'
 	Plug 'majutsushi/tagbar'
 	autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)

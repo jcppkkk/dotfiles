@@ -28,151 +28,153 @@ endif
 call plug#begin()
 
 " Testing
-	Plug 'mfukar/robotframework-vim'
+Plug 'mfukar/robotframework-vim'
 " General programming
-	Plug 'vim-scripts/AutoTag'
+Plug 'vim-scripts/AutoTag'
 " format / indent
-	Plug 'roryokane/detectindent'
-	autocmd BufReadPost *.jade DetectIndent
-	autocmd BufReadPost *.coffee DetectIndent
-	let g:detectindent_preferred_expandtab = 1
-	let g:detectindent_preferred_indent = 4
+Plug 'roryokane/detectindent'
+autocmd BufReadPost *.jade DetectIndent
+autocmd BufReadPost *.coffee DetectIndent
+let g:detectindent_preferred_expandtab = 1
+let g:detectindent_preferred_indent = 4
+Plug 'Chiel92/vim-autoformat'
+autocmd BufWrite * :Autoformat
 " syntax checker
-	Plug 'scrooloose/syntastic'
-	set statusline+=%#warningmsg#
-	set statusline+=%{SyntasticStatuslineFlag()}
-	set statusline+=%*
-	let g:syntastic_reuse_loc_lists = 0
-	let g:syntastic_always_populate_loc_list = 1
-	let g:syntastic_auto_loc_list = 1
-	let g:syntastic_check_on_open = 1
-	let g:syntastic_check_on_wq = 1
-	let g:syntastic_cpp_checkers = ['make', 'cpplint']
-	let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
-	let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
-	let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
-	let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
-	let g:syntastic_aggregate_errors = 1
-	let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
-	let g:syntastic_python_checkers=['flake8']
-	let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241,E221'
-	let g:syntastic_sh_checkers = ['shellcheck']
+Plug 'scrooloose/syntastic'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_reuse_loc_lists = 0
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+let g:syntastic_cpp_checkers = ['make', 'cpplint']
+let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
+let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
+let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
+let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
+let g:syntastic_python_checkers=['flake8']
+let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241,E221'
+let g:syntastic_sh_checkers = ['shellcheck']
 
 " language support - others
-	Plug 'tell-k/vim-autopep8'
-	Plug 'chase/vim-ansible-yaml'
-	Plug 'vim-ruby/vim-ruby'
-	Plug 'kchmck/vim-coffee-script'
-	Plug 'PProvost/vim-ps1'
-	Plug 'vim-scripts/Improved-AnsiEsc'
+Plug 'tell-k/vim-autopep8'
+Plug 'chase/vim-ansible-yaml'
+Plug 'vim-ruby/vim-ruby'
+Plug 'kchmck/vim-coffee-script'
+Plug 'PProvost/vim-ps1'
+Plug 'vim-scripts/Improved-AnsiEsc'
 " language support - Shell
-	Plug 'chrisbra/vim-sh-indent'
+Plug 'chrisbra/vim-sh-indent'
 " language support - Docker
-	Plug 'ekalinin/Dockerfile.vim'
+Plug 'ekalinin/Dockerfile.vim'
 " language support - Python
-	"Plug 'klen/python-mode'
-	"let g:pymode_folding=0
-	"let g:pymode_rope = 0
-	"let g:pymode_lint_checkers = ['pyflakes', 'pep8']
-	"let g:pymode_lint_ignore = "E501,E221"
-	"let g:pymode_lint = 1
-	"let g:pymode_folding=0
-	" Track the engine.
-	Plug 'SirVer/ultisnips'
-	" Snippets are separated from the engine. Add this if you want them:
-	Plug 'honza/vim-snippets'
-		" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-		let g:UltiSnipsExpandTrigger="<c-tab>"
-		let g:UltiSnipsJumpForwardTrigger="<c-b>"
-		let g:UltiSnipsJumpBackwardTrigger="<c-x>"
-		" If you want :UltiSnipsEdit to split your window.
-		let g:UltiSnipsEditSplit="vertical"
+"Plug 'klen/python-mode'
+"let g:pymode_folding=0
+"let g:pymode_rope = 0
+"let g:pymode_lint_checkers = ['pyflakes', 'pep8']
+"let g:pymode_lint_ignore = "E501,E221"
+"let g:pymode_lint = 1
+"let g:pymode_folding=0
+" Track the engine.
+Plug 'SirVer/ultisnips'
+" Snippets are separated from the engine. Add this if you want them:
+Plug 'honza/vim-snippets'
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-x>"
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
 " language support - C/C++
-	Plug 'scrooloose/nerdcommenter'
-		let g:NERDSpaceDelims = 1
-		let g:NERDTrimTrailingWhitespace = 1
-		nmap <leader>cr :call Reformat_comment()<CR>
-		function! Reformat_comment()
-			normal k$]/
-			silent! s#^\s*\*/#&#
-			normal [/v]/\c gv=gvJgv\cs[/v]/
-			pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
-			normal gv]/gq
-		endfunction
-	Plug 'vim-scripts/valgrind.vim'
-		let g:valgrind_arguments=''
-	Plug 'xolox/vim-misc'
-	Plug 'xolox/vim-easytags'
-		let g:easytags_auto_highlight = 0
-		let g:easytags_async = 1
-		let g:easytags_dynamic_files = 1
-		let g:easytags_events = ['BufReadPost']
-	Plug 'vim-scripts/cuteErrorMarker'
-	Plug 'majutsushi/tagbar'
-	autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
-	autocmd FileType qf wincmd J
-	"let g:tagbar_width = 60
-	Plug 'vim-scripts/gcov.vim'
+Plug 'scrooloose/nerdcommenter'
+let g:NERDSpaceDelims = 1
+let g:NERDTrimTrailingWhitespace = 1
+nmap <leader>cr :call Reformat_comment()<CR>
+function! Reformat_comment()
+	normal k$]/
+	silent! s#^\s*\*/#&#
+	normal [/v]/\c gv=gvJgv\cs[/v]/
+	pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
+	normal gv]/gq
+endfunction
+Plug 'vim-scripts/valgrind.vim'
+let g:valgrind_arguments=''
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-easytags'
+let g:easytags_auto_highlight = 0
+let g:easytags_async = 1
+let g:easytags_dynamic_files = 1
+let g:easytags_events = ['BufReadPost']
+Plug 'vim-scripts/cuteErrorMarker'
+Plug 'majutsushi/tagbar'
+autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
+autocmd FileType qf wincmd J
+"let g:tagbar_width = 60
+Plug 'vim-scripts/gcov.vim'
 " language support - csv
-	Plug 'chrisbra/csv.vim'
+Plug 'chrisbra/csv.vim'
 
 " Tools - Git
-	Plug 'airblade/vim-gitgutter'
-	let g:gitgutter_escape_grep = 1
-	nmap <M-Down> <Plug>GitGutterNextHunk
-	nmap <M-Up> <Plug>GitGutterPrevHunk
-	nmap <esc>[1;3B <Plug>GitGutterNextHunk
-	nmap <esc>[1;3A <Plug>GitGutterPrevHunk
-	let g:gitgutter_max_signs = 5000
-	Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+let g:gitgutter_escape_grep = 1
+nmap <M-Down> <Plug>GitGutterNextHunk
+nmap <M-Up> <Plug>GitGutterPrevHunk
+nmap <esc>[1;3B <Plug>GitGutterNextHunk
+nmap <esc>[1;3A <Plug>GitGutterPrevHunk
+let g:gitgutter_max_signs = 5000
+Plug 'tpope/vim-fugitive'
 
 " Editing Tools
-	Plug 'vim-scripts/renamer.vim'
-	Plug 'nathanaelkane/vim-indent-guides'
-	let g:indent_guides_enable_on_vim_startup = 1
-	let g:indent_guides_auto_colors = 0
-	let g:indent_guides_start_level=2
-	let g:indent_guides_guide_size=1
-	Plug 'guns/xterm-color-table.vim'
-	Plug 'terryma/vim-multiple-cursors'
-	Plug 'junegunn/vim-easy-align'
-	" Start interactive EasyAlign in visual mode (e.g. vipga)
-	xmap ga <Plug>(EasyAlign)
-	" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-	nmap ga <Plug>(EasyAlign)
-	let g:easy_align_delimiters = { ';': {
-				\	'pattern': ';;\|;',
-				\	'left_margin': 0
-				\	}
-				\ }
-	let g:easy_align_ignore_groups = ['String']
-	Plug 'Valloric/ListToggle'
-	let g:lt_location_list_toggle_map = '<leader>l'
-	let g:lt_quickfix_list_toggle_map = '<leader>q'
+Plug 'vim-scripts/renamer.vim'
+Plug 'nathanaelkane/vim-indent-guides'
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_auto_colors = 0
+let g:indent_guides_start_level=2
+let g:indent_guides_guide_size=1
+Plug 'guns/xterm-color-table.vim'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'junegunn/vim-easy-align'
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+let g:easy_align_delimiters = { ';': {
+			\	'pattern': ';;\|;',
+			\	'left_margin': 0
+			\	}
+			\ }
+let g:easy_align_ignore_groups = ['String']
+Plug 'Valloric/ListToggle'
+let g:lt_location_list_toggle_map = '<leader>l'
+let g:lt_quickfix_list_toggle_map = '<leader>q'
 
 " Themes
-	Plug 'altercation/vim-colors-solarized'
-	syntax enable
-	set background=dark
-	let g:solarized_diffmode="low"
+Plug 'altercation/vim-colors-solarized'
+syntax enable
+set background=dark
+let g:solarized_diffmode="low"
 
-	Plug 'bling/vim-airline'
-	Plug 'vim-airline/vim-airline-themes'
-	let g:airline_powerline_fonts = 1
-	let g:airline_theme='solarized'
-	" spaces are allowed after tabs, but not in between
-	" this algorithm works well with programming styles that use tabs for
-	" indentation and spaces for alignment
-	let g:airline#extensions#whitespace#mixed_indent_algo = 2
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#fnamemod = ':t'
-	let g:airline#extensions#tabline#excludes = []
-	let g:airline#extensions#tabline#exclude_preview = 1
-	let g:airline#extensions#tabline#fnametruncate = 8
+Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+let g:airline_powerline_fonts = 1
+let g:airline_theme='solarized'
+" spaces are allowed after tabs, but not in between
+" this algorithm works well with programming styles that use tabs for
+" indentation and spaces for alignment
+let g:airline#extensions#whitespace#mixed_indent_algo = 2
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#excludes = []
+let g:airline#extensions#tabline#exclude_preview = 1
+let g:airline#extensions#tabline#fnametruncate = 8
 call plug#end()
 set wildmode=longest,list
 set wildmenu
-" load colorscheme out of plug section 
+" load colorscheme out of plug section
 silent! colorscheme solarized " ignore error on first initialize
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -204,7 +206,7 @@ set wildmenu                    " : menu has tab completion, etc
 set scrolloff=5                 " keep at least 10 lines above/below cursor
 set sidescrolloff=5             " keep at least 5 columns left/right of cursoraaaaa
 set history=200                 " remember the last 200 commands
-set showcmd		        " display incomplete commands
+set showcmd			" display incomplete commands
 set tags=./.tags;,~/.vimtags
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

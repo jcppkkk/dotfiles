@@ -102,17 +102,7 @@ case $platform in
 	install_pkg() { sudo aptitude install -y $@; }
 	update_pkg_list() { sudo apt-get update; }
 
-	# Add clang ${CL_V}
-	if ! test -f /etc/apt/sources.list.d/llvm.list; then
-		cat <<-EOF |
-		deb http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST}-${CL_V} main
-		deb-src http://apt.llvm.org/${DIST}/ llvm-toolchain-${DIST}-${CL_V} main
-		EOF
-		sudo tee /etc/apt/sources.list.d/llvm.list
-	fi
-	curl http://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-	packages+=(clang-${CL_V} clang-format-${CL_V} libclang-${CL_V}-dev)
-
+	add-apt-repository -y ppa:git-core/ppa
 	packages+=(apt-file)
 	packages+=(bmon)
 	packages+=(build-essential)
@@ -142,13 +132,8 @@ case $platform in
 esac
 
 
-list=""
-for P in "${packages[@]}"; do
-	if ! check_pkg $P; then
-		list+=" $P"
-	fi
-done
-[ -n "$list" ] && update_pkg_list && install_pkg $list
+update_pkg_list
+install_pkg ${packages[@]}
 
 
 # Clang config

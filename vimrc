@@ -38,7 +38,7 @@ autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent = 4
 Plug 'Chiel92/vim-autoformat'
-autocmd BufWrite * :Autoformat
+"autocmd BufWrite *.py :Autoformat
 " syntax checker
 Plug 'scrooloose/syntastic'
 set statusline+=%#warningmsg#
@@ -57,7 +57,8 @@ let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
 let g:syntastic_python_checkers=['flake8']
-let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241,E221'
+"let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241,E221'
+let g:syntastic_python_flake8_args='--ignore=E501,E265'
 let g:syntastic_sh_checkers = ['shellcheck']
 
 " language support - others
@@ -107,8 +108,7 @@ Plug 'xolox/vim-misc'
 Plug 'xolox/vim-easytags'
 let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
-let g:easytags_dynamic_files = 1
-let g:easytags_events = ['BufReadPost']
+let g:easytags_events = ['BufWritePost']
 Plug 'vim-scripts/cuteErrorMarker'
 Plug 'majutsushi/tagbar'
 autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
@@ -528,7 +528,7 @@ nmap <silent> B :call Do_make__()<CR>
 nmap <silent> C :cclose<CR>
 set autowrite
 function! Do_make__()
-	execute "silent make!|cwindow|cc!|redraw!"
+	execute "silent make!|cwindow|try|cc!|catch||endtry|redraw!"
 endfunction
 
 
@@ -597,6 +597,8 @@ autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabsto
 autocmd FileType               markdown   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               php        setl shiftwidth=4 softtabstop=4 expandtab
 autocmd FileType               python     setl shiftwidth=4 softtabstop=4 expandtab cindent
+autocmd FileType               python     setlocal makeprg=pychecker\ -Q\ --only\ %\ 2>/dev/null
+autocmd FileType               python     setlocal efm=%f:%l:\ %m
 autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab

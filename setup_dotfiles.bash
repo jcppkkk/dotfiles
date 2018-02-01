@@ -3,24 +3,10 @@ if [[ $EUID -eq 0 ]]; then
 	echo "This script must NOT be run as root" 1>&2
 	exit 1
 fi
-
+here=$(cd $(dirname $0); pwd)
+cd $here
+. lib/traceback.sh
 ## predefined functions
-script_error_report() {
-	local code="$?"
-	set +x >/dev/null
-	local script="$1"
-	local lineno="$2"
-	local printnear=4
-	start=$(($lineno - $printnear))
-	start=$(($start > 0 ? $start : 1))
-	end=$(($lineno + $printnear))
-	echo "Error at file ${script}:${lineno}. Exit code: ${code}"
-	sed -e 's/^/ /' -e $lineno's/^/>/' -e $start,$end'!d;=' "${script}" \
-		| sed -e 'N;s/\(.*\)\n\(.\)/\2\1 /'
-	exit "${code}"
-}
-trap 'script_error_report "${BASH_SOURCE[0]}" ${LINENO}' ERR
-set -e
 
 realpath() {
 	[[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
@@ -35,9 +21,6 @@ retry_root() {
 }
 
 # setup env and location
-PATH="$PATH:/usr/local/bin"
-current="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $current
 source bashrc.d/get-platform
 source /etc/lsb-release
 DIST=${DISTRIB_CODENAME/serena/xenial}
@@ -171,7 +154,7 @@ git config branch.master.rebase true
 # Daily Update dotfiles repo
 if ! (crontab -l | grep -q git_update_dotfiles.bash); then
 	crontab -l \
-		| { cat; echo "@daily $current/git_update_dotfiles.bash"; } \
+		| { cat; echo "@daily $here/git_update_dotfiles.bash"; } \
 		| crontab -
 fi
 

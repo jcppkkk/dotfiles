@@ -12,6 +12,7 @@ fi
 #export LANG="zh_TW.UTF-8"
 export LC_TIME="en_US.utf8"
 #export LC_CTYPE="zh_TW.UTF-8"
+export LC_COLLATE=C
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
@@ -72,7 +73,7 @@ vgrep() {
     if [[ $1 == -rn ]];then
         shift
     fi
-    vim +cfile\ <(ag --vimgrep "$@" | grep -v '~:')
+    vim +cfile\ <(ag --hidden --vimgrep "$@" | grep -v '~:')
 }
 
 # Find a file with a pattern in name:
@@ -264,7 +265,7 @@ if type -P mintty &>/dev/null;then
 fi
 
 #-------------------------------------------------------------
-# TMUX
+# tmux
 #-------------------------------------------------------------
 if [ -z "$TMUX" ]; then
     [ -f /var/run/motd ] && cat /var/run/motd
@@ -383,4 +384,14 @@ fi
 # include rbenv
 if hash rbenv 2>/dev/null; then
     eval "$(rbenv init -)"
+fi
+# ensure X forwarding is setup correctly, even for screen
+XAUTH=~/.Xauthority
+if [[ ! -e "${XAUTH}" ]]; then
+    # create new ~/.Xauthority file
+    xauth
+fi
+if [[ -z "${XAUTHORITY}" ]]; then
+    # export env var if not already available.
+    export XAUTHORITY="${XAUTH}" 
 fi

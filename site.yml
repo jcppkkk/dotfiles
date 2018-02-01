@@ -1,12 +1,11 @@
+# vim:ft=ansible:
 - hosts: all
   become: True
   tasks:
-# SUDO
     - name: Make sure we have a 'wheel' group
       group:
         name: wheel
         state: present
-    
     - name: Allow 'wheel' group to have passwordless sudo
       lineinfile:
         dest: /etc/sudoers
@@ -14,7 +13,6 @@
         regexp: '^%wheel'
         line: '%wheel ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
-
     - name: Add sudoers users to wheel group
       user:
         name={{ lookup('env', 'USER') }}
@@ -22,7 +20,6 @@
         append=yes
         state=present
         createhome=yes
-
     - name: Cleanup old sudoers config
       file:
         state=absent
@@ -40,17 +37,13 @@
         insertafter: EOF
         state: present
       register: ssh_config
-
     - name: Restart ssh
       service:
         name: ssh
         state: restarted
       when: ssh_config.changed
-
-## Delete dead links
     - name: Delete dead links
       become: True
       command: find -L {{ lookup('env','HOME') }} -maxdepth 1 -type l -print -delete
       register: command_result
       changed_when: "command_result.stdout != ''"
-# vim:ft=ansible:

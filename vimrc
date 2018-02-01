@@ -94,14 +94,6 @@ let g:UltiSnipsEditSplit="vertical"
 Plug 'scrooloose/nerdcommenter'
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
-nmap <leader>cr :call Reformat_comment()<CR>
-function! Reformat_comment()
-	normal k$]/
-	silent! s#^\s*\*/#&#
-	normal [/v]/\c gv=gvJgv\cs[/v]/
-	pyf /usr/share/vim/addons/syntax/clang-format-4.0.py
-	normal gv]/gq
-endfunction
 Plug 'vim-scripts/valgrind.vim'
 let g:valgrind_arguments=''
 Plug 'xolox/vim-misc'
@@ -121,10 +113,6 @@ Plug 'chrisbra/csv.vim'
 " Tools - Git
 Plug 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
-nmap <M-Down> <Plug>GitGutterNextHunk
-nmap <M-Up> <Plug>GitGutterPrevHunk
-nmap <esc>[1;3B <Plug>GitGutterNextHunk
-nmap <esc>[1;3A <Plug>GitGutterPrevHunk
 let g:gitgutter_max_signs = 5000
 Plug 'tpope/vim-fugitive'
 
@@ -143,9 +131,9 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 let g:easy_align_delimiters = { ';': {
-			\	'pattern': ';;\|;',
-			\	'left_margin': 0
-			\	}
+			\		'pattern': ';;\|;',
+			\		'left_margin': 0 },
+                        \       '"': { 'pattern': ' "' }
 			\ }
 let g:easy_align_ignore_groups = ['String']
 Plug 'Valloric/ListToggle'
@@ -198,7 +186,6 @@ set backup                      " produce *~ backup files
 set backupext=~                 " add ~ to the end of backup files
 ":set patchmode=~               " only produce *~ if not there
 set noautowrite                 " don't automatically write on :next, etc
-let maplocalleader=','          " all my macros start with ,
 set lazyredraw                  " don't redraw when running macros
 set ttyfast                     " Speedup for tty
 set updatetime=750		" screen update speed
@@ -210,20 +197,11 @@ set showcmd			" display incomplete commands
 set tags=./.tags;,~/.vimtags
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" meta
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <LocalLeader>ce :edit ~/.vimrc<CR>          " quickly edit this file
-map <LocalLeader>cs :source ~/.vimrc<CR>        " quickly source this file
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " window spacing
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set cmdheight=1                 " make command line two lines high
 set ruler                       " show the line number on bar
 set number                      " show
-
-map <LocalLeader>w+ 100<C-w>+  " grow by 100
-map <LocalLeader>w- 100<C-w>-  " shrink by 100
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " mouse settings
@@ -231,14 +209,6 @@ map <LocalLeader>w- 100<C-w>-  " shrink by 100
 set mouse=                      " disable mouse support in all modes
 set mousehide                   " hide the mouse when typing text
 
-" ,p and shift-insert will paste the X buffer, even on the command line
-nmap <LocalLeader>p i<S-MiddleMouse><ESC>
-imap <S-Insert> <S-MiddleMouse>
-cmap <S-Insert> <S-MiddleMouse>
-
-" this makes the mouse paste a block of text without formatting it
-" (good for code)
-map <MouseMiddle> <esc>"*p
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " global editing settings
@@ -250,22 +220,11 @@ set updatecount=100             " write swap file to disk every 100 chars
 set complete=.,w,b,u,U,t,i,d    " do lots of scanning on tab completion
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" tab indent
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <Tab> >>_
-nnoremap <S-Tab> <<_
-inoremap <S-Tab> <C-D>
-vnoremap <Tab> >gv_
-vnoremap <S-Tab> <gv_
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " searching...
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hlsearch                   " enable search highlight globally
 set incsearch                  " show matches as soon as possible
 set showmatch                  " show matching brackets when typing
-" disable last one highlight
-nmap <LocalLeader>nh :nohlsearch<CR>
 
 set diffopt=filler,iwhite       " ignore all whitespace and sync
 
@@ -291,48 +250,7 @@ if v:version >= 700
 	setlocal nospell
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" some useful mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" disable search complete
-let loaded_search_complete = 1
-
-" Y yanks from cursor to $
-map Y y$
-" change directory to that of current file
-nmap <LocalLeader>cd :cd%:p:h<CR>
-" change local directory to that of current file
-nmap <LocalLeader>lcd :lcd%:p:h<CR>
-
-" word swapping
-nmap <silent> gw "_yiw:s/\(\%#\w\+\)\(\W\+\)\(\w\+\)/\3\2\1/<CR><c-o><c-l>
-" char swapping
-nmap <silent> gc xph
-
-" save and build
-nmap <LocalLeader>w  :wa<CR>:make<CR>
-
-" this is for the find function plugin
-nmap <LocalLeader>ff :let name = FunctionName()<CR> :echo name<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  buffer management, note 'set hidden' above
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Move to next buffer
-map <LocalLeader>bn :bn<CR>
-" Move to previous buffer
-map <LocalLeader>bp :bp<CR>
-" List open buffers
-map <LocalLeader>bb :ls<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" dealing with merge conflicts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" find merge conflict markers
-:map <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup for the visual environment
@@ -367,13 +285,6 @@ set notitle
 "set notimeout      " don't timeout on mappings
 set ttimeout       " do timeout on terminal key codes
 set timeoutlen=1000 " timeout after 100 msec
-map <C-S-left> :bp<CR>
-map <C-S-right> :bn<CR>
-" For metas keys in tmux
-map <esc>[1;3D :bp<CR>
-map <esc>[1;3C :bn<CR>
-nnoremap <C-left> <C-W><C-H>
-nnoremap <C-right> <C-W><C-L>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " import other files...
@@ -394,29 +305,10 @@ else
 	set backup		" keep a backup file
 endif
 
-map Q gq
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" box comments tool
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-vmap <silent>c<right>   !boxes -t 4 -d c-cmt2 <CR>
-vmap <silent>c<left>    !boxes -t 4 -d c-cmt2 -r<CR>
-vmap <silent>c<up>      !boxes -t 4 <CR>
-vmap <silent>c<down>    !boxes -t 4 -r<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Function Keys F1~F12, B, C,
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-nnoremap <silent> <F2> :TagbarToggle<CR>
-
-map <F3> :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
-imap <F3> <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
-
-map <F4> :SyntasticToggleMode\|:silent w<CR>
-map! <F4> <Esc><F4>a
-map <F5>  :w<CR>
-map! <F5>  <Esc>:w<CR>i
 function! SaveAllExit()
 	try
 		wqa!
@@ -426,22 +318,6 @@ function! SaveAllExit()
 		wqa!
 	endtry
 endfun
-map ZZ :silent call SaveAllExit()<CR>
-
-nnoremap <F6> :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
-vnoremap <F6> "hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
-nnoremap <F7> :silent gr "<c-r>=expand("<cword>")<CR>" .<CR>
-vnoremap <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
-
-" <F8> 會在 searching highlight 及非 highlight 間切換
-map <F8> :set hls!<BAR>set hls?<CR>
-
-" <F9> Toggle on/off paste mode
-map <F9> :set paste!<BAr>set paste?<CR>
-set pastetoggle=<F9>
-
-map <F10> :set spell spelllang=en_us<CR>
-map <F12> :call Switch_indent()<CR>
 
 let g:indent_mod = 2
 function! Switch_indent()
@@ -458,7 +334,6 @@ function! Switch_indent()
 	echom "softtabstop"&softtabstop "sw"&sw "tabstop"&tabstop "expandtab"&expandtab
 endfunction
 
-map <silent> <S-Down> :call Next_err()<CR>
 function! Next_err()
 	try
 		cnext!
@@ -468,7 +343,6 @@ function! Next_err()
 	endtry
 endfunction
 
-map <silent> <S-Up> :call Pre_err()<CR>
 function! Pre_err()
 	try
 		cprevious!
@@ -479,12 +353,6 @@ function! Pre_err()
 endfunction
 
 " Bind for terminator
-map [1;5A <C-Up>
-map [1;5B <C-Down>
-map <silent> <C-Up> :call <SID>LocationPrevious()<CR>
-map <silent> <C-Down> :call <SID>LocationNext()<CR>
-map! <silent> <C-Up> <Esc><C-Up>i
-map! <silent> <C-Down> <Esc><C-Down>i
 function! <SID>LocationPrevious()
 	try
 		lprev!
@@ -496,6 +364,7 @@ function! <SID>LocationPrevious()
 		ll!
 	endtry
 endfunction
+
 function! <SID>LocationNext()
 	try
 		lnext!
@@ -507,6 +376,7 @@ function! <SID>LocationNext()
 		call <SID>LocationNext()
 	endtry
 endfunction
+
 function! <SID>LocationFirst()
 	try
 		lfirst!
@@ -514,6 +384,7 @@ function! <SID>LocationFirst()
 		call <SID>LocationFirst()
 	endtry
 endfunction
+
 function! <SID>LocationLast()
 	try
 		llast!
@@ -522,30 +393,27 @@ function! <SID>LocationLast()
 	endtry
 endfunction
 
-" <B> <C> this script use to excute make in vim and open quickfix window
-"let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
-nmap <silent> B :call Do_make__()<CR>
-nmap <silent> C :cclose<CR>
 set autowrite
 function! Do_make__()
-	execute "silent make!|cwindow|try|cc!|catch||endtry|redraw!"
+	wall
+	silent make!
+	cwindow
+	try
+		cc!
+	catch
+		" deal with it
+	endtry
+	redraw!
 endfunction
-
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Hide the default mode text (e.g. -- INSERT -- below the statusline)
-set noshowmode
-
 " Always show statusline
 set laststatus=2
 
 " Use 256 colours (Use this setting only if your terminal supports 256 colours)
 set t_Co=256
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " auto load extensions for different file types
@@ -603,7 +471,7 @@ autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expand
 autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 tabstop=4
+autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 tabstop=4|syntax sync fromstart
 autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])
 autocmd FileType               gitcommit  set spell spelllang=en_us
 
@@ -626,9 +494,83 @@ augroup qf
 	autocmd FileType qf set nobuflisted
 augroup END
 
-set clipboard="unnamedplus\|linux"
-imap [1~ <esc>^i
-nmap [1~ ^
-imap OH <esc>^i
-nmap OH ^
+set clipboard=exclude:.*. 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" maps
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" fix vim screen TERM
+map  <ESC>[1;2A <S-UP>
+map  <ESC>[1;2B <S-DOWN>
+map  <ESC>[1;2C <S-Right>
+map  <ESC>[1;2D <S-Left>
+map  <ESC>[1;3A <M-Up>
+map  <ESC>[1;3B <M-Down>
+map  <ESC>[1;3C <M-Right>
+map  <ESC>[1;3D <M-Left>
+map  <ESC>[1;5A <C-UP>
+map  <ESC>[1;5B <C-DOWN>
+map  <ESC>[1;5C <C-Right>
+map  <ESC>[1;5D <C-Left>
+map  <ESC>[1;6C <C-S-Right>
+map  <ESC>[1;6D <C-S-Left>
+map  <ESC>[1;3Q <M-F2>
+map! <ESC>[1;2A <S-UP>
+map! <ESC>[1;2B <S-DOWN>
+map! <ESC>[1;2C <S-Right>
+map! <ESC>[1;2D <S-Left>
+map! <ESC>[1;3A <M-Up>
+map! <ESC>[1;3B <M-Down>
+map! <ESC>[1;3C <M-Right>
+map! <ESC>[1;3D <M-Left>
+map! <ESC>[1;5A <C-UP>
+map! <ESC>[1;5B <C-DOWN>
+map! <ESC>[1;5C <C-Right>
+map! <ESC>[1;5D <C-Left>
+map! <ESC>[1;6C <C-S-Right>
+map! <ESC>[1;6D <C-S-Left>
+map  <ESC>[5;5~ <C-PageUp>
+map  <ESC>[6;5~ <C-PageDown>
+
+set pastetoggle=<F9>
+vmap <silent> <C-H> "hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
+vmap <silent> <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
+nmap <silent> <C-F7> :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
+
+map  <silent>      <C-B>           :call Do_make__()<CR>|         " excute make in vim and open quickfix window
+map  <silent>      <C-Down>        :call <SID>LocationNext()<CR>|
+map  <silent>      <C-S-left>      <C-W><C-H>
+map  <silent>      <C-S-right>     <C-W><C-L>
+map  <silent>      <C-Up>          :call <SID>LocationPrevious()<CR>
+map  <silent>      <C-left>        :bp<CR>|                       " previous buffer
+map  <silent>      <C-right>       :bn<CR>|                       " next buffer
+map  <silent>      <F12>           :call Switch_indent()<CR>
+map  <silent>      <F3>            :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
+map  <silent>      <F4>            :SyntasticToggleMode\|:silent w<CR>
+map  <silent>      <F5>            :w<CR>
+map  <silent>      <C-H>           :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
+map  <silent>      <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
+map  <silent>      <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
+map  <silent>      <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file
+map  <silent>      <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
+map  <silent>      <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
+map  <silent>      <LocalLeader>t  :TagbarToggle<CR>
+map  <silent>      <M-Down>        <Plug>GitGutterNextHunk
+map  <silent>      <M-Up>          <Plug>GitGutterPrevHunk
+map  <silent>      <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it
+map  <silent>      <S-Down>        :call Next_err()<CR>
+map  <silent>      <S-Tab>         <<_|                           " tab indent
+map  <silent>      <S-Up>          :call Pre_err()<CR>
+map  <silent>      <Tab>           >>_|                           " tab indent
+map  <silent>      ZZ              :silent call SaveAllExit()<CR>
+map! <silent>      <F3>            <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
+map! <silent>      <M-Down>        <Plug>GitGutterNextHunk
+map! <silent>      <M-Up>          <Plug>GitGutterPrevHunk
+map! <silent>      <S-Tab>         <C-D>|                         " tab indent
+vmap <silent>      <S-Tab>         <gv_|                          " tab indent
+vmap <silent>      <Tab>           >gv_|                          " tab indent
+vmap <silent>      c<down>         !boxes -t 4 -r<CR>|            " box comments tool
+vmap <silent>      c<left>         !boxes -t 4 -d c-cmt2 -r<CR>|  " box comments tool
+vmap <silent>      c<right>        !boxes -t 4 -d c-cmt2 <CR>|    " box comments tool
+vmap <silent>      c<up>           !boxes -t 4 <CR>|              " box comments tool

@@ -85,7 +85,7 @@ case $platform in
 	install_pkg() { sudo aptitude install -y $@; }
 	update_pkg_list() { sudo apt-get update; }
 
-	add-apt-repository -y ppa:git-core/ppa
+	sudo add-apt-repository -y ppa:git-core/ppa
 	packages+=(apt-file)
 	packages+=(bmon)
 	packages+=(build-essential)

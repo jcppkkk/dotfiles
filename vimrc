@@ -29,8 +29,6 @@ call plug#begin()
 
 " Testing
 Plug 'mfukar/robotframework-vim'
-" General programming
-Plug 'vim-scripts/AutoTag'
 " format / indent
 Plug 'roryokane/detectindent'
 autocmd BufReadPost *.jade DetectIndent
@@ -41,9 +39,6 @@ Plug 'Chiel92/vim-autoformat'
 "autocmd BufWrite *.py :Autoformat
 " syntax checker
 Plug 'scrooloose/syntastic'
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
 let g:syntastic_reuse_loc_lists = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -96,13 +91,13 @@ let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
 Plug 'vim-scripts/valgrind.vim'
 let g:valgrind_arguments=''
+Plug 'vim-scripts/taglist.vim'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-easytags'
 let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
 let g:easytags_events = ['BufWritePost']
 Plug 'vim-scripts/cuteErrorMarker'
-Plug 'majutsushi/tagbar'
 autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
 autocmd FileType qf wincmd J
 "let g:tagbar_width = 60
@@ -133,7 +128,7 @@ nmap ga <Plug>(EasyAlign)
 let g:easy_align_delimiters = { ';': {
 			\		'pattern': ';;\|;',
 			\		'left_margin': 0 },
-                        \       '"': { 'pattern': ' "' }
+			\       '"': { 'pattern': ' "' }
 			\ }
 let g:easy_align_ignore_groups = ['String']
 Plug 'Valloric/ListToggle'
@@ -409,39 +404,25 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Always show statusline
-set laststatus=2
-
 " Use 256 colours (Use this setting only if your terminal supports 256 colours)
 set t_Co=256
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " auto load extensions for different file types
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has('autocmd')
-	filetype plugin indent on
-	set nostartofline
-	" jump to last line edited in a given file (based on .viminfo)
-	autocmd BufReadPost *
-				\ if line("'\"") > 0|
-				\       if line("'\"") <= line("$")|
-				\               exe("norm '\"")|
-				\       else|
-				\               exe("norm $")|
-				\       endif|
-				\ endif
-
-	" improve legibility
-	"au BufRead quickfix setlocal nobuflisted wrap number
-	au BufReadPost quickfix  setlocal modifiable
-				\ | silent exe 'g/^/s//\=line(".")." "/'
-				\ | setlocal nomodifiable
-
-
-	" configure various extenssions
-	let git_diff_spawn_mode=2
-
-endif
+" jump to last line edited in a given file (based on .viminfo)
+"set nostartofline
+au BufReadPost * call Last_line()
+function! Last_line()
+	if line("'\"") > 1 && line("'\"") <= line("$")
+		exe("norm '\"")
+	endif
+endfunction
+" improve legibility
+au BufRead quickfix setlocal nobuflisted wrap number
+au BufReadPost quickfix  setlocal modifiable
+			\ | silent exe 'g/^/s//\=line(".")." "/'
+			\ | setlocal nomodifiable
 
 autocmd BufNewFile,BufReadPost *.coffee   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.erb      setl shiftwidth=4 softtabstop=4 expandtab
@@ -494,7 +475,7 @@ augroup qf
 	autocmd FileType qf set nobuflisted
 augroup END
 
-set clipboard=exclude:.*. 
+set clipboard=exclude:.*.
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " maps
@@ -555,7 +536,7 @@ map  <silent>      <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit
 map  <silent>      <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file
 map  <silent>      <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
 map  <silent>      <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
-map  <silent>      <LocalLeader>t  :TagbarToggle<CR>
+map  <silent>      <LocalLeader>t  :TlistToggle<CR>
 map  <silent>      <M-Down>        <Plug>GitGutterNextHunk
 map  <silent>      <M-Up>          <Plug>GitGutterPrevHunk
 map  <silent>      <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it

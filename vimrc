@@ -140,6 +140,7 @@ Plug 'altercation/vim-colors-solarized'
 syntax enable
 set background=dark
 let g:solarized_diffmode="low"
+"let g:solarized_termtrans=1
 
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -254,6 +255,7 @@ if &term =~ "putty-256color" | set term=xterm-256color | endif
 highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
 "match OverLength /.\%82v.*/
 set cursorline
+:hi CursorLine ctermbg=white
 set foldlevelstart=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -277,10 +279,7 @@ let g:notmuch_debug = 0
 " termcaps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set notitle
-"set notimeout      " don't timeout on mappings
-set ttimeout       " do timeout on terminal key codes
-set timeoutlen=1000 " timeout after 100 msec
-
+set timeoutlen=1000 ttimeoutlen=0
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " import other files...
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -513,9 +512,8 @@ map! <ESC>[1;6C <C-S-Right>
 map! <ESC>[1;6D <C-S-Left>
 map  <ESC>[5;5~ <C-PageUp>
 map  <ESC>[6;5~ <C-PageDown>
-
 set pastetoggle=<F9>
-vmap <silent> <C-H> "hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
+vmap <silent> <F6> "hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
 vmap <silent> <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
 nmap <silent> <C-F7> :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
 

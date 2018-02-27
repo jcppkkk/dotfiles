@@ -44,8 +44,9 @@ alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias du='du -kh'       # Makes a more readable output.
 alias df='df -kTh'
 
-# Typos
+# Commands
 alias ivm='vim'
+alias tmux='tmux -2'
 
 set_title() { printf '\e]2;%s\a' "$*"; }
 alias tt='set_title'

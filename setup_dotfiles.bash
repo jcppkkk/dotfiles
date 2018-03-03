@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 if [[ $EUID -eq 0 ]]; then
 	echo "This script must NOT be run as root" 1>&2
 	exit 1
@@ -13,6 +13,10 @@ realpath() {
 }
 
 retry_root() {
+	if ! command -v $1; then
+		echo "$1 not existed!"
+		exit 1
+	fi
 	cmd=$(command -v $1)
 	shift
 	if ! $cmd $@; then
@@ -26,9 +30,36 @@ source /etc/lsb-release
 DIST=${DISTRIB_CODENAME/serena/xenial}
 DIST=${DIST/sonya/xenial}
 
+function install_pkg () {
+	if ! _install_pkg $@; then
+		update_pkg_list
+		_install_pkg $@
+	fi
+}
+case $platform in
+'linux')
+	check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
+	# aptitude can solve depenency problem for clang-*
+	_install_pkg() { sudo apt-get install -y $@; }
+	update_pkg_list() { sudo apt-get update; }
+	# setup aptitude first
+	install_pkg aptitude
+	_install_pkg() { sudo aptitude install -y $@; }
+	;;
+'mac')
+	check_pkg() { brew list -1 | grep -q "^${1}\$"; }
+	_install_pkg() { brew install $@; }
+	update_pkg_list() { :; }
+	if ! brew help > /dev/null; then
+		ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	fi
+	;;
+esac
 #######################
 ## install pips & powerline
 #######################
+packages+=(python)
+install_pkg ${packages[@]}
 # Remove deprecated pyenv version powerline
 if command -v powerline-daemon 2>/dev/null; then
 	powerline-daemon -k || true
@@ -80,11 +111,6 @@ packages=(git dos2unix wget curl)
 
 case $platform in
 'linux')
-	check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
-	# aptitude can solve depenency problem for clang-*
-	install_pkg() { sudo aptitude install -y $@; }
-	update_pkg_list() { sudo apt-get update; }
-
 	sudo add-apt-repository -y ppa:git-core/ppa
 	packages+=(apt-file)
 	packages+=(bmon)
@@ -102,33 +128,17 @@ case $platform in
 	packages+=(bikeshed)
 	;;
 'mac')
-	check_pkg() { brew list -1 | grep -q "^${1}\$"; }
-	install_pkg() { brew install $@; }
-	update_pkg_list() { :; }
-	if ! brew help > /dev/null; then
-		ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-	fi
 	packages+=(ctags)
 	packages+=(python)
 	packages+=(coreutils)
 	;;
 esac
-
-
-update_pkg_list
 install_pkg ${packages[@]}
-
 
 # Clang config
 if [ -f /usr/bin/clang-${CL_V} ]; then
 	sudo ln -fs /usr/bin/clang-${CL_V} /usr/bin/clang
 	sudo ln -fs /usr/bin/clang++-${CL_V} /usr/bin/clang++
-fi
-
-# auto cleanup old-kernels
-if [[ -n "$(\which purge-old-kernels)" ]]; then
-	sudo ln -fs $(\which purge-old-kernels) /etc/cron.daily/
-	sudo purge-old-kernels
 fi
 
 #######################
@@ -165,5 +175,11 @@ rm -rf local
 [ -L ~/.local ] && rm ~/.local
 if [ -n "$USER" -a "$USER" != "root" ]; then
 	sudo chown -R $USER:$GROUPS $HOME
+fi
+
+# auto cleanup old-kernels
+if [[ -n "$(\which purge-old-kernels)" ]]; then
+	sudo ln -fs $(\which purge-old-kernels) /etc/cron.daily/
+	sudo purge-old-kernels
 fi
 

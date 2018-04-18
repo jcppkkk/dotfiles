@@ -82,7 +82,7 @@ alias ci='git commit --verbose'
 alias ciam='git commit --verbose --amend'
 alias co='git checkout'
 alias cs='git checkout $(__git_refs | percol)'
-alias gd='git diff'
+alias gd='git diff --word-diff=color'
 alias gr=$'git log --graph --pretty=format:\'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\' --abbrev-commit --date=relative'
 alias gra='gr --all'
 

@@ -112,6 +112,8 @@ let g:gitgutter_max_signs = 5000
 Plug 'tpope/vim-fugitive'
 
 " Editing Tools
+Plug 'ctrlpvim/ctrlp.vim'
+let g:ctrlp_cmd = 'CtrlPMRU'
 Plug 'vim-scripts/renamer.vim'
 Plug 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_enable_on_vim_startup = 1
@@ -140,7 +142,7 @@ Plug 'altercation/vim-colors-solarized'
 syntax enable
 set background=dark
 let g:solarized_diffmode="low"
-"let g:solarized_termtrans=1
+let g:solarized_termtrans=1
 
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -195,7 +197,6 @@ set tags=./.tags;,~/.vimtags
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " window spacing
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set cmdheight=1                 " make command line two lines high
 set ruler                       " show the line number on bar
 set number                      " show
 
@@ -251,11 +252,9 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup for the visual environment
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if &term =~ "putty-256color" | set term=xterm-256color | endif
-highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
-"match OverLength /.\%82v.*/
+highlight OverLength ctermbg=LightCyan
+match OverLength /\%141v.*/
 set cursorline
-:hi CursorLine ctermbg=white
 set foldlevelstart=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -400,6 +399,8 @@ function! Do_make__()
 	redraw!
 endfunction
 
+set viminfo='1000,<1000,s20,h
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " status line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -417,6 +418,8 @@ function! Last_line()
 		exe("norm '\"")
 	endif
 endfunction
+autocmd BufReadPost COMMIT_EDITMSG
+  \ exe "normal! gg"
 " improve legibility
 au BufRead quickfix setlocal nobuflisted wrap number
 au BufReadPost quickfix  setlocal modifiable
@@ -512,11 +515,10 @@ map! <ESC>[1;6C <C-S-Right>
 map! <ESC>[1;6D <C-S-Left>
 map  <ESC>[5;5~ <C-PageUp>
 map  <ESC>[6;5~ <C-PageDown>
-set pastetoggle=<F9>
-vmap <silent> <F6> "hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g<left><left>
+set pastetoggle=<LocalLeader>p
+vmap <silent> <F6> :"hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g
 vmap <silent> <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
 nmap <silent> <C-F7> :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
-
 map  <silent>      <C-B>           :call Do_make__()<CR>|         " excute make in vim and open quickfix window
 map  <silent>      <C-Down>        :call <SID>LocationNext()<CR>|
 map  <silent>      <C-S-left>      <C-W><C-H>
@@ -525,6 +527,7 @@ map  <silent>      <C-Up>          :call <SID>LocationPrevious()<CR>
 map  <silent>      <C-left>        :bp<CR>|                       " previous buffer
 map  <silent>      <C-right>       :bn<CR>|                       " next buffer
 map  <silent>      <F12>           :call Switch_indent()<CR>
+map  <silent>      <LocalLeader>t  :TlistToggle<CR>
 map  <silent>      <F3>            :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
 map  <silent>      <F4>            :SyntasticToggleMode\|:silent w<CR>
 map  <silent>      <F5>            :w<CR>
@@ -534,7 +537,6 @@ map  <silent>      <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit
 map  <silent>      <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file
 map  <silent>      <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
 map  <silent>      <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
-map  <silent>      <LocalLeader>t  :TlistToggle<CR>
 map  <silent>      <M-Down>        <Plug>GitGutterNextHunk
 map  <silent>      <M-Up>          <Plug>GitGutterPrevHunk
 map  <silent>      <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it
@@ -553,3 +555,4 @@ vmap <silent>      c<down>         !boxes -t 4 -r<CR>|            " box comments
 vmap <silent>      c<left>         !boxes -t 4 -d c-cmt2 -r<CR>|  " box comments tool
 vmap <silent>      c<right>        !boxes -t 4 -d c-cmt2 <CR>|    " box comments tool
 vmap <silent>      c<up>           !boxes -t 4 <CR>|              " box comments tool
+set cmdheight=1                 " make command line two lines high

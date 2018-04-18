@@ -35,11 +35,13 @@ shopt -s checkwinsize
 #-------------------------------------------------------------
 # Auto load ssh agent
 #-------------------------------------------------------------
-check-ssh-agent() {
-    [ -S "$SSH_AUTH_SOCK" ] && { ssh-add -l >& /dev/null || [ $? -ne 2 ]; }
-}
-check-ssh-agent || export SSH_AUTH_SOCK=$HOME/.tmp/ssh-agent.sock
-check-ssh-agent || { mkdir -p "$HOME/.tmp" && rm -f "$HOME/.tmp/ssh-agent.sock" && eval "$(ssh-agent -s -a "$HOME/.tmp/ssh-agent.sock")"; } > /dev/null
+if ! kill -0 ${SSH_AGENT_PID:-0}; then
+    export SSH_AUTH_SOCK=$HOME/.tmp/ssh-agent.sock
+    mkdir -p "$HOME/.tmp"
+    rm -f "$HOME/.tmp/ssh-agent.sock"
+    eval $(ssh-agent -s -a $SSH_AUTH_SOCK) > /dev/null
+    ssh-add >& /dev/null
+fi
 
 #-------------------------------------------------------------
 # Set Default keybinding
@@ -385,6 +387,8 @@ fi
 if hash rbenv 2>/dev/null; then
     eval "$(rbenv init -)"
 fi
+PATH=`path | uniq | sed '/^$/d' | paste -sd ":" -`
+
 # ensure X forwarding is setup correctly, even for screen
 XAUTH=~/.Xauthority
 if [[ ! -e "${XAUTH}" ]]; then
@@ -393,5 +397,6 @@ if [[ ! -e "${XAUTH}" ]]; then
 fi
 if [[ -z "${XAUTHORITY}" ]]; then
     # export env var if not already available.
-    export XAUTHORITY="${XAUTH}" 
+    export XAUTHORITY="${XAUTH}"
 fi
+export DISPLAY=:0.0

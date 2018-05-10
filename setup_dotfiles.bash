@@ -65,12 +65,12 @@ if command -v powerline-daemon 2>/dev/null; then
 	powerline-daemon -k || true
 fi
 
-if ! command -v pip2.7; then
+if ! command -v pip; then
 	wget https://bootstrap.pypa.io/get-pip.py -q -O get-pip.py
 	retry_root python get-pip.py
 fi
-retry_root pip2.7 install -U pip
-retry_root pip2.7 install -U -r requirements_dotfiles.txt
+retry_root pip install -U pip
+retry_root pip install -U -r requirements_dotfiles.txt
 if command -v pyenv; then
 	pyenv rehash
 fi
@@ -119,11 +119,7 @@ case $platform in
 	packages+=(meld tig) # SVC tools
 	packages+=(unzip)
 	packages+=(manpages-dev manpages-posix-dev)
-	if lsb_release -a | grep 14.04; then
-		packages+=(vim)
-	else
-		packages+=(vim-nox-py2)
-	fi
+	packages+=(vim)
 	packages+=(cmake) # vim YouCompleteMe
 	packages+=(bikeshed)
 	;;

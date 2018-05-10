@@ -207,10 +207,10 @@ _bash_history_sync() {
 while true
 do
     srcfiles=()
-    srcfiles+=(/home/$SUDO_USER/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh)
-    srcfiles+=($HOME/.local/lib/python2.?/site-packages/powerline/bindings/bash/powerline.sh)
-    srcfiles+=(/usr/local/lib/python2.?/dist-packages/powerline/bindings/bash/powerline.sh)
-    srcfiles+=(/Library/Python/2.?/site-packages/powerline/bindings/bash/powerline.sh)
+    srcfiles+=(/home/$SUDO_USER/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh)
+    srcfiles+=($HOME/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh)
+    srcfiles+=(/usr/local/lib/python*/dist-packages/powerline/bindings/bash/powerline.sh)
+    srcfiles+=(/Library/Python/*/site-packages/powerline/bindings/bash/powerline.sh)
     for powerline in "${srcfiles[@]}"
     do
         if [ -f "$powerline" ]; then
@@ -393,7 +393,7 @@ PATH=`path | uniq | sed '/^$/d' | paste -sd ":" -`
 XAUTH=~/.Xauthority
 if [[ ! -e "${XAUTH}" ]]; then
     # create new ~/.Xauthority file
-    xauth
+    xauth q
 fi
 if [[ -z "${XAUTHORITY}" ]]; then
     # export env var if not already available.

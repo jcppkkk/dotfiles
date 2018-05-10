@@ -44,6 +44,6 @@
       when: ssh_config.changed
     - name: Delete dead links
       become: True
-      command: find -xdev -L {{ lookup('env','HOME') }} -maxdepth 1 -type l -print -delete
+      command: find -L {{ lookup('env','HOME') }} -xdev -maxdepth 1 -type l -print -delete
       register: command_result
       changed_when: "command_result.stdout != ''"

@@ -35,7 +35,7 @@ shopt -s checkwinsize
 #-------------------------------------------------------------
 # Auto load ssh agent
 #-------------------------------------------------------------
-if ! kill -0 ${SSH_AGENT_PID:-0}; then
+if [ ${#SSH_AGENT_PID} -eq 0 ] || ! kill -0 ${SSH_AGENT_PID:-0}; then
     export SSH_AUTH_SOCK=$HOME/.tmp/ssh-agent.sock
     mkdir -p "$HOME/.tmp"
     rm -f "$HOME/.tmp/ssh-agent.sock"
@@ -400,3 +400,10 @@ if [[ -z "${XAUTHORITY}" ]]; then
     export XAUTHORITY="${XAUTH}"
 fi
 export DISPLAY=:0.0
+
+function cd {
+    builtin cd "$@"
+    if [ -f "Pipfile" ] ; then
+        pipenv shell
+    fi
+}

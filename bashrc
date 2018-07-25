@@ -390,11 +390,7 @@ elif [[ "$PROMPT_COMMAND" != *"POST_COMMAND"* ]]; then
     PROMPT_COMMAND="POST_COMMAND;$PROMPT_COMMAND"
 fi
 
-# include rbenv
-if hash rbenv 2>/dev/null; then
-    eval "$(rbenv init -)"
-fi
-PATH=`path | uniq | sed '/^$/d' | paste -sd ":" -`
+export PATH=`path | awk '!x[$0]++' | paste -sd ":" -`
 
 # ensure X forwarding is setup correctly, even for screen
 XAUTH=~/.Xauthority
@@ -409,8 +405,8 @@ fi
 export DISPLAY=:0.0
 
 function cd {
-    builtin cd "$@"
-    if [ -f "Pipfile" ] ; then
-        pipenv shell
+    builtin \cd "$@"
+    if [[ -z "$PIPENV_ACTIVE" && -f "Pipfile" ]] ; then
+        pipenv shell export PATH=`path | awk '!x[$0]++' | paste -sd ":" -`
     fi
 }

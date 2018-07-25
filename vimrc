@@ -92,11 +92,15 @@ let g:NERDTrimTrailingWhitespace = 1
 Plug 'vim-scripts/valgrind.vim'
 let g:valgrind_arguments=''
 Plug 'vim-scripts/taglist.vim'
+Plug 'airblade/vim-rooter'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-easytags'
 let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
 let g:easytags_events = ['BufWritePost']
+set tags=.tags
+autocmd BufReadPre,FileReadPre * execute !empty(FindRootDirectory()) ? 'setlocal tags=' . FindRootDirectory() . "/.tags" : 'setlocal tags=./.tags'
+let g:easytags_dynamic_files = 2
 Plug 'vim-scripts/cuteErrorMarker'
 autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
 autocmd FileType qf wincmd J
@@ -192,7 +196,6 @@ set scrolloff=5                 " keep at least 10 lines above/below cursor
 set sidescrolloff=5             " keep at least 5 columns left/right of cursoraaaaa
 set history=200                 " remember the last 200 commands
 set showcmd			" display incomplete commands
-set tags=./.tags;,~/.vimtags
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " window spacing

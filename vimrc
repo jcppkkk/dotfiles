@@ -255,8 +255,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " setup for the visual environment
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-highlight OverLength ctermbg=LightCyan
-match OverLength /\%141v.*/
+autocmd FileType  python highlight OverLength ctermbg=LightCyan|match OverLength /\%142v.*/
 set cursorline
 set foldlevelstart=1
 

@@ -169,6 +169,8 @@ fi
 path="$path $HOME/bin"
 path="$path $HOME/.bin"
 path="$path $HOME/.local/bin"
+path="$path $HOME/.rbenv/bin"
+path="$path $HOME/.pyenv/bin"
 path="$path /usr/local/bin"
 for a in $path
 do
@@ -179,13 +181,18 @@ done
 unset path
 
 #-------------------------------------------------------------
+# include rbenv
+#-------------------------------------------------------------
+if hash rbenv 2>/dev/null; then
+    eval "$(rbenv init -)"
+fi
+
+#-------------------------------------------------------------
 # Insert pyenv PATH
 #-------------------------------------------------------------
-export PYENV_ROOT="${HOME}/.pyenv"
-
-if [ -d "${PYENV_ROOT}" ]; then
-    export PATH="${PYENV_ROOT}/bin:${PATH}"
+if hash pyenv 2>/dev/null; then
     eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
 fi
 
 #-------------------------------------------------------------

@@ -456,7 +456,7 @@ autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expand
 autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 tabstop=4|syntax sync fromstart
+autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 expandtab|syntax sync fromstart
 autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])
 autocmd FileType               gitcommit  set spell spelllang=en_us
 

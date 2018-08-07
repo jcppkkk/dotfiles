@@ -87,10 +87,9 @@ alias gr=$'git log --graph --pretty=format:\'%Cred%h%Creset%x09%C(yellow) %d%Cre
 alias gra='gr --all'
 
 alias gre='git remote'
-alias gp='git pull'
 alias st='git status'
 alias gcp='git cherry-pick'
-alias gp='git push'
+alias gp='git push --force-with-lease'
 alias gu='git up'
 alias gm='git merge'
 alias gmt='git mergetool'

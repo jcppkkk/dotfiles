@@ -390,7 +390,9 @@ elif [[ "$PROMPT_COMMAND" != *"POST_COMMAND"* ]]; then
     PROMPT_COMMAND="POST_COMMAND;$PROMPT_COMMAND"
 fi
 
-export PATH=`path | awk '!x[$0]++' | paste -sd ":" -`
+function path_unique {
+    export PATH=`echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -`
+}
 
 # ensure X forwarding is setup correctly, even for screen
 XAUTH=~/.Xauthority
@@ -406,7 +408,7 @@ export DISPLAY=:0.0
 
 function cd {
     builtin \cd "$@"
-    if [[ -z "$PIPENV_ACTIVE" && -f "Pipfile" ]] ; then
-        pipenv shell export PATH=`path | awk '!x[$0]++' | paste -sd ":" -`
+    if [[ $? -eq 0 && -z "$PIPENV_ACTIVE" && -f "Pipfile" ]] ; then
+        pipenv shell path_unique
     fi
 }

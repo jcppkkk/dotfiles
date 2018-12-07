@@ -46,7 +46,7 @@ alias df='df -kTh'
 
 # Commands
 alias ivm='vim'
-alias tmux='tmux -2'
+alias tmux='tmux new-session -A -s main'
 
 set_title() { printf '\e]2;%s\a' "$*"; }
 alias tt='set_title'
@@ -95,10 +95,11 @@ alias gm='git merge'
 alias gmt='git mergetool'
 alias grc='git rebase --continue || git status'
 alias grs='git rebase --skip'
+alias gsu='git submodule update --force --init'
 
 alias guptag='git tag -l | xargs git tag -d && git fetch'
 alias gltag='git for-each-ref refs/tags/ --format "%(objecttype) %(refname:short)" |  while read ty name; do [ $ty = commit ] && echo $name; done'
-alias gva='(cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | sed -ne "s#.* ##p"))'
+alias gva='(builtin \cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | sed -ne "s#.* ##p"))'
 alias gt='git tag'
 
 touchtag(){ tag=$1; export GIT_COMMITTER_DATE="$(git show $tag --format=%aD | head -1)"; git tag -a -m $tag -f $tag $tag; }
@@ -107,7 +108,7 @@ deltag() {
 	git push -d origin $1
 }
 delbr() {
-	git branch -d $1
+	git branch -D $1
 	git push -d origin $1
 }
 mvtag() {
@@ -124,7 +125,8 @@ mvbr() {
 }
 remote_tag(){ git tag -f $1 $2; git push -f origin $1; }
 
-alias ag='ag --ignore *~'
+alias tig='tig --stat=$COLUMNS'
+alias ag='ag --ignore=*~'
 
 #-------------------------------------------------------------
 # Admin assistant

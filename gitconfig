@@ -20,9 +20,12 @@
 	br = branch
 	last = log -1 HEAD
 	unstage = reset HEAD --
-	gr = "log --graph --pretty=format:'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+	gr = "log --graph --pretty=format:'%C(red)%h%C(reset)%x09 %C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit --date=relative"
 	last = !git --no-pager gr -20
 	d = difftool
+	amend-to = "!f() { SHA=`git rev-parse \"$1\"`; git commit --fixup \"$SHA\" && \
+		GIT_SEQUENCE_EDITOR=true git rebase --autostash --interactive --autosquash \"$SHA^\";}; f"
+	rename = "!f() { git push origin origin/$1:refs/heads/$2 :$1; } ; f"
 [merge]
 	tool = meld
 	conflictstyle = diff3
@@ -35,18 +38,31 @@
 [credential]
 	helper = cache --timeout=86400
 [rerere]
-	enabled = 1
+	enabled = true
 [rebase]
 	instructionFormat = [%an @ %ar] %s
 [git-up "fetch"]
 	prune = true
 	all = true
+[git-up "rebase"]
+	arguments = --rerere-autoupdate
 [mergetool]
 	keepBackup = false
 [include]
 	path = ~/.local_gitconfig
 [diff]
 	algorithm = patience
+	submodule = diff
+	tool = meld
 [user]
 	email = comet.jc@gmail.com
 	name = Jethro Yu
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[cola]
+	spellcheck = true
+[sequence]
+	editor = interactive-rebase-tool

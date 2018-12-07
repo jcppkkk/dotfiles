@@ -5,6 +5,7 @@ vim/bundle
 /bashrc.d/bashrc_local
 /bashrc.d/local_env
 /.gitconfig
+/fonts/.uuid
 
 *.pyc
 /local/share

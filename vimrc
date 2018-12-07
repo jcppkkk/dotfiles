@@ -16,9 +16,9 @@ if !exists("my_auto_commands_loaded")
 		autocmd BufReadPre * let f=expand("<afile>") |
 					\ if getfsize(f) > g:LargeFile |
 					\ set eventignore+=FileType |
-					\ setlocal noswapfile |
-					\ setlocal bufhidden=unload |
-					\ setlocal undolevels=-1 |
+					\ setl noswapfile |
+					\ setl bufhidden=unload |
+					\ setl undolevels=-1 |
 					\ else |
 					\ set eventignore-=FileType |
 					\ endif
@@ -64,7 +64,7 @@ Plug 'kchmck/vim-coffee-script'
 Plug 'PProvost/vim-ps1'
 Plug 'vim-scripts/Improved-AnsiEsc'
 " language support - Shell
-Plug 'chrisbra/vim-sh-indent'
+Plug 'Clavelito/indent-sh.vim'
 " language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
 " language support - Python
@@ -99,7 +99,7 @@ let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
 let g:easytags_events = ['BufWritePost']
 set tags=.tags
-autocmd BufReadPre,FileReadPre * execute !empty(FindRootDirectory()) ? 'setlocal tags=' . FindRootDirectory() . "/.tags" : 'setlocal tags=./.tags'
+autocmd BufReadPre,FileReadPre * execute !empty(FindRootDirectory()) ? 'setl tags=' . FindRootDirectory() . "/.tags" : 'setl tags=./.tags'
 let g:easytags_dynamic_files = 2
 Plug 'vim-scripts/cuteErrorMarker'
 autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
@@ -136,7 +136,6 @@ let g:easy_align_delimiters = { ';': {
 			\		'left_margin': 0 },
 			\       '"': { 'pattern': ' "' }
 			\ }
-let g:easy_align_ignore_groups = ['String']
 Plug 'Valloric/ListToggle'
 let g:lt_location_list_toggle_map = '<leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader>q'
@@ -182,11 +181,9 @@ set more                        " the 'more' prompt
 filetype plugin indent on       " automatic file type detection
 set autoread                    " watch for file changes by other programs
 "set visualbell                 " visual beep
-set backupdir=~/.backup,.
-set directory=.,~/.backup
 set backup                      " produce *~ backup files
-set backupext=~                 " add ~ to the end of backup files
-":set patchmode=~               " only produce *~ if not there
+set backupdir=~/.backup//
+set directory=~/.backup//
 set noautowrite                 " don't automatically write on :next, etc
 set lazyredraw                  " don't redraw when running macros
 set ttyfast                     " Speedup for tty
@@ -236,18 +233,18 @@ if v:version >= 700
 	function! ToggleSpell()
 		if &spell == 1
 			let b:lastspelllang=&spelllang
-			setlocal spell!
+			setl spell!
 		elseif b:lastspelllang
-			setlocal spell spelllang=b:lastspelllang
+			setl spell spelllang=b:lastspelllang
 		else
-			setlocal spell spelllang=en
+			setl spell spelllang=en
 		endif
 	endfunction
 
 	nmap <LocalLeader>ss :call ToggleSpell()<CR>
 
-	setlocal spell spelllang=en
-	setlocal nospell
+	setl spell spelllang=en
+	setl nospell
 endif
 
 
@@ -414,19 +411,18 @@ set t_Co=256
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " jump to last line edited in a given file (based on .viminfo)
 "set nostartofline
-au BufReadPost * call Last_line()
+autocmd BufReadPost * call Last_line()
 function! Last_line()
 	if line("'\"") > 1 && line("'\"") <= line("$")
 		exe("norm '\"")
 	endif
 endfunction
-autocmd BufReadPost COMMIT_EDITMSG
-  \ exe "normal! gg"
+autocmd BufReadPost COMMIT_EDITMSG exe "normal! gg" | setl textwidth=0
 " improve legibility
-au BufRead quickfix setlocal nobuflisted wrap number
-au BufReadPost quickfix  setlocal modifiable
+autocmd BufRead quickfix setl nobuflisted wrap number
+autocmd BufReadPost quickfix  setl modifiable
 			\ | silent exe 'g/^/s//\=line(".")." "/'
-			\ | setlocal nomodifiable
+			\ | setl nomodifiable
 
 autocmd BufNewFile,BufReadPost *.coffee   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.erb      setl shiftwidth=4 softtabstop=4 expandtab
@@ -438,24 +434,21 @@ autocmd BufNewFile,BufReadPost *.js       setl shiftwidth=4 softtabstop=4 expand
 autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost log        AnsiEsc
+autocmd FileType               log        AnsiEsc
 autocmd FileType               Dockerfile setl shiftwidth=2 softtabstop=2 tabstop=8
 autocmd FileType               Podfile    setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               Rakefile   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               c          setl fo=cq        wm=0          formatoptions+=r
 autocmd FileType               css        setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               html       setl shiftwidth=4 softtabstop=4 expandtab
 autocmd FileType               jade       setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabstop=8
+autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabstop=8 iskeyword=-,@,48-57,_,192-255
 autocmd FileType               markdown   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               php        setl shiftwidth=4 softtabstop=4 expandtab
-autocmd FileType               python     setl shiftwidth=4 softtabstop=4 expandtab cindent
-autocmd FileType               python     setlocal makeprg=pychecker\ -Q\ --only\ %\ 2>/dev/null
-autocmd FileType               python     setlocal efm=%f:%l:\ %m
+autocmd FileType               python     setl makeprg=pychecker\ -Q\ --only\ %\ 2>/dev/null efm=%f:%l:\ %m shiftwidth=4 softtabstop=4 expandtab cindent
 autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab iskeyword=-,@,48-57,_,192-255
 autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 expandtab|syntax sync fromstart
 autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])
 autocmd FileType               gitcommit  set spell spelllang=en_us
@@ -481,10 +474,12 @@ augroup END
 
 set clipboard=exclude:.*.
 
+set pastetoggle=<LocalLeader>p
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " maps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+" open list when jump  to multiple match tags
+nnoremap <C-]> g<C-]>
 " fix vim screen TERM
 map  <ESC>[1;2A <S-UP>
 map  <ESC>[1;2B <S-DOWN>
@@ -517,44 +512,47 @@ map! <ESC>[1;6C <C-S-Right>
 map! <ESC>[1;6D <C-S-Left>
 map  <ESC>[5;5~ <C-PageUp>
 map  <ESC>[6;5~ <C-PageDown>
-set pastetoggle=<LocalLeader>p
-vmap <silent> <F6> :"hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g
-vmap <silent> <F7> "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
-nmap <silent> <C-F7> :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
-map  <silent>      <C-B>           :call Do_make__()<CR>|         " excute make in vim and open quickfix window
-map  <silent>      <C-Down>        :call <SID>LocationNext()<CR>|
-map  <silent>      <C-S-left>      <C-W><C-H>
-map  <silent>      <C-S-right>     <C-W><C-L>
-map  <silent>      <C-Up>          :call <SID>LocationPrevious()<CR>
-map  <silent>      <C-left>        :bp<CR>|                       " previous buffer
-map  <silent>      <C-right>       :bn<CR>|                       " next buffer
-map  <silent>      <F12>           :call Switch_indent()<CR>
-map  <silent>      <LocalLeader>t  :TlistToggle<CR>
-map  <silent>      <F3>            :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
-map  <silent>      <F4>            :SyntasticToggleMode\|:silent w<CR>
-map  <silent>      <F5>            :w<CR>
-map  <silent>      <C-H>           :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
-map  <silent>      <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
-map  <silent>      <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
-map  <silent>      <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file
-map  <silent>      <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
-map  <silent>      <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
-map  <silent>      <M-Down>        <Plug>GitGutterNextHunk
-map  <silent>      <M-Up>          <Plug>GitGutterPrevHunk
-map  <silent>      <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it
-map  <silent>      <S-Down>        :call Next_err()<CR>
-map  <silent>      <S-Tab>         <<_|                           " tab indent
-map  <silent>      <S-Up>          :call Pre_err()<CR>
-map  <silent>      <Tab>           >>_|                           " tab indent
-map  <silent>      ZZ              :silent call SaveAllExit()<CR>
-map! <silent>      <F3>            <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
-map! <silent>      <M-Down>        <Plug>GitGutterNextHunk
-map! <silent>      <M-Up>          <Plug>GitGutterPrevHunk
-map! <silent>      <S-Tab>         <C-D>|                         " tab indent
-vmap <silent>      <S-Tab>         <gv_|                          " tab indent
-vmap <silent>      <Tab>           >gv_|                          " tab indent
-vmap <silent>      c<down>         !boxes -t 4 -r<CR>|            " box comments tool
-vmap <silent>      c<left>         !boxes -t 4 -d c-cmt2 -r<CR>|  " box comments tool
-vmap <silent>      c<right>        !boxes -t 4 -d c-cmt2 <CR>|    " box comments tool
-vmap <silent>      c<up>           !boxes -t 4 <CR>|              " box comments tool
-set cmdheight=1                 " make command line two lines high
+
+map  <silent> <Home>          ^
+imap <silent> <Home>          <Esc>^i
+map  <silent> <M-Up>          :call <SID>LocationPrevious()<CR>
+map  <silent> <S-Up>          :call Pre_err()<CR>
+map  <silent> <C-Up>          <Plug>GitGutterPrevHunk
+map! <silent> <C-Up>          <Plug>GitGutterPrevHunk
+map  <silent> <M-Down>        :call <SID>LocationNext()<CR>|
+map  <silent> <S-Down>        :call Next_err()<CR>
+map  <silent> <C-Down>        <Plug>GitGutterNextHunk
+map! <silent> <C-Down>        <Plug>GitGutterNextHunk
+
+map  <silent> <C-B>           :call Do_make__()<CR>|         " excute make in vim and open quickfix window
+vmap <silent> c<down>         !boxes -t 4 -r<CR>|            " box comments tool
+vmap <silent> c<left>         !boxes -t 4 -d c-cmt2 -r<CR>|  " box comments tool
+vmap <silent> c<right>        !boxes -t 4 -d c-cmt2 <CR>|    " box comments tool
+vmap <silent> c<up>           !boxes -t 4 <CR>|              " box comments tool
+nmap <silent> <C-F7>          :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
+map  <silent> <C-H>           :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
+map  <silent> <C-left>        :bp<CR>|                       " previous buffer
+map  <silent> <C-right>       :bn<CR>|                       " next buffer
+map  <silent> <C-S-left>      <C-W><C-H>
+map  <silent> <C-S-right>     <C-W><C-L>
+map  <silent> <F12>           :call Switch_indent()<CR>
+map! <silent> <F3>            <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
+map  <silent> <F3>            :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
+map  <silent> <F4>            :SyntasticToggleMode\|:silent w<CR>
+map  <silent> <F5>            :w<CR>
+vmap <silent> <F6>            :"hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g
+vmap <silent> <F7>            "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
+map  <silent> <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
+map  <silent> <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
+map  <silent> <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file
+map  <silent> <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
+map  <silent> <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
+map  <silent> <LocalLeader>t  :TlistToggle<CR>
+map  <silent> <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it
+map! <silent> <S-Tab>         <C-D>|                         " tab indent
+vmap <silent> <S-Tab>         <gv_|                          " tab indent
+map  <silent> <S-Tab>         <<_|                           " tab indent
+vmap <silent> <Tab>           >gv_|                          " tab indent
+map  <silent> <Tab>           >>_|                           " tab indent
+map  <silent> ZZ              :silent call SaveAllExit()<CR>
+set  cmdheight=1                 " make command line two lines high

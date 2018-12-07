@@ -12,4 +12,14 @@ set show-all-if-ambiguous on
 set show-all-if-unmodified on
 set colored-stats on
 
+# Be 8 bit clean.
+set meta-flag on
+set input-meta on
+set output-meta on
+
+# To allow the use of 8bit-characters like the german umlauts, comment out
+# the line below. However this makes the meta key not work as a meta key,
+# which is annoying to those which don't need to type in 8-bit characters.
+set convert-meta off
+
 $include /etc/inputrc

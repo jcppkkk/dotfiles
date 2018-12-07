@@ -21,3 +21,6 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
+if [ -n $HOME/.env_setup.sh ]; then
+    source $HOME/.env_setup.sh
+fi

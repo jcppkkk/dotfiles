@@ -46,7 +46,7 @@ alias df='df -kTh'
 
 # Commands
 alias ivm='vim'
-alias tmux='tmux new-session -A -s main'
+alias tmux='tmux -2'
 
 set_title() { printf '\e]2;%s\a' "$*"; }
 alias tt='set_title'

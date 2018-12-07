@@ -75,7 +75,7 @@ vgrep() {
     if [[ $1 == -rn ]];then
         shift
     fi
-    vim +cfile\ <(ag --hidden --vimgrep "$@" | grep -v '~:')
+    vim +cfile\ <(ag --hidden --ignore .git/ --ignore .tags --vimgrep "$@" | grep -v '~:')
 }
 
 # Find a file with a pattern in name:
@@ -169,9 +169,8 @@ fi
 path="$path $HOME/bin"
 path="$path $HOME/.bin"
 path="$path $HOME/.local/bin"
-path="$path $HOME/.rbenv/bin"
-path="$path $HOME/.pyenv/bin"
 path="$path /usr/local/bin"
+path="$path /usr/sbin"
 for a in $path
 do
     if [[ -d "$a" && ! ":$PATH:" == *":$a:"* ]]; then
@@ -179,21 +178,6 @@ do
     fi
 done
 unset path
-
-#-------------------------------------------------------------
-# include rbenv
-#-------------------------------------------------------------
-if hash rbenv 2>/dev/null; then
-    eval "$(rbenv init -)"
-fi
-
-#-------------------------------------------------------------
-# Insert pyenv PATH
-#-------------------------------------------------------------
-if hash pyenv 2>/dev/null; then
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-fi
 
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
@@ -391,7 +375,7 @@ elif [[ "$PROMPT_COMMAND" != *"POST_COMMAND"* ]]; then
 fi
 
 function path_unique {
-    export PATH=`echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -`
+    export PATH="$(echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -)"
 }
 
 # ensure X forwarding is setup correctly, even for screen
@@ -412,3 +396,5 @@ function cd {
         pipenv shell path_unique
     fi
 }
+
+export DOCKER_BUILDKIT=1

@@ -1,3 +1,5 @@
+$include /etc/inputrc
+
 "\eOA": history-search-backward
 "\eOB": history-search-forward
 "\e[A": history-search-backward
@@ -10,7 +12,6 @@ set completion-ignore-case On
 set visible-stats On
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
-set colored-stats on
 
 # Be 8 bit clean.
 set meta-flag on
@@ -21,5 +22,3 @@ set output-meta on
 # the line below. However this makes the meta key not work as a meta key,
 # which is annoying to those which don't need to type in 8-bit characters.
 set convert-meta off
-
-$include /etc/inputrc

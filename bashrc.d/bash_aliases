@@ -1,3 +1,4 @@
+#!/bin/bash
 #===============================================================
 #
 # ALIASES AND FUNCTIONS
@@ -46,7 +47,7 @@ alias df='df -kTh'
 
 # Commands
 alias ivm='vim'
-alias tmux='tmux -2'
+alias tmux='tmux -2 new -D -A -s main'
 
 set_title() { printf '\e]2;%s\a' "$*"; }
 alias tt='set_title'
@@ -80,6 +81,13 @@ alias bra='br -a'
 
 alias ci='git commit --verbose'
 alias ciam='git commit --verbose --amend'
+fixup() {
+    if [ -n "$1" ]; then
+        git add "$1"
+        git commit --amend --no-edit
+        git push --force-with-lease
+    fi
+}
 alias co='git checkout --recurse-submodules'
 alias cs='git checkout $(__git_refs | percol)'
 alias gd='git diff'
@@ -89,6 +97,7 @@ alias gra='gr --all'
 alias gre='git remote'
 alias st='git status'
 alias gcp='git cherry-pick'
+alias gcpc='git cherry-pick --continue'
 alias gp='git push --force-with-lease'
 alias gu='git up'
 alias gm='git merge'
@@ -104,24 +113,24 @@ alias gt='git tag'
 
 touchtag(){ tag=$1; export GIT_COMMITTER_DATE="$(git show $tag --format=%aD | head -1)"; git tag -a -m $tag -f $tag $tag; }
 deltag() {
-	git tag -d $1
-	git push -d origin $1
+    git tag -d $1
+    git push -d origin $1
 }
 delbr() {
-	git branch -D $1
-	git push -d origin $1
+    git branch -D $1
+    git push -d origin $1
 }
 mvtag() {
-	git tag $2 $1
-	git tag -d $1
-	git push -d origin $1&
-	git push origin $2&
-	wait
+    git tag $2 $1
+    git tag -d $1
+    git push -d origin $1&
+    git push origin $2&
+    wait
 }
 mvbr() {
-	git branch -m $1 $2
-	git push -d origin $1&
-	git push origin $2&
+    git branch -m $1 $2
+    git push -d origin $1&
+    git push origin $2&
 }
 remote_tag(){ git tag -f $1 $2; git push -f origin $1; }
 

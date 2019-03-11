@@ -29,14 +29,14 @@ call plug#begin()
 
 " Testing
 Plug 'mfukar/robotframework-vim'
+
 " format / indent
 Plug 'roryokane/detectindent'
 autocmd BufReadPost *.jade DetectIndent
 autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent = 4
-Plug 'Chiel92/vim-autoformat'
-"autocmd BufWrite *.py :Autoformat
+
 " syntax checker
 Plug 'scrooloose/syntastic'
 let g:syntastic_reuse_loc_lists = 0
@@ -56,25 +56,20 @@ let g:syntastic_python_checkers=['flake8']
 let g:syntastic_python_flake8_args='--ignore=E501,E265'
 let g:syntastic_sh_checkers = ['shellcheck']
 
-" language support - others
-Plug 'tell-k/vim-autopep8'
+""""""""""""""""""" language support - others
 Plug 'chase/vim-ansible-yaml'
 Plug 'vim-ruby/vim-ruby'
 Plug 'kchmck/vim-coffee-script'
 Plug 'PProvost/vim-ps1'
 Plug 'vim-scripts/Improved-AnsiEsc'
-" language support - Shell
+""""""""""""""""""" language support - Shell
 Plug 'Clavelito/indent-sh.vim'
-" language support - Docker
+""""""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
-" language support - Python
-"Plug 'klen/python-mode'
-"let g:pymode_folding=0
-"let g:pymode_rope = 0
-"let g:pymode_lint_checkers = ['pyflakes', 'pep8']
-"let g:pymode_lint_ignore = "E501,E221"
-"let g:pymode_lint = 1
-"let g:pymode_folding=0
+""""""""""""""""""" language support - Python
+Plug 'vim-python/python-syntax'
+let g:python_highlight_all = 1
+
 " Track the engine.
 Plug 'SirVer/ultisnips'
 " Snippets are separated from the engine. Add this if you want them:
@@ -85,7 +80,8 @@ let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-x>"
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
-" language support - C/C++
+
+""""""""""""""""""" language support - C/C++
 Plug 'scrooloose/nerdcommenter'
 let g:NERDSpaceDelims = 1
 let g:NERDTrimTrailingWhitespace = 1
@@ -106,7 +102,7 @@ autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
 autocmd FileType qf wincmd J
 "let g:tagbar_width = 60
 Plug 'vim-scripts/gcov.vim'
-" language support - csv
+""""""""""""""""""" language support - csv
 Plug 'chrisbra/csv.vim'
 
 " Tools - Git
@@ -116,6 +112,7 @@ let g:gitgutter_max_signs = 5000
 Plug 'tpope/vim-fugitive'
 
 " Editing Tools
+Plug 'farmergreg/vim-lastplace'
 Plug 'ctrlpvim/ctrlp.vim'
 let g:ctrlp_cmd = 'CtrlPMRU'
 Plug 'vim-scripts/renamer.vim'
@@ -409,20 +406,6 @@ set t_Co=256
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " auto load extensions for different file types
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" jump to last line edited in a given file (based on .viminfo)
-"set nostartofline
-autocmd BufReadPost * call Last_line()
-function! Last_line()
-	if line("'\"") > 1 && line("'\"") <= line("$")
-		exe("norm '\"")
-	endif
-endfunction
-autocmd BufReadPost COMMIT_EDITMSG exe "normal! gg" | setl textwidth=0
-" improve legibility
-autocmd BufRead quickfix setl nobuflisted wrap number
-autocmd BufReadPost quickfix  setl modifiable
-			\ | silent exe 'g/^/s//\=line(".")." "/'
-			\ | setl nomodifiable
 
 autocmd BufNewFile,BufReadPost *.coffee   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.erb      setl shiftwidth=4 softtabstop=4 expandtab
@@ -547,12 +530,12 @@ map  <silent> <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this
 map  <silent> <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file
 map  <silent> <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
 map  <silent> <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
-map  <silent> <LocalLeader>t  :TlistToggle<CR>
-map  <silent> <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it
-map! <silent> <S-Tab>         <C-D>|                         " tab indent
-vmap <silent> <S-Tab>         <gv_|                          " tab indent
-map  <silent> <S-Tab>         <<_|                           " tab indent
-vmap <silent> <Tab>           >gv_|                          " tab indent
-map  <silent> <Tab>           >>_|                           " tab indent
+"map  <silent> <LocalLeader>t  :TlistToggle<CR>
+"map  <silent> <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it
+map! <silent> <S-Tab>         <C-D>|                        " tab indenta
+vmap <silent> <S-Tab>         <gv_|                         " tab indent
+nmap <silent> <S-Tab>         <<|                           " tab indent
+vmap <silent> <Tab>           >gv_|                         " tab indent
+nmap <silent> <Tab>           >>|                           " tab indent
 map  <silent> ZZ              :silent call SaveAllExit()<CR>
 set  cmdheight=1                 " make command line two lines high

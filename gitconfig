@@ -38,7 +38,7 @@
 [credential]
 	helper = cache --timeout=86400
 [rerere]
-	enabled = true
+	enabled = 1
 [rebase]
 	instructionFormat = [%an @ %ar] %s
 [git-up "fetch"]

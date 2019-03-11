@@ -993,7 +993,7 @@ __git_aliased_command ()
 		\(\))   : skip parens of shell function definition ;;
 		{)	: skip start of shell helper function ;;
 		:)	: skip null command ;;
-		\'*)	: skip opening quote after sh -c ;;
+		"'"*)	: skip opening quote after sh -c ;;
 		*)
 			echo "$word"
 			return

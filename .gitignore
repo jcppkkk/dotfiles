@@ -8,6 +8,7 @@ vim/bundle
 /fonts/.uuid
 
 *.pyc
+*.tags
 /local/share
 /vim/.netrwhist
 /vim/spell/

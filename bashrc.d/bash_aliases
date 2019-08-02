@@ -43,7 +43,7 @@ alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
 alias du='du -kh'       # Makes a more readable output.
-alias df='df -kTh'
+alias df='df -kTh -x"squashfs"'
 
 # Commands
 alias ivm='vim'
@@ -98,7 +98,7 @@ alias gre='git remote'
 alias st='git status'
 alias gcp='git cherry-pick'
 alias gcpc='git cherry-pick --continue'
-alias gp='git push --force-with-lease'
+alias gp='git push --force-with-lease --recurse-submodules=on-demand'
 alias gu='git up'
 alias gm='git merge'
 alias gmt='git mergetool'
@@ -135,7 +135,7 @@ mvbr() {
 remote_tag(){ git tag -f $1 $2; git push -f origin $1; }
 
 alias tig='tig --stat=$COLUMNS'
-alias ag='ag --ignore=*~'
+alias ag='ag --hidden --ignore=*~'
 
 #-------------------------------------------------------------
 # Admin assistant

@@ -106,7 +106,6 @@ find "$dotfiles_oldfolder" -type d -empty | xargs rm -rvf
 ## install packages on new machine
 #######################
 
-CL_V=4.0
 packages=(git dos2unix wget curl)
 
 case $platform in
@@ -130,12 +129,6 @@ case $platform in
 	;;
 esac
 install_pkg ${packages[@]}
-
-# Clang config
-if [ -f /usr/bin/clang-${CL_V} ]; then
-	sudo ln -fs /usr/bin/clang-${CL_V} /usr/bin/clang
-	sudo ln -fs /usr/bin/clang++-${CL_V} /usr/bin/clang++
-fi
 
 #######################
 ## install vim plugins

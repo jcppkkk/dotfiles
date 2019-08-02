@@ -13,6 +13,7 @@
 	interactive = auto
 	status = auto
 	ui = true
+
 [alias]
 	co = checkout
 	ci = commit --verbose
@@ -26,6 +27,13 @@
 	amend-to = "!f() { SHA=`git rev-parse \"$1\"`; git commit --fixup \"$SHA\" && \
 		GIT_SEQUENCE_EDITOR=true git rebase --autostash --interactive --autosquash \"$SHA^\";}; f"
 	rename = "!f() { git push origin origin/$1:refs/heads/$2 :$1; } ; f"
+	cap = "!f() { git commit --verbose -e -m \"$@\"; }; f"
+	new = "!f() { git cap \"📦 NEW: $@\"; }; f"
+	imp = "!f() { git cap \"👌 IMPROVE: $@\"; }; f"
+	fix = "!f() { git cap \"🐛 FIX: $@\"; }; f"
+	rlz = "!f() { git cap \"🚀 RELEASE: $@\"; }; f"
+	doc = "!f() { git cap \"📖 DOC: $@\"; }; f"
+	tst = "!f() { git cap \"✅ TEST: $@\"; }; f"
 [merge]
 	tool = meld
 	conflictstyle = diff3
@@ -52,7 +60,7 @@
 	path = ~/.local_gitconfig
 [diff]
 	algorithm = patience
-	submodule = diff
+	submodule = log
 	tool = meld
 [user]
 	email = comet.jc@gmail.com

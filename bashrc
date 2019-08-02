@@ -173,6 +173,7 @@ path="$path $HOME/.bin"
 path="$path $HOME/.local/bin"
 path="$path /usr/local/bin"
 path="$path /usr/sbin"
+path="$path $HOME/.pyenv/bin"
 for a in $path; do
 	if [[ -d "$a" && ! ":$PATH:" == *":$a:"* ]]; then
 		export PATH="$a:$PATH"
@@ -190,7 +191,7 @@ eval "$(dircolors -b "$HOME/.dircolors.ansi-universal")" || :
 #-------------------------------------------------------------
 _bash_history_sync() {
 	builtin history -a
-	builtin history -n
+	builtin history -r
 }
 
 # Powerline prompt
@@ -203,6 +204,7 @@ srcfiles=(
 )
 for powerline in "${srcfiles[@]}"; do
 	if [ -f "$powerline" ]; then
+        echo "$powerline"
 		powerline-daemon -q || true
 		export POWERLINE_CONFIG_COMMAND="powerline-config"
 		export POWERLINE_BASH_CONTINUATION=1
@@ -307,7 +309,7 @@ command_timer_stop() {
 		# Sound after slow command
 		if hash play 2>/dev/null; then
 			(for i in {1..8}; do
-				play -q -n synth 0.2 sine 800 vol 0.8
+				play -q -n synth 0.2 sin 800 vol 0.8
 				sleep 0.2
 			done 2>/dev/null &)
 		fi
@@ -380,7 +382,7 @@ POST_COMMAND() {
 if [[ -z "$PROMPT_COMMAND" ]]; then
 	PROMPT_COMMAND="POST_COMMAND"
 elif [[ "$PROMPT_COMMAND" != *"POST_COMMAND"* ]]; then
-	PROMPT_COMMAND="POST_COMMAND;$PROMPT_COMMAND"
+	PROMPT_COMMAND=$'POST_COMMAND\n'"$PROMPT_COMMAND"
 fi
 
 function path_unique() {
@@ -397,13 +399,18 @@ if [[ -z "${XAUTHORITY}" ]]; then
 	# export env var if not already available.
 	export XAUTHORITY="${XAUTH}"
 fi
-export DISPLAY=:0.0
 
 function cd() {
 	builtin \cd "$@"
 	if [[ $? -eq 0 && -z "$PIPENV_ACTIVE" && -f "Pipfile" ]]; then
+        export PIPENV_IGNORE_VIRTUALENVS=1
 		source $(pipenv --venv)/bin/activate
 	fi
 }
 
 export DOCKER_BUILDKIT=1
+
+if [ -f ~/bin/vault ]; then
+    complete -C ~/bin/vault vault
+fi
+eval "$($HOME/.pyenv/bin/pyenv init -)"

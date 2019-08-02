@@ -62,6 +62,9 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'kchmck/vim-coffee-script'
 Plug 'PProvost/vim-ps1'
 Plug 'vim-scripts/Improved-AnsiEsc'
+Plug 'inkarkat/vim-ingo-library'
+Plug 'inkarkat/vim-AutoAdapt'
+let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
 """"""""""""""""""" language support - Shell
 Plug 'Clavelito/indent-sh.vim'
 """"""""""""""""""" language support - Docker
@@ -69,6 +72,7 @@ Plug 'ekalinin/Dockerfile.vim'
 """"""""""""""""""" language support - Python
 Plug 'vim-python/python-syntax'
 let g:python_highlight_all = 1
+Plug 'davidhalter/jedi-vim'
 
 " Track the engine.
 Plug 'SirVer/ultisnips'
@@ -91,11 +95,11 @@ Plug 'vim-scripts/taglist.vim'
 Plug 'airblade/vim-rooter'
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-easytags'
-let g:easytags_auto_highlight = 0
 let g:easytags_async = 1
-let g:easytags_events = ['BufWritePost']
-set tags=.tags
-autocmd BufReadPre,FileReadPre * execute !empty(FindRootDirectory()) ? 'setl tags=' . FindRootDirectory() . "/.tags" : 'setl tags=./.tags'
+let g:easytags_events = ['BufWritePost', 'BufReadPost']
+let gitroot = system("git rev-parse --show-superproject-working-tree --show-toplevel | head -n1 | tr -d '\\n'")
+setl tags=
+autocmd BufReadPre,FileReadPre * execute !empty(gitroot) ? 'setl tags=' . gitroot . "/.git/vimtags" : 'setl tags=~/.vimtags'
 let g:easytags_dynamic_files = 2
 Plug 'vim-scripts/cuteErrorMarker'
 autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
@@ -128,11 +132,11 @@ Plug 'junegunn/vim-easy-align'
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
-let g:easy_align_delimiters = { ';': {
-			\		'pattern': ';;\|;',
-			\		'left_margin': 0 },
-			\       '"': { 'pattern': ' "' }
-			\ }
+"let g:easy_align_delimiters = { ';': {
+"			\		'pattern': ';;\|;',
+"			\		'left_margin': 0 },
+"			\       '"': { 'pattern': ' "' }
+"			\ }
 Plug 'Valloric/ListToggle'
 let g:lt_location_list_toggle_map = '<leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader>q'
@@ -508,10 +512,6 @@ map  <silent> <C-Down>        <Plug>GitGutterNextHunk
 map! <silent> <C-Down>        <Plug>GitGutterNextHunk
 
 map  <silent> <C-B>           :call Do_make__()<CR>|         " excute make in vim and open quickfix window
-vmap <silent> c<down>         !boxes -t 4 -r<CR>|            " box comments tool
-vmap <silent> c<left>         !boxes -t 4 -d c-cmt2 -r<CR>|  " box comments tool
-vmap <silent> c<right>        !boxes -t 4 -d c-cmt2 <CR>|    " box comments tool
-vmap <silent> c<up>           !boxes -t 4 <CR>|              " box comments tool
 nmap <silent> <C-F7>          :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
 map  <silent> <C-H>           :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
 map  <silent> <C-left>        :bp<CR>|                       " previous buffer

@@ -3,7 +3,6 @@
 		"left": [
 			{
 				"function": "powerline.segments.common.net.hostname",
-                                "args": { "only_if_ssh": false },
 				"priority": 10
 			},
 			{
@@ -27,7 +26,7 @@
 				"priority": 20
 			},
 			{
-				"function": "powerline.segments.shell.last_status",
+				"function": "powerline.segments.shell.last_pipe_status",
 				"priority": 10
 			}
 		]

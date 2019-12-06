@@ -56,8 +56,6 @@
 	arguments = --rerere-autoupdate
 [mergetool]
 	keepBackup = false
-[include]
-	path = ~/.local_gitconfig
 [diff]
 	algorithm = patience
 	submodule = log
@@ -74,3 +72,5 @@
 	spellcheck = true
 [sequence]
 	editor = interactive-rebase-tool
+[include]
+	path = ~/.local_gitconfig

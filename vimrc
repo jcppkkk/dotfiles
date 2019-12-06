@@ -72,7 +72,7 @@ Plug 'ekalinin/Dockerfile.vim'
 """"""""""""""""""" language support - Python
 Plug 'vim-python/python-syntax'
 let g:python_highlight_all = 1
-Plug 'davidhalter/jedi-vim'
+"Plug 'davidhalter/jedi-vim'
 
 " Track the engine.
 Plug 'SirVer/ultisnips'
@@ -98,6 +98,7 @@ Plug 'xolox/vim-easytags'
 let g:easytags_async = 1
 let g:easytags_events = ['BufWritePost', 'BufReadPost']
 let gitroot = system("git rev-parse --show-superproject-working-tree --show-toplevel | head -n1 | tr -d '\\n'")
+set tags=
 setl tags=
 autocmd BufReadPre,FileReadPre * execute !empty(gitroot) ? 'setl tags=' . gitroot . "/.git/vimtags" : 'setl tags=~/.vimtags'
 let g:easytags_dynamic_files = 2
@@ -211,7 +212,8 @@ set mousehide                   " hide the mouse when typing text
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " global editing settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set autoindent smartindent      " turn on auto/smart indenting
+set autoindent                  " turn on auto/smart indenting
+set cindent cinkeys-=0#
 set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
 set updatecount=100             " write swap file to disk every 100 chars

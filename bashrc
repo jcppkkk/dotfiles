@@ -309,7 +309,7 @@ command_timer_stop() {
 		# Sound after slow command
 		if hash play 2>/dev/null; then
 			(for i in {1..8}; do
-				play -q -n synth 0.2 sin 800 vol 0.8
+				play -q -n synth 0.2 sin 800 vol 0.1
 				sleep 0.2
 			done 2>/dev/null &)
 		fi
@@ -372,7 +372,6 @@ POST_COMMAND() {
 	else
 		r=0
 	fi
-	echo -ne "\033]0;${HOSTNAME}\007"
 	_last_cmd=$_cmd
 	_last_r=$r
 
@@ -414,3 +413,7 @@ if [ -f ~/bin/vault ]; then
     complete -C ~/bin/vault vault
 fi
 eval "$($HOME/.pyenv/bin/pyenv init -)"
+
+path_unique
+
+complete -C /usr/local/bin/mc mc

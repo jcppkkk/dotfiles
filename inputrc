@@ -4,10 +4,8 @@ $include /etc/inputrc
 "\eOB": history-search-forward
 "\e[A": history-search-backward
 "\e[B": history-search-forward
-set meta-flag On
-set input-meta On
-set convert-meta On
-set output-meta On
+"/e[1~":        beginning-of-line
+"/e[4~":        end-of-line
 set completion-ignore-case On
 set visible-stats On
 set show-all-if-ambiguous on

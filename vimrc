@@ -92,9 +92,8 @@ let g:NERDTrimTrailingWhitespace = 1
 Plug 'vim-scripts/valgrind.vim'
 let g:valgrind_arguments=''
 Plug 'vim-scripts/taglist.vim'
-Plug 'airblade/vim-rooter'
 Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
+"Plug 'xolox/vim-easytags'
 let g:easytags_async = 1
 let g:easytags_events = ['BufWritePost', 'BufReadPost']
 let gitroot = system("git rev-parse --show-superproject-working-tree --show-toplevel | head -n1 | tr -d '\\n'")
@@ -470,6 +469,9 @@ set pastetoggle=<LocalLeader>p
 " open list when jump  to multiple match tags
 nnoremap <C-]> g<C-]>
 " fix vim screen TERM
+map  <ESC>[1;3Q <M-F2>
+map  <ESC>[1;5R <C-F3>
+map  <ESC>[1;5S <C-F4>
 map  <ESC>[1;2A <S-UP>
 map  <ESC>[1;2B <S-DOWN>
 map  <ESC>[1;2C <S-Right>
@@ -484,7 +486,6 @@ map  <ESC>[1;5C <C-Right>
 map  <ESC>[1;5D <C-Left>
 map  <ESC>[1;6C <C-S-Right>
 map  <ESC>[1;6D <C-S-Left>
-map  <ESC>[1;3Q <M-F2>
 map! <ESC>[1;2A <S-UP>
 map! <ESC>[1;2B <S-DOWN>
 map! <ESC>[1;2C <S-Right>
@@ -506,14 +507,15 @@ map  <silent> <Home>          ^
 imap <silent> <Home>          <Esc>^i
 map  <silent> <M-Up>          :call <SID>LocationPrevious()<CR>
 map  <silent> <S-Up>          :call Pre_err()<CR>
-map  <silent> <C-Up>          <Plug>GitGutterPrevHunk
-map! <silent> <C-Up>          <Plug>GitGutterPrevHunk
+map  <silent> <C-Up>          <Plug>(GitGutterPrevHunk)
+map! <silent> <C-Up>          <Plug>(GitGutterPrevHunk)
 map  <silent> <M-Down>        :call <SID>LocationNext()<CR>|
 map  <silent> <S-Down>        :call Next_err()<CR>
-map  <silent> <C-Down>        <Plug>GitGutterNextHunk
-map! <silent> <C-Down>        <Plug>GitGutterNextHunk
+map  <silent> <C-Down>        <Plug>(GitGutterNextHunk)
+map! <silent> <C-Down>        <Plug>(GitGutterNextHunk)
 
 map  <silent> <C-B>           :call Do_make__()<CR>|         " excute make in vim and open quickfix window
+nmap <silent> <C-F4>          :bd<CR>
 nmap <silent> <C-F7>          :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
 map  <silent> <C-H>           :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
 map  <silent> <C-left>        :bp<CR>|                       " previous buffer

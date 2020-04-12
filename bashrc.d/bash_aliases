@@ -144,7 +144,7 @@ mvbr() {
 remote_tag(){ git tag -f $1 $2; git push -f origin $1; }
 
 alias tig='tig --stat=$COLUMNS'
-alias ag='ag --hidden --ignore=*~'
+alias ag='ag --hidden --ignore=.git --ignore=*~'
 
 #-------------------------------------------------------------
 # Admin assistant

@@ -82,7 +82,11 @@ vag() {
 	if [[ $1 == -rn ]]; then
 		shift
 	fi
-	vim +cfile\ <(ag --hidden --ignore .git/ --ignore .tags --vimgrep "$@" | grep -v '~:')
+    local d="${@: -1}"
+    tmp=$(tempfile)
+    ag --hidden --ignore .git/ --ignore .tags --ignore *~ --vimgrep "$@" > $tmp
+    vim -c "cfile $tmp" -c "1bd"
+    rm -f $tmp
 }
 
 # Find a file with a pattern in name:
@@ -168,17 +172,17 @@ fi
 #-------------------------------------------------------------
 # customize PATH
 #-------------------------------------------------------------
-path="$path $HOME/bin"
-path="$path $HOME/.bin"
-path="$path $HOME/.local/bin"
-path="$path /usr/local/bin"
-path="$path /usr/sbin"
-path="$path $HOME/.pyenv/bin"
-for a in $path; do
-	if [[ -d "$a" && ! ":$PATH:" == *":$a:"* ]]; then
-		export PATH="$a:$PATH"
-	fi
-done
+path=(
+    $HOME/bin
+    $HOME/.bin
+    $HOME/.local/bin
+    /usr/local/bin
+    /usr/sbin
+    $HOME/.pyenv/bin
+    $HOME/.local/bin
+)
+export PATH="$(IFS=:; echo "${path[*]}"):$PATH"
+
 unset path
 
 #-------------------------------------------------------------

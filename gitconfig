@@ -28,12 +28,14 @@
 		GIT_SEQUENCE_EDITOR=true git rebase --autostash --interactive --autosquash \"$SHA^\";}; f"
 	rename = "!f() { git push origin origin/$1:refs/heads/$2 :$1; } ; f"
 	cap = "!f() { git commit --verbose -e -m \"$@\"; }; f"
-	new = "!f() { git cap \"📦 NEW: $@\"; }; f"
-	imp = "!f() { git cap \"👌 IMPROVE: $@\"; }; f"
-	fix = "!f() { git cap \"🐛 FIX: $@\"; }; f"
-	rlz = "!f() { git cap \"🚀 RELEASE: $@\"; }; f"
-	doc = "!f() { git cap \"📖 DOC: $@\"; }; f"
-	tst = "!f() { git cap \"✅ TEST: $@\"; }; f"
+	new = "!f() { git cap \"NEW: $@\"; }; f"
+	imp = "!f() { git cap \"IMPROVE: $@\"; }; f"
+	fix = "!f() { git cap \"FIX: $@\"; }; f"
+	rlz = "!f() { git cap \"RELEASE: $@\"; }; f"
+	doc = "!f() { git cap \"DOC: $@\"; }; f"
+	tst = "!f() { git cap \"TEST: $@\"; }; f"
+
+
 [merge]
 	tool = meld
 	conflictstyle = diff3
@@ -74,3 +76,5 @@
 	editor = interactive-rebase-tool
 [include]
 	path = ~/.local_gitconfig
+[init]
+	templatedir = ~/.git-templates

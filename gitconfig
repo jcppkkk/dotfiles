@@ -62,6 +62,7 @@
 	algorithm = patience
 	submodule = log
 	tool = meld
+	renames = true
 [user]
 	email = comet.jc@gmail.com
 	name = Jethro Yu
@@ -75,6 +76,6 @@
 [sequence]
 	editor = interactive-rebase-tool
 [include]
-	path = ~/.local_gitconfig
+	path = ~/.gitconfig_local
 [init]
 	templatedir = ~/.git-templates

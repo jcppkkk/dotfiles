@@ -388,10 +388,6 @@ elif [[ "$PROMPT_COMMAND" != *"POST_COMMAND"* ]]; then
 	PROMPT_COMMAND=$'POST_COMMAND\n'"$PROMPT_COMMAND"
 fi
 
-function path_unique() {
-	export PATH="$(echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -)"
-}
-
 # ensure X forwarding is setup correctly, even for screen
 XAUTH=~/.Xauthority
 if [[ ! -e "${XAUTH}" ]]; then
@@ -416,8 +412,12 @@ export DOCKER_BUILDKIT=1
 if [ -f ~/bin/vault ]; then
     complete -C ~/bin/vault vault
 fi
-eval "$($HOME/.pyenv/bin/pyenv init -)"
+if [ -f /usr/local/bin/mc ]; then
+    complete -C /usr/local/bin/mc mc
+fi
 
+function path_unique() {
+	export PATH="$(echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -)"
+}
 path_unique
 
-complete -C /usr/local/bin/mc mc

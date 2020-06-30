@@ -468,41 +468,16 @@ set pastetoggle=<LocalLeader>p
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " open list when jump  to multiple match tags
 nnoremap <C-]> g<C-]>
-" fix vim screen TERM
-map  <ESC>[1;3Q <M-F2>
-map  <ESC>[1;5R <C-F3>
-map  <ESC>[1;5S <C-F4>
-map  <ESC>[1;2A <S-UP>
-map  <ESC>[1;2B <S-DOWN>
-map  <ESC>[1;2C <S-Right>
-map  <ESC>[1;2D <S-Left>
-map  <ESC>[1;3A <M-Up>
-map  <ESC>[1;3B <M-Down>
-map  <ESC>[1;3C <M-Right>
-map  <ESC>[1;3D <M-Left>
-map  <ESC>[1;5A <C-UP>
-map  <ESC>[1;5B <C-DOWN>
-map  <ESC>[1;5C <C-Right>
-map  <ESC>[1;5D <C-Left>
-map  <ESC>[1;6C <C-S-Right>
-map  <ESC>[1;6D <C-S-Left>
-map! <ESC>[1;2A <S-UP>
-map! <ESC>[1;2B <S-DOWN>
-map! <ESC>[1;2C <S-Right>
-map! <ESC>[1;2D <S-Left>
-map! <ESC>[1;3A <M-Up>
-map! <ESC>[1;3B <M-Down>
-map! <ESC>[1;3C <M-Right>
-map! <ESC>[1;3D <M-Left>
-map! <ESC>[1;5A <C-UP>
-map! <ESC>[1;5B <C-DOWN>
-map! <ESC>[1;5C <C-Right>
-map! <ESC>[1;5D <C-Left>
-map! <ESC>[1;6C <C-S-Right>
-map! <ESC>[1;6D <C-S-Left>
-map  <ESC>[5;5~ <C-PageUp>
-map  <ESC>[6;5~ <C-PageDown>
 
+
+if &term == "tmux"
+	set term=screen.xterm-256color
+elseif &term == "terminator"
+	set term=xterm-256color
+endif
+
+let g:multi_cursor_select_all_word_key = '<C-D>'
+let g:multi_cursor_select_all_key      = 'g<C-D>'
 map  <silent> <Home>          ^
 imap <silent> <Home>          <Esc>^i
 map  <silent> <M-Up>          :call <SID>LocationPrevious()<CR>
@@ -523,8 +498,6 @@ map  <silent> <C-right>       :bn<CR>|                       " next buffer
 map  <silent> <C-S-left>      <C-W><C-H>
 map  <silent> <C-S-right>     <C-W><C-L>
 map  <silent> <F12>           :call Switch_indent()<CR>
-map! <silent> <F3>            <C-o>:pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
-map  <silent> <F3>            :pyf /usr/share/vim/addons/syntax/clang-format-4.0.py<CR>
 map  <silent> <F4>            :SyntasticToggleMode\|:silent w<CR>
 map  <silent> <F5>            :w<CR>
 vmap <silent> <F6>            :"hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g
@@ -535,7 +508,7 @@ map  <silent> <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source th
 map  <silent> <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
 map  <silent> <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
 "map  <silent> <LocalLeader>t  :TlistToggle<CR>
-"map  <silent> <MouseMiddle>   <ESC>"*p|                      " makes the mouse paste a block of text without formatting it
+
 map! <silent> <S-Tab>         <C-D>|                        " tab indenta
 vmap <silent> <S-Tab>         <gv_|                         " tab indent
 nmap <silent> <S-Tab>         <<|                           " tab indent

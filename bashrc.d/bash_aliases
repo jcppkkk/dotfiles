@@ -47,10 +47,7 @@ alias df='df -kTh -x"squashfs"'
 
 # Commands
 alias ivm='vim'
-alias tmux='tmux -2 new -D -A -s main'
-
-set_title() { printf '\e]2;%s\a' "$*"; }
-alias tt='set_title'
+alias tt='tmux -2 new -D -A -s main'
 
 #-------------------------------------------------------------
 # The 'ls' family (this assumes you use a recent GNU ls)

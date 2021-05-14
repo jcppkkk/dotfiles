@@ -49,6 +49,7 @@
 	helper = cache --timeout=86400
 [rerere]
 	enabled = 1
+	autoupdate = true
 [rebase]
 	instructionFormat = [%an @ %ar] %s
 [git-up "fetch"]

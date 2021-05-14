@@ -36,6 +36,7 @@ autocmd BufReadPost *.jade DetectIndent
 autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent = 4
+Plug 'vim-scripts/Modeliner'
 
 " syntax checker
 Plug 'scrooloose/syntastic'
@@ -58,7 +59,6 @@ let g:syntastic_sh_checkers = ['shellcheck']
 
 """"""""""""""""""" language support - others
 Plug 'chase/vim-ansible-yaml'
-Plug 'vim-ruby/vim-ruby'
 Plug 'kchmck/vim-coffee-script'
 Plug 'PProvost/vim-ps1'
 Plug 'vim-scripts/Improved-AnsiEsc'
@@ -108,6 +108,9 @@ autocmd FileType qf wincmd J
 Plug 'vim-scripts/gcov.vim'
 """"""""""""""""""" language support - csv
 Plug 'chrisbra/csv.vim'
+""""""""""""""""""" language support - ruby
+Plug 'vim-ruby/vim-ruby'
+Plug 'ngmy/vim-rubocop'
 
 " Tools - Git
 Plug 'airblade/vim-gitgutter'
@@ -116,6 +119,8 @@ let g:gitgutter_max_signs = 5000
 Plug 'tpope/vim-fugitive'
 
 " Editing Tools
+Plug 'vim-scripts/lastmod.vim'
+let g:lastmod_format = '%Y-%m-%d %H:%M:%S (%z)'
 Plug 'farmergreg/vim-lastplace'
 Plug 'ctrlpvim/ctrlp.vim'
 let g:ctrlp_cmd = 'CtrlPMRU'
@@ -125,8 +130,8 @@ let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_auto_colors = 0
 let g:indent_guides_start_level=2
 let g:indent_guides_guide_size=1
-Plug 'guns/xterm-color-table.vim'
 Plug 'terryma/vim-multiple-cursors'
+
 Plug 'junegunn/vim-easy-align'
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -147,11 +152,12 @@ syntax enable
 set background=dark
 let g:solarized_diffmode="low"
 let g:solarized_termtrans=1
+Plug 'morhetz/gruvbox'
 
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_powerline_fonts = 1
-let g:airline_theme='solarized'
+let g:airline_theme='gruvbox'
 " spaces are allowed after tabs, but not in between
 " this algorithm works well with programming styles that use tabs for
 " indentation and spaces for alignment
@@ -164,8 +170,9 @@ let g:airline#extensions#tabline#fnametruncate = 8
 call plug#end()
 set wildmode=longest,list
 set wildmenu
+
 " load colorscheme out of plug section
-silent! colorscheme solarized " ignore error on first initialize
+silent! colorscheme gruvbox " ignore error on first initialize
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns
@@ -231,21 +238,17 @@ set diffopt=filler,iwhite       " ignore all whitespace and sync
 " spelling...
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if v:version >= 700
-	let b:lastspelllang='en'
 	function! ToggleSpell()
 		if &spell == 1
-			let b:lastspelllang=&spelllang
 			setl spell!
-		elseif b:lastspelllang
-			setl spell spelllang=b:lastspelllang
 		else
-			setl spell spelllang=en
+			setl spell spelllang=en_us
 		endif
 	endfunction
 
 	nmap <LocalLeader>ss :call ToggleSpell()<CR>
 
-	setl spell spelllang=en
+	setl spell spelllang=en_us
 	setl nospell
 endif
 
@@ -438,8 +441,8 @@ autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expand
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab iskeyword=-,@,48-57,_,192-255
 autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 expandtab|syntax sync fromstart
-autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])
-autocmd FileType               gitcommit  set spell spelllang=en_us
+autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])|call ToggleSpell()
+
 
 " The Silver Searcher
 if executable('ag')
@@ -467,17 +470,27 @@ set pastetoggle=<LocalLeader>p
 " maps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " open list when jump  to multiple match tags
+if &term =~ '^screen'
+	" tmux will send xterm-style keys when its xterm-keys option is on
+	execute "set <xUp>=\e[1;*A"
+	execute "set <xDown>=\e[1;*B"
+	execute "set <xRight>=\e[1;*C"
+	execute "set <xLeft>=\e[1;*D"
+endif
+
 nnoremap <C-]> g<C-]>
 
 
 if &term == "tmux"
-	set term=screen.xterm-256color
+	set term=xterm-256color
 elseif &term == "terminator"
 	set term=xterm-256color
 endif
 
-let g:multi_cursor_select_all_word_key = '<C-D>'
-let g:multi_cursor_select_all_key      = 'g<C-D>'
+let g:multi_cursor_start_word_key      = '<C-d>'
+let g:multi_cursor_next_key            = '<C-d>'
+let g:multi_cursor_select_all_word_key = 'g<C-d>'
+let g:multi_cursor_select_all_key      = 'g<C-f>'
 map  <silent> <Home>          ^
 imap <silent> <Home>          <Esc>^i
 map  <silent> <M-Up>          :call <SID>LocationPrevious()<CR>

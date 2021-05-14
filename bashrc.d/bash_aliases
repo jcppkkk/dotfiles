@@ -105,7 +105,7 @@ alias gsu='git submodule update --force --init'
 
 alias guptag='git tag -l | xargs git tag -d && git fetch'
 alias gltag='git for-each-ref refs/tags/ --format "%(objecttype) %(refname:short)" |  while read ty name; do [ $ty = commit ] && echo $name; done'
-alias gva='(builtin \cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | sed -ne "s#.* ##p"))'
+alias gva='(builtin \cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | grep ^MM | sed -ne "s#.* ##p"))'
 alias gt='git tag'
 
 touchtag(){ tag=$1; export GIT_COMMITTER_DATE="$(git show $tag --format=%aD | head -1)"; git tag -a -m $tag -f $tag $tag; }

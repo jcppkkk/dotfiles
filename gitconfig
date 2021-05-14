@@ -80,3 +80,6 @@
 	path = ~/.gitconfig_local
 [init]
 	templatedir = ~/.git-templates
+[filter "vimrc"]
+	smudge = cat
+	clean = sed /LOCAL_SCRIPTS_START/,/LOCAL_SCRIPTS_END/d

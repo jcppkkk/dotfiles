@@ -14,5 +14,5 @@ set show-all-if-unmodified on
 # Be 8 bit clean.
 set meta-flag on
 set input-meta on
-set convert-meta on
+set convert-meta off
 set output-meta on

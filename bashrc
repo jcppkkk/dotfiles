@@ -173,13 +173,12 @@ fi
 # customize PATH
 #-------------------------------------------------------------
 path=(
+    $HOME/.pyenv/bin
+    $HOME/.rbenv/shims
     $HOME/bin
     $HOME/.bin
-    $HOME/.local/bin
-    /usr/local/bin
     /usr/sbin
-    $HOME/.pyenv/bin
-    $HOME/.local/bin
+    /usr/local/bin
 )
 export PATH="$(IFS=:; echo "${path[*]}"):$PATH"
 
@@ -408,6 +407,10 @@ function cd() {
 }
 
 export DOCKER_BUILDKIT=1
+
+if command -v pyenv >/dev/null; then
+    eval "$(pyenv init -)"
+fi
 
 if [ -f ~/bin/vault ]; then
     complete -C ~/bin/vault vault

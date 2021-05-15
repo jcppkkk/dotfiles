@@ -24,6 +24,7 @@
       { "function": "powerline_gitstatus.gitstatus", "priority": 40 },
       { "function":"powerline.segments.shell.last_status", "priority":10 },
       { "type":"string", "highlight_groups":[ "information:regular" ], "contents":"↪" }
-    ]
+    ],
+    "right": [ ]
   }
 }

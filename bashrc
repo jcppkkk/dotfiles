@@ -200,10 +200,11 @@ _bash_history_sync() {
 # Powerline prompt
 
 srcfiles=(
-	/home/$SUDO_USER/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh
-	$HOME/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh
+    /usr/share/powerline/bindings/bash/powerline.sh
 	/usr/local/lib/python*/dist-packages/powerline/bindings/bash/powerline.sh
 	/Library/Python/*/site-packages/powerline/bindings/bash/powerline.sh
+	/home/$SUDO_USER/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh
+	$HOME/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh
 )
 for powerline in "${srcfiles[@]}"; do
 	if [ -f "$powerline" ]; then

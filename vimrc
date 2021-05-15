@@ -147,17 +147,11 @@ let g:lt_location_list_toggle_map = '<leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader>q'
 
 " Themes
-Plug 'altercation/vim-colors-solarized'
-syntax enable
-set background=dark
-let g:solarized_diffmode="low"
-let g:solarized_termtrans=1
 Plug 'morhetz/gruvbox'
-
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_powerline_fonts = 1
-let g:airline_theme='gruvbox'
+let g:airline_theme='base16_gruvbox_dark_hard'
 " spaces are allowed after tabs, but not in between
 " this algorithm works well with programming styles that use tabs for
 " indentation and spaces for alignment
@@ -171,8 +165,10 @@ call plug#end()
 set wildmode=longest,list
 set wildmenu
 
-" load colorscheme out of plug section
-silent! colorscheme gruvbox " ignore error on first initialize
+syntax enable
+set background=dark
+colorscheme gruvbox " ignore error on first initialize
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " first the disabled features due to security concerns

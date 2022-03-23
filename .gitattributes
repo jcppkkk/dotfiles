@@ -2,3 +2,4 @@
 *.vimrc text eol=lf
 /bashrc text eol=lf
 /vimrc filter=vimrc
+/gitconfig filter=gitconfig

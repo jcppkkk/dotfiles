@@ -1,85 +1,85 @@
-[user]
-	name = Jethro Yu
-[core]
-	editor = vim
-	autocrlf = input
-	whitespace = cr-at-eol
-	pager = sed 's/\\t/        /g' | less -R
-	preloadindex = true
-	excludesfile = ~/.gitignore_global
+[alias]
+	amend-to = "!f() { SHA=`git rev-parse \"$1\"`; git commit --fixup \"$SHA\" && GIT_SEQUENCE_EDITOR=true git rebase --autostash --interactive --autosquash \"$SHA^\";}; f"
+	br = branch
+	ci = commit --verbose
+	co = checkout
+	d = difftool
+	gr = "log --graph --pretty=format:'%C(red)%h%C(reset)%x09 %C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit --date=relative"
+	json = log --format='{ \"hashes\":{ \"commit\":\"%H\", \"tree\":\"%T\", \"parents\":\"%P\" }, \"author\":{ \"date\": \"%ai\", \"name\": \"%an\", \"email\":\"%ae\" }, \"committer\":{ \"date\": \"%ci\", \"name\": \"%cn\", \"email\":\"%ce\" } }'
+	last = !git --no-pager gr -20
+	root = rev-parse --show-superproject-working-tree --show-toplevel
+	st = status
+	unstage = reset HEAD --
+	cap = "!f() { git commit --verbose -e -m \"$@\"; }; f"
+	tst = "!f() { git cap \"TEST: $@\"; }; f"
+	rlz = "!f() { git cap \"RELEASE: $@\"; }; f"
+	new = "!f() { git cap \"NEW: $@\"; }; f"
+	imp = "!f() { git cap \"IMPROVE: $@\"; }; f"
+	doc = "!f() { git cap \"DOC: $@\"; }; f"
+	fix = "!f() { git cap \"FIX: $@\"; }; f"
+[branch]
+	autosetuprebase = always
+[cola]
+	spellcheck = true
 [color]
 	branch = auto
 	diff = auto
 	interactive = auto
 	status = auto
 	ui = true
-
-[alias]
-	co = checkout
-	ci = commit --verbose
-	st = status
-	br = branch
-	last = log -1 HEAD
-	unstage = reset HEAD --
-	gr = "log --graph --pretty=format:'%C(red)%h%C(reset)%x09 %C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)' --abbrev-commit --date=relative"
-	last = !git --no-pager gr -20
-	d = difftool
-	amend-to = "!f() { SHA=`git rev-parse \"$1\"`; git commit --fixup \"$SHA\" && \
-		GIT_SEQUENCE_EDITOR=true git rebase --autostash --interactive --autosquash \"$SHA^\";}; f"
-	rename = "!f() { git push origin origin/$1:refs/heads/$2 :$1; } ; f"
-	cap = "!f() { git commit --verbose -e -m \"$@\"; }; f"
-	new = "!f() { git cap \"NEW: $@\"; }; f"
-	imp = "!f() { git cap \"IMPROVE: $@\"; }; f"
-	fix = "!f() { git cap \"FIX: $@\"; }; f"
-	rlz = "!f() { git cap \"RELEASE: $@\"; }; f"
-	doc = "!f() { git cap \"DOC: $@\"; }; f"
-	tst = "!f() { git cap \"TEST: $@\"; }; f"
-
-
-[merge]
-	tool = meld
-	conflictstyle = diff3
-[mergetool "mymeld"]
-	cmd = meld --diff $BASE $LOCAL --diff $BASE $REMOTE --diff $LOCAL $BASE $REMOTE $MERGED
-[branch]
-	autosetuprebase = always
-[push]
-	default = current
+[core]
+	attributesfile = /home/jethro/.gitattributes
+	autocrlf = input
+	commentchar = @
+	editor = vim
+	excludesfile = ~/.gitignore_global
+	pager = sed 's/\\t/        /g' | less -R
+	preloadindex = true
+	whitespace = cr-at-eol
 [credential]
 	helper = cache --timeout=86400
-[rerere]
-	enabled = 1
-	autoupdate = true
-[rebase]
-	instructionFormat = [%an @ %ar] %s
-[git-up "fetch"]
-	prune = true
-	all = true
-[git-up "rebase"]
-	arguments = --rerere-autoupdate
-[mergetool]
-	keepBackup = false
 [diff]
-	algorithm = patience
-	submodule = log
-	tool = meld
+	algorithm = histogram
 	renames = true
-[user]
-	email = comet.jc@gmail.com
-	name = Jethro Yu
+	submodule = log
+	tool = vimdiff
+[difftool]
+	prompt = false
+[filter "gitconfig"]
 [filter "lfs"]
+	clean = git-lfs clean -- %f
 	process = git-lfs filter-process
 	required = true
-	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
-[cola]
-	spellcheck = true
-[sequence]
-	editor = interactive-rebase-tool
+[filter "vimrc"]
+	clean = sed /LOCAL_SCRIPTS_START/,/LOCAL_SCRIPTS_END/d
+[git-up "fetch"]
+	all = true
+	prune = true
+[git-up "rebase"]
+	arguments = --rerere-autoupdate
 [include]
 	path = ~/.gitconfig_local
 [init]
 	templatedir = ~/.git-templates
-[filter "vimrc"]
-	smudge = cat
-	clean = sed /LOCAL_SCRIPTS_START/,/LOCAL_SCRIPTS_END/d
+[merge]
+	conflictstyle = diff3
+	tool = meld
+[mergetool]
+	keepBackup = false
+[mergetool "kdiff3"]
+	trustExitCode = false
+[mergetool "mymeld"]
+	cmd = meld --diff $BASE $LOCAL --diff $BASE $REMOTE --diff $LOCAL $BASE $REMOTE $MERGED
+[push]
+	default = current
+[rebase]
+	instructionFormat = "[%an @ %ar] %s"
+[rerere]
+	autoupdate = true
+	enabled = 1
+[sequence]
+	editor = interactive-rebase-tool
+[status]
+	submoduleSummary = false
+[user]

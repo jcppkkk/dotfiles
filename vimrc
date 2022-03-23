@@ -25,6 +25,10 @@ if !exists("my_auto_commands_loaded")
 	augroup END
 endif
 
+if has("patch-8.1.0360")
+    set diffopt+=internal,algorithm:histogram
+endif
+
 call plug#begin()
 
 " Testing
@@ -58,7 +62,10 @@ let g:syntastic_python_flake8_args='--ignore=E501,E265'
 let g:syntastic_sh_checkers = ['shellcheck']
 
 """"""""""""""""""" language support - others
-Plug 'chase/vim-ansible-yaml'
+Plug 'luochen1990/rainbow'
+let g:rainbow_active = 1
+Plug 'stephpy/vim-yaml'
+Plug 'avakhov/vim-yaml' " indent yaml
 Plug 'kchmck/vim-coffee-script'
 Plug 'PProvost/vim-ps1'
 Plug 'vim-scripts/Improved-AnsiEsc'
@@ -130,7 +137,10 @@ let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_auto_colors = 0
 let g:indent_guides_start_level=2
 let g:indent_guides_guide_size=1
-Plug 'terryma/vim-multiple-cursors'
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+let g:VM_maps = {}
+let g:VM_maps["Add Cursor Down"]             = ''
+let g:VM_maps["Add Cursor Up"]               = ''
 
 Plug 'junegunn/vim-easy-align'
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -292,13 +302,6 @@ set fileformats=unix,dos
 set showtabline=1                       " auto hide tab title if only 1 tab
 set nobinary
 
-if has("vms")
-	set nobackup	" do not keep a backup file, use versions instead
-else
-	set backup		" keep a backup file
-endif
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Function Keys F1~F12, B, C,
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -417,7 +420,6 @@ autocmd BufNewFile,BufReadPost *.gcov     setl filetype=gcov
 autocmd BufNewFile,BufReadPost Rockerfile setl filetype=Dockerfile
 autocmd BufNewFile,BufReadPost *.go       setl shiftwidth=4 noexpandtab   tabstop=4
 autocmd BufNewFile,BufReadPost *.hbs      setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.js       setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
@@ -428,6 +430,7 @@ autocmd FileType               c          setl fo=cq        wm=0          format
 autocmd FileType               css        setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               html       setl shiftwidth=4 softtabstop=4 expandtab
 autocmd FileType               jade       setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               javascript setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabstop=8 iskeyword=-,@,48-57,_,192-255
 autocmd FileType               markdown   setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               php        setl shiftwidth=4 softtabstop=4 expandtab
@@ -435,7 +438,8 @@ autocmd FileType               python     setl makeprg=pychecker\ -Q\ --only\ %\
 autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               yaml       setl shiftwidth=2 softtabstop=2 expandtab iskeyword=-,@,48-57,_,192-255
+autocmd FileType               gitcommit  setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               yaml       setl ts=2 sts=2 sw=2 expandtab indentkeys-=0# indentkeys-=<:> iskeyword=-,@,48-57,_,192-255
 autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 expandtab|syntax sync fromstart
 autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])|call ToggleSpell()
 
@@ -459,7 +463,7 @@ augroup qf
 	autocmd FileType qf set nobuflisted
 augroup END
 
-set clipboard=exclude:.*.
+set clipboard=exclude:.*
 
 set pastetoggle=<LocalLeader>p
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -477,7 +481,7 @@ endif
 nnoremap <C-]> g<C-]>
 
 
-if &term == "tmux"
+if &term == "screen-256color"
 	set term=xterm-256color
 elseif &term == "terminator"
 	set term=xterm-256color

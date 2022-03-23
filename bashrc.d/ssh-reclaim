@@ -29,7 +29,7 @@ if [ -t 0 ]; then
     echo
     echo " ${BLUE}*${DEFAULT} Starting ssh-agent..."
 fi
-ssh_agent_pid=$(pgrep -u "$USER" ssh-agent | cut -d' ' -f1)
+ssh_agent_pid=$(pgrep -u "$USER" ssh-agent | cut -d' ' -f1 | tr '\n' ' ')
 ssh_auth_sock=$HOME/.ssh/agent-auth-sock-$(uname -n)
 if [ -z "$ssh_agent_pid" ]; then
     rm -f "$ssh_auth_sock"

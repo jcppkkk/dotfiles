@@ -10,13 +10,6 @@
 	root = rev-parse --show-superproject-working-tree --show-toplevel
 	st = status
 	unstage = reset HEAD --
-	cap = "!f() { git commit --verbose -e -m \"$@\"; }; f"
-	tst = "!f() { git cap \"TEST: $@\"; }; f"
-	rlz = "!f() { git cap \"RELEASE: $@\"; }; f"
-	new = "!f() { git cap \"NEW: $@\"; }; f"
-	imp = "!f() { git cap \"IMPROVE: $@\"; }; f"
-	doc = "!f() { git cap \"DOC: $@\"; }; f"
-	fix = "!f() { git cap \"FIX: $@\"; }; f"
 [branch]
 	autosetuprebase = always
 [cola]

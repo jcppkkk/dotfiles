@@ -4,42 +4,50 @@
 
 # Git Commit, Add all and Push — in one step.
 gcap() {
-    git add . && git commit -m "$*" && git push
+    git add . && git commit -m "$*"# && git push
 }
 
+gprompt() {
+    if [[ -z "$@" ]]; then
+        read -p "git commit: " -e msg
+        echo "$msg"
+    else
+        echo "$@"
+    fi
+}
 # NEW.
 gnew() {
-    gcap "📦 NEW: $@"
+    gcap "📦 NEW: $(gprompt $@)"
 }
 
 # IMPROVE.
 gimp() {
-    gcap "👌 IMPROVE: $@"
+    gcap "👌 IMPROVE: $(gprompt $@)"
 }
 
 # FIX.
 gfix() {
-    gcap "🐛 FIX: $@"
+    gcap "🐛 FIX: $(gprompt $@)"
 }
 
 # RELEASE.
 grlz() {
-    gcap "🚀 RELEASE: $@"
+    gcap "🚀 RELEASE: $(gprompt $@)"
 }
 
 # DOC.
 gdoc() {
-    gcap "📖 DOC: $@"
+    gcap "📖 DOC: $(gprompt $@)"
 }
 
 # TEST.
 gtst() {
-    gcap "🤖 TEST: $@"
+    gcap "🤖 TEST: $(gprompt $@)"
 }
 
 # BREAKING CHANGE.
 gbrk() {
-    gcap "‼️ BREAKING: $@"
+    gcap "‼️ BREAKING: $(gprompt $@)"
 }
 gtype() {
     NORMAL='\033[0;39m'

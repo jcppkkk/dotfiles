@@ -40,17 +40,6 @@ fi
 shopt -s checkwinsize
 
 #-------------------------------------------------------------
-# Auto load ssh agent
-#-------------------------------------------------------------
-if [ ${#SSH_AGENT_PID} -eq 0 ] || ! kill -0 ${SSH_AGENT_PID:-0}; then
-	export SSH_AUTH_SOCK=$HOME/.tmp/ssh-agent.sock
-	mkdir -p "$HOME/.tmp"
-	rm -f "$HOME/.tmp/ssh-agent.sock"
-	eval $(ssh-agent -s -a $SSH_AUTH_SOCK) >/dev/null
-	ssh-add >&/dev/null
-fi
-
-#-------------------------------------------------------------
 # Set Default keybinding
 #-------------------------------------------------------------
 if [ -z "$INPUTRC" -a ! -f "$HOME/.inputrc" ]; then
@@ -139,25 +128,6 @@ jcrm() {
 	unset queue
 }
 
-#-------------------------------------------------------------
-# import scripts
-#-------------------------------------------------------------
-[[ "$-" == *e* ]] && set +e && e=e # store -e flag when sourcing external resource
-shopt -s extglob
-list=()
-list+=(/etc/bashrc)
-# /etc/bashrc need to run after bashrc.d
-list+=($HOME/.bashrc.d/!(*~))
-list+=($HOME/.bashrc_local)
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-for file in "${list[@]}"; do
-	if [ -f "$file" ]; then
-		source "$file"
-	fi
-done
-unset list
-[ "$e" = "e" ] && set -e && unset e # restore -e flag
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -169,20 +139,6 @@ if ! shopt -oq posix; then
 	fi
 fi
 
-#-------------------------------------------------------------
-# customize PATH
-#-------------------------------------------------------------
-path=(
-    $HOME/.pyenv/bin
-    $HOME/.rbenv/shims
-    $HOME/bin
-    $HOME/.bin
-    /usr/sbin
-    /usr/local/bin
-)
-export PATH="$(IFS=:; echo "${path[*]}"):$PATH"
-
-unset path
 
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
@@ -293,6 +249,9 @@ winscp() { echo -ne "\033];__ws:${PWD}\007"; }
 #-------------------------------------------------------------
 # Report command takes long time
 #-------------------------------------------------------------
+_beep() {
+    paplay /usr/share/sounds/sound-icons/finish --volume=60000
+}
 timer_start() {
 	timer=${timer:-$SECONDS}
 }
@@ -309,31 +268,24 @@ command_timer_stop() {
 	local show_timer_after=30
 	local duration=$(($SECONDS - ${command_timer:-$SECONDS}))
 	local str_dur=""
-	if [ $duration -gt $show_timer_after ]; then
-		# Sound after slow command
-		if hash play 2>/dev/null; then
-			(for i in {1..8}; do
-				play -q -n synth 0.2 sin 800 vol 0.1
-				sleep 0.2
-			done 2>/dev/null &)
-		fi
+	if [[ $duration -gt $show_timer_after ]]; then
 		local hours=$(($duration / 3600))
 		local mins=$((($duration % 3600) / 60))
 		local secs=$(($duration % 60))
 		if (($duration >= 3600)); then
-			str_dur=$(printf "(%02g:%02g:%02g (hh:mm:ss)) " $hours $mins $secs)
+			str_dur=$(printf "(%02g:%02g:%02g)" $hours $mins $secs)
 		elif (($duration >= 60)); then
-			str_dur=$(printf "(%02g:%02g (mm:ss)) " $mins $secs)
+			str_dur=$(printf "(%02g:%02g)" $mins $secs)
 		else
-			str_dur=$(printf "(%s seconds) " $secs)
+			str_dur=$(printf "(%s sec)" $secs)
 		fi
 	fi
-	if [ -z "$str_dur" -a $1 -eq 0 ]; then
+	if [[ -z "$str_dur" ]] && [[ $1 -eq 0 ]]; then
 		return $1
 	fi
 	# Print on error or wainting too long
 	local ncolors=$(tput colors 2>/dev/null)
-	if [ $1 -eq 0 ]; then
+	if [[ $1 -eq 0 ]]; then
 		local status=success
 		local color_status="\e[0;32m"
 		local color_cmd="\e[7m"
@@ -343,12 +295,19 @@ command_timer_stop() {
 		local status="failed with code ${color_cmd}${1}${color_status}"
 	fi
 	local color_reset="\e[00m"
-	if [ ${ncolors:=0} -lt 8 ]; then
+	if [[ ${ncolors:=0} -lt 8 ]]; then
 		color_status=""
 		color_cmd=""
 		color_reset=""
 	fi
-	echo -e "${color_status}#### Command ${color_cmd}$_cmd${color_status} ${status} $str_dur#### ${color_reset}"
+	echo -e "${color_status}#### Command ${color_cmd}$_cmd${color_status} ${status} ${str_dur} #### ${color_reset}"
+	if [[ $duration -gt $show_timer_after ]]; then
+        if [[ "$1" == "0" ]]; then
+            (_beep "Done" "$_cmd" "$str_dur" &)
+        else
+            (_beep "E($1)" "$_cmd" "$str_dur" &)
+        fi
+    fi
 }
 
 set_screen_title() {
@@ -371,6 +330,7 @@ POST_COMMAND() {
 
 	if [[ -n "$_cmd" ]]; then
 		command_timer_stop $r
+        SECONDS=0
 		_bash_history_sync
 		_cmd=
 	else
@@ -401,10 +361,14 @@ fi
 
 function cd() {
 	builtin \cd "$@"
-	if [[ $? -eq 0 && -z "$PIPENV_ACTIVE" && -f "Pipfile" ]]; then
-        export PIPENV_IGNORE_VIRTUALENVS=1
-		source $(pipenv --venv)/bin/activate
-	fi
+    if [[ $? -eq 0 ]]; then
+        if [[ -z "$PIPENV_ACTIVE" && -f "Pipfile" ]]; then
+            export PIPENV_IGNORE_VIRTUALENVS=1
+            source $(pipenv --venv)/bin/activate
+        elif [[ -f poetry.lock && -n "$(poetry env info -p)" ]]; then
+            source $(poetry env info -p)/bin/activate
+        fi
+    fi
 }
 
 export DOCKER_BUILDKIT=1
@@ -420,8 +384,43 @@ if [ -f /usr/local/bin/mc ]; then
     complete -C /usr/local/bin/mc mc
 fi
 
-function path_unique() {
-	export PATH="$(echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -)"
-}
-path_unique
+#-------------------------------------------------------------
+# import scripts
+#-------------------------------------------------------------
+[[ "$-" == *e* ]] && set +e && e=e # store -e flag when sourcing external resource
+shopt -s extglob
+list=()
+list+=(/etc/bashrc)
+# /etc/bashrc need to run after bashrc.d
+list+=($HOME/.bashrc.d/!(*~))
+list+=($HOME/.bashrc_local)
+for file in "${list[@]}"; do
+	if [ -f "$file" ]; then
+		source "$file"
+	fi
+done
+unset list
+[ "$e" = "e" ] && set -e && unset e # restore -e flag
 
+complete -C /usr/local/bin/mc mc
+
+
+#-------------------------------------------------------------
+# customize PATH
+#-------------------------------------------------------------
+path=(
+    $HOME/bin
+    $HOME/.bin
+    $HOME/.poetry/bin
+    $HOME/.pyenv/bin
+    $HOME/.rbenv/bin
+    $HOME/.pyenv/shims
+    $HOME/.rbenv/shims
+    /usr/sbin
+    /usr/local/bin
+)
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$(IFS=:; echo "${path[*]}"):$PATH"
+
+unset path
+export PATH="$(echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -)"

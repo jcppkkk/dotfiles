@@ -1,10 +1,22 @@
 {
-	"segments": {
-		"right": [
-			{
-				"function": "powerline.segments.common.sys.system_load",
-				"priority": 50
-			}
-		]
-	}
+  "spaces": 0,
+  "outer_padding": 0,
+  "dividers": {
+    "left": {
+      "hard": "",
+      "soft": ""
+    },
+    "right": {
+      "hard": " ",
+      "soft": " "
+    }
+  },
+  "segments": {
+    "right": [
+      {
+        "function": "powerline.segments.common.sys.system_load",
+        "priority": 50
+      }
+    ]
+  }
 }

@@ -485,6 +485,8 @@ if &term == "screen-256color"
 	set term=xterm-256color
 elseif &term == "terminator"
 	set term=xterm-256color
+elseif &term == "putty-256color"
+	set term=xterm-256color
 endif
 
 let g:multi_cursor_start_word_key      = '<C-d>'

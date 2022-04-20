@@ -4,7 +4,7 @@
 
 # Git Commit, Add all and Push — in one step.
 gcap() {
-    git add . && git commit -m "$*"# && git push
+    git add . && git commit -m "$*" && git push
 }
 
 gprompt() {

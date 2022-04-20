@@ -373,9 +373,6 @@ function cd() {
 
 export DOCKER_BUILDKIT=1
 
-if command -v pyenv >/dev/null; then
-    eval "$(pyenv init -)"
-fi
 
 if [ -f ~/bin/vault ]; then
     complete -C ~/bin/vault vault
@@ -412,15 +409,25 @@ path=(
     $HOME/bin
     $HOME/.bin
     $HOME/.poetry/bin
-    $HOME/.pyenv/bin
     $HOME/.rbenv/bin
-    $HOME/.pyenv/shims
     $HOME/.rbenv/shims
     /usr/sbin
     /usr/local/bin
 )
-export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$(IFS=:; echo "${path[*]}"):$PATH"
-
 unset path
+
+#-------------------------------------------------------------
+# pyenv
+#-------------------------------------------------------------
+if [[ -d $HOME/.pyenv/bin ]]; then
+    export PATH="$HOME/.pyenv/bin:$PATH"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+fi
+
+
+#-------------------------------------------------------------
+# dedup PATH
+#-------------------------------------------------------------
 export PATH="$(echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -)"

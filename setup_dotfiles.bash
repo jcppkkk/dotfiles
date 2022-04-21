@@ -140,6 +140,11 @@ curl -fLo vim/autoload/plug.vim --create-dirs \
 vim +PlugInstall +qa
 find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 
+#######################
+## install tmux plugins
+#######################
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
 
 #######################
 ## Local changes

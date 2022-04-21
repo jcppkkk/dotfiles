@@ -32,16 +32,16 @@ alias h='history'
 alias j='jobs -l'
 alias which='type -a'
 alias cdd='cd $(\ls -a -d .. * | percol --prompt-bottom --result-bottom-up);ls'
-function update_dots() {
-    READLINE_LINE=${READLINE_LINE}.
-    if [[ "$READLINE_LINE" =~ ^\.(\.+)$ ]]; then
-        DOT_CMD="cd ${READLINE_LINE//\./\.\.\/}"
-        alias $READLINE_LINE="$DOT_CMD"
-    fi
-    READLINE_POINT=$(($READLINE_POINT+1))
-}
+dots=".."
+target="cd .."
+for((i=0; i<10; i++))
+do
+    alias "$dots=$target"
+    dots+="."
+    target+="/.."
+done
+unset dots target
 
-bind -x '".":"update_dots"'
 alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 

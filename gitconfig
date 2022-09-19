@@ -36,6 +36,10 @@
 	renames = true
 	submodule = log
 	tool = vimdiff
+[diff "tar-gz"]
+    binary = true
+    textconv = tar -tvzf
+
 [difftool]
 	prompt = false
 [filter "gitconfig"]

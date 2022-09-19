@@ -26,7 +26,7 @@ if !exists("my_auto_commands_loaded")
 endif
 
 if has("patch-8.1.0360")
-    set diffopt+=internal,algorithm:histogram
+	set diffopt+=internal,algorithm:histogram
 endif
 
 call plug#begin()
@@ -49,17 +49,12 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
-let g:syntastic_cpp_checkers = ['make', 'cpplint']
-let g:syntastic_c_checkers = ['make', 'checkpatch', 'cpplint']
-let g:syntastic_c_checkpatch_exec = $HOME."/bin/checkpatch.pl"
-let g:syntastic_c_cpplint_exec =  $HOME."/bin/hb_clint.py"
-let g:syntastic_cpp_cpplint_exec =  $HOME."/bin/hb_clint.py"
 let g:syntastic_aggregate_errors = 1
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
+"let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
 let g:syntastic_python_checkers=['flake8']
-"let g:syntastic_python_flake8_args='--ignore=E501,F405,F408,F403,E241,E221'
-let g:syntastic_python_flake8_args='--ignore=E501,E265'
+let g:syntastic_python_flake8_args='--ignore=E501,E265,W503'
 let g:syntastic_sh_checkers = ['shellcheck']
+let g:syntastic_sh_shellcheck_args="-x"
 
 """"""""""""""""""" language support - others
 Plug 'luochen1990/rainbow'
@@ -72,6 +67,7 @@ Plug 'vim-scripts/Improved-AnsiEsc'
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-AutoAdapt'
 let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
+Plug 'stephpy/vim-yaml'
 """"""""""""""""""" language support - Shell
 Plug 'Clavelito/indent-sh.vim'
 """"""""""""""""""" language support - Docker
@@ -302,6 +298,15 @@ set fileformats=unix,dos
 set showtabline=1                       " auto hide tab title if only 1 tab
 set nobinary
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" create the directory there if it doesn't exist yet.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup Mkdir
+  autocmd!
+  autocmd BufWritePre * call mkdir(expand("<afile>:p:h"), "p")
+augroup END
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Function Keys F1~F12, B, C,
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -514,9 +519,8 @@ map  <silent> <C-S-left>      <C-W><C-H>
 map  <silent> <C-S-right>     <C-W><C-L>
 map  <silent> <F12>           :call Switch_indent()<CR>
 map  <silent> <F4>            :SyntasticToggleMode\|:silent w<CR>
-map  <silent> <F5>            :w<CR>
-vmap <silent> <F6>            :"hy:silent %s/\V<C-r>=substitute(substitute(escape(@h, '\/'),"\n",'\\n','g'),"\t",'\\t','g')<CR>//g
-vmap <silent> <F7>            "hy:silent gr <c-r>=escape(shellescape(substitute(substitute(escape(@h, '\'),"\n",'\\n','g'),"\t",'\\t','g')),'()')<CR> .<CR>
+map  <silent> <F5>            :w<CR>:ll<CR>|
+map  <silent> <F7>            :set invnumber \| :GitGutterSignsToggle \| :SyntasticToggleMode<CR>
 map  <silent> <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
 map  <silent> <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
 map  <silent> <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file

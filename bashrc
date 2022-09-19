@@ -184,31 +184,6 @@ _bash_history_sync() {
 	builtin history -r
 }
 
-# Powerline prompt
-if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
-        || "$platform" == "mac" \
-        || "$platform" == "linux" \
-        || "$TMUX" != "" \
-        || "$SUDO_USER" != "" ]]; then
-    PATH="$PATH:$(python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
-    for site in $(python3 -c 'import site; print(" ".join(site.getsitepackages()))')
-    do
-        powerline="$site/powerline/bindings/bash/powerline.sh"
-        if [ -f "$powerline" ]; then
-            echo $powerline
-            powerline-daemon -q || true
-            POWERLINE_CONFIG_COMMAND=powerline-config
-            POWERLINE_BASH_CONTINUATION=1
-            POWERLINE_BASH_SELECT=1
-            source "$powerline"
-            # update tmux config
-            sed --follow-symlinks -i "s@source .*/powerline/bindings/tmux/powerline.conf@source $site/powerline/bindings/tmux/powerline.conf@" ~/.tmux.conf
-            break
-        fi
-    done
-fi
-unset srcfiles powerline
-
 #-------------------------------------------------------------
 # History
 #-------------------------------------------------------------
@@ -441,7 +416,30 @@ done
 unset list
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
 
-complete -C /usr/local/bin/mc mc
+# Powerline prompt
+if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
+        || "$platform" == "mac" \
+        || "$platform" == "linux" \
+        || "$TMUX" != "" \
+        || "$SUDO_USER" != "" ]]; then
+    PATH="$PATH:$(python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
+    for site in $(python3 -c 'import site; print(" ".join(site.getsitepackages()))')
+    do
+        powerline="$site/powerline/bindings/bash/powerline.sh"
+        if [ -f "$powerline" ]; then
+            echo $powerline
+            powerline-daemon -q || true
+            POWERLINE_CONFIG_COMMAND=powerline-config
+            POWERLINE_BASH_CONTINUATION=1
+            POWERLINE_BASH_SELECT=1
+            source "$powerline"
+            # update tmux config
+            sed --follow-symlinks -i "s@source .*/powerline/bindings/tmux/powerline.conf@source $site/powerline/bindings/tmux/powerline.conf@" ~/.tmux.conf
+            break
+        fi
+    done
+fi
+unset srcfiles powerline
 
 #-------------------------------------------------------------
 # dedup PATH

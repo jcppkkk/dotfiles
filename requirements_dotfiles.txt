@@ -6,3 +6,4 @@ percol
 pyOpenSSL
 ansible
 cdhist
+pre-commit

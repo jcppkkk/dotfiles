@@ -1,3 +1,4 @@
+#!/bin/bash
 # vim: set wrap tabstop=4 shiftwidth=4 softtabstop=0 expandtab :
 # vim: set textwidth=0 filetype=sh foldmethod=manual nospell :
 # Test for an interactive shell.  There is no need to set anything
@@ -41,8 +42,8 @@ shopt -s checkwinsize
 
 #-------------------------------------------------------------
 # Set Default keybinding
-#-------------------------------------------------------------
-if [ -z "$INPUTRC" -a ! -f "$HOME/.inputrc" ]; then
+#------------------------------------------------
+if [[ -z "$INPUTRC" ]] && [[ ! -f "$HOME/.inputrc" ]]; then
 	export INPUTRC=/etc/inputrc
 fi
 
@@ -71,11 +72,10 @@ vag() {
 	if [[ $1 == -rn ]]; then
 		shift
 	fi
-    local d="${@: -1}"
-    tmp=$(tempfile)
-    ag --hidden --ignore .git/ --ignore .tags --ignore *~ --vimgrep "$@" > $tmp
+    tmp=$(mktemp)
+    ag --hidden --ignore .git/ --ignore .tags --ignore "*~" --vimgrep "$@" > "$tmp"
     vim -c "cfile $tmp" -c "1bd"
-    rm -f $tmp
+    rm -f "$tmp"
 }
 
 # Find a file with a pattern in name:
@@ -128,6 +128,30 @@ jcrm() {
 	unset queue
 }
 
+#-------------------------------------------------------------
+# customize PATH
+#-------------------------------------------------------------
+path=(
+    "$HOME"/.local/bin
+    "$HOME"/bin
+    "$HOME"/.bin
+    "$HOME"/.poetry/bin
+    "$HOME"/.rbenv/bin
+    "$HOME"/.pyenv/bin
+    "$HOME"/.rbenv/shims
+    "$HOME"/.pyenv/shims
+    /usr/sbin
+    /usr/local/bin
+)
+PATH="$(IFS=:; echo "${path[*]}"):$PATH"
+unset path
+
+if [[ -d $HOME/.pyenv/bin ]]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    eval "$(pyenv init -)"
+fi
+
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -137,6 +161,13 @@ if ! shopt -oq posix; then
 	elif [ -f /etc/bash_completion ]; then
 		. /etc/bash_completion
 	fi
+    # auto complete ssh-multi.sh as same as ssh
+    if [[ -f /usr/share/bash-completion/completions/ssh ]]; then
+        . /usr/share/bash-completion/completions/ssh
+    fi
+    if command -v ssh-multi.sh >/dev/null; then
+        shopt -u hostcomplete && complete -F _ssh ssh-multi.sh
+    fi
 fi
 
 
@@ -159,8 +190,8 @@ srcfiles=(
     /usr/share/powerline/bindings/bash/powerline.sh
 	/usr/local/lib/python*/dist-packages/powerline/bindings/bash/powerline.sh
 	/Library/Python/*/site-packages/powerline/bindings/bash/powerline.sh
-	/home/$SUDO_USER/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh
-	$HOME/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh
+	"/home/$SUDO_USER/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh"
+	"$HOME/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh"
 )
 for powerline in "${srcfiles[@]}"; do
 	if [ -f "$powerline" ]; then
@@ -169,6 +200,7 @@ for powerline in "${srcfiles[@]}"; do
 		export POWERLINE_CONFIG_COMMAND="powerline-config"
 		export POWERLINE_BASH_CONTINUATION=1
 		export POWERLINE_BASH_SELECT=1
+        # shellcheck source=/dev/null
 		source "$powerline"
 		break
 	fi
@@ -237,11 +269,16 @@ if hash thefuck 2>/dev/null; then
 fi
 
 #-------------------------------------------------------------
+# direnv https://direnv.net/docs/hook.html
+#-------------------------------------------------------------
+eval "$(direnv hook bash)"
+
+#-------------------------------------------------------------
 # kitty intergration
 #-------------------------------------------------------------
 get() {
 	echo -ne "\033];__pw:${PWD}\007"
-	for file in $*; do echo -ne "\033];__rv:${file}\007"; done
+	for file in "$@"; do echo -ne "\033];__rv:${file}\007"; done
 	echo -ne "\033];__ti\007"
 }
 winscp() { echo -ne "\033];__ws:${PWD}\007"; }
@@ -252,39 +289,33 @@ winscp() { echo -ne "\033];__ws:${PWD}\007"; }
 _beep() {
     paplay /usr/share/sounds/sound-icons/finish --volume=60000
 }
+
 timer_start() {
 	timer=${timer:-$SECONDS}
 }
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-	SESSION_TYPE=remote/ssh
-else
-	case $(ps -o comm= -p $PPID) in
-	sshd | */sshd)
-		SESSION_TYPE=remote/ssh
-		;;
-	esac
-fi
+
 command_timer_stop() {
 	local show_timer_after=30
-	local duration=$(($SECONDS - ${command_timer:-$SECONDS}))
+	local duration=$((SECONDS - ${command_timer:-$SECONDS}))
 	local str_dur=""
 	if [[ $duration -gt $show_timer_after ]]; then
-		local hours=$(($duration / 3600))
-		local mins=$((($duration % 3600) / 60))
-		local secs=$(($duration % 60))
-		if (($duration >= 3600)); then
+		local hours=$((duration / 3600))
+		local mins=$(((duration % 3600) / 60))
+		local secs=$((duration % 60))
+		if ((duration >= 3600)); then
 			str_dur=$(printf "(%02g:%02g:%02g)" $hours $mins $secs)
-		elif (($duration >= 60)); then
+		elif ((duration >= 60)); then
 			str_dur=$(printf "(%02g:%02g)" $mins $secs)
 		else
 			str_dur=$(printf "(%s sec)" $secs)
 		fi
 	fi
 	if [[ -z "$str_dur" ]] && [[ $1 -eq 0 ]]; then
-		return $1
+		return "$1"
 	fi
 	# Print on error or wainting too long
-	local ncolors=$(tput colors 2>/dev/null)
+	local ncolors
+    ncolors=$(tput colors 2>/dev/null)
 	if [[ $1 -eq 0 ]]; then
 		local status=success
 		local color_status="\e[0;32m"
@@ -360,13 +391,21 @@ if [[ -z "${XAUTHORITY}" ]]; then
 fi
 
 function cd() {
-	builtin \cd "$@"
-    if [[ $? -eq 0 ]]; then
+    if builtin cd "$@"; then
         if [[ -z "$PIPENV_ACTIVE" && -f "Pipfile" ]]; then
+            echo Active pipenv
             export PIPENV_IGNORE_VIRTUALENVS=1
-            source $(pipenv --venv)/bin/activate
+            # shellcheck source=/dev/null
+            source "$(pipenv --venv)/bin/activate"
         elif [[ -f poetry.lock && -n "$(poetry env info -p)" ]]; then
-            source $(poetry env info -p)/bin/activate
+            penv="$(poetry env info -p)"
+            if [[ -n "$penv" ]]; then
+                echo Active "$penv"
+                # shellcheck source=/dev/null
+                source "$penv/bin/activate"
+            else
+                echo Active poetry failed, empty 'poetry env info -p'
+            fi
         fi
     fi
 }
@@ -389,10 +428,11 @@ shopt -s extglob
 list=()
 list+=(/etc/bashrc)
 # /etc/bashrc need to run after bashrc.d
-list+=($HOME/.bashrc.d/!(*~))
-list+=($HOME/.bashrc_local)
+list+=("$HOME"/.bashrc.d/!(*~))
+list+=("$HOME"/.bashrc_local)
 for file in "${list[@]}"; do
 	if [ -f "$file" ]; then
+        # shellcheck source=/dev/null
 		source "$file"
 	fi
 done
@@ -401,33 +441,12 @@ unset list
 
 complete -C /usr/local/bin/mc mc
 
-
-#-------------------------------------------------------------
-# customize PATH
-#-------------------------------------------------------------
-path=(
-    $HOME/bin
-    $HOME/.bin
-    $HOME/.poetry/bin
-    $HOME/.rbenv/bin
-    $HOME/.rbenv/shims
-    /usr/sbin
-    /usr/local/bin
-)
-export PATH="$(IFS=:; echo "${path[*]}"):$PATH"
-unset path
-
-#-------------------------------------------------------------
-# pyenv
-#-------------------------------------------------------------
-if [[ -d $HOME/.pyenv/bin ]]; then
-    export PATH="$HOME/.pyenv/bin:$PATH"
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-fi
-
-
 #-------------------------------------------------------------
 # dedup PATH
 #-------------------------------------------------------------
-export PATH="$(echo -e ${PATH//:/\\n} | awk '!x[$0]++' | paste -sd ":" -)"
+PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
+
+# pnpm
+export PNPM_HOME="/home/jethro/.local/share/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end

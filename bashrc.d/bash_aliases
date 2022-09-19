@@ -16,41 +16,43 @@
 # Personnal Aliases
 #-------------------
 
+# util wraps
 alias ssh='export LC_ALL=en_US.UTF-8; ssh'
-alias aa='vim ~/.bashrc && source ~/.bashrc'
-alias as='vim ~/.bashrc.d/bash_aliases && source ~/.bashrc'
-alias an='source ~/.bashrc'
-alias zz='vim ~/.vimrc'
-
-alias wttr='curl "wttr.in/taipei?1p&lang=zh"'
+sshfs() {
+    mkdir -pv "$2"
+    command sshfs "$@"
+}
 alias mv='mv -i'
-# -> Prevents accidentally clobbering files.
 alias mkdir='mkdir -p'
 alias grep='grep --color=auto --binary-files=without-match'
+alias du='du -kh'       # Makes a more readable output.
 
+# Custom Commands
+alias aa='vim ~/.bashrc && source ~/.bashrc'
+alias an='source ~/.bashrc'
+alias as='vim ~/.bashrc.d/bash_aliases && source ~/.bashrc'
 alias h='history'
+alias ivm='vim'
 alias j='jobs -l'
-alias which='type -a'
-alias cdd='cd $(\ls -a -d .. * | percol --prompt-bottom --result-bottom-up);ls'
+alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
+alias path='echo -e ${PATH//:/\\n}'
+alias tt='tmux -2 new -D -A -s main'
+alias wt='curl "v2.wttr.in/新莊區?1p&lang=zh-tw"'
+alias zz='vim ~/.vimrc'
+
+# dynamic dots
 dots=".."
 target="cd .."
-for((i=0; i<10; i++))
+for i in $(seq 1 10);
 do
+    # shellcheck disable=SC2139
     alias "$dots=$target"
     dots+="."
     target+="/.."
 done
 unset dots target
 
-alias path='echo -e ${PATH//:/\\n}'
-alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
-
-alias du='du -kh'       # Makes a more readable output.
-alias df='df -kTh -x"squashfs"'
-
-# Commands
-alias ivm='vim'
-alias tt='tmux -2 new -D -A -s main'
+# become_sem_ver: 2.1.1-R1
 mk256() {
     if [[ -n "$1" ]]; then
         sha256sum "$1" > "$1".sha256
@@ -68,14 +70,14 @@ fi
 alias sl='ls'
 alias l="ls -l"
 alias ll="ls -l"
-alias la='ls -a'          # show hidden files
-alias lla='ls -la'          # show hidden files
-alias lk='ls -lSr'         # sort by size, biggest last
-alias lc='ls -ltcr'        # sort by and show change time, most recent last
-alias lu='ls -ltur'        # sort by and show access time, most recent last
-alias lt='ls -ltr'         # sort by date, most recent last
-alias lm='ls -l |more'    # pipe through 'more'
-alias lr='ls -lR'          # recursive ls
+alias la='ls -a'       # show hidden files
+alias lla='ls -la'     # show hidden files
+alias lk='ls -lSr'     # sort by size, biggest last
+alias lc='ls -ltcr'    # sort by and show change time, most recent last
+alias lu='ls -ltur'    # sort by and show access time, most recent last
+alias lt='ls -ltr'     # sort by date, most recent last
+alias lm='ls -l |more' # pipe through 'more'
+alias lr='ls -lR'      # recursive ls
 
 #-------------------------------------------------------------
 # Git alias
@@ -87,7 +89,7 @@ alias bra='br -a'
 alias ci='git commit --verbose'
 alias ciam='git commit --verbose --amend'
 fixup() {
-    if [ -n "$1" ]; then
+    if [[ -a "$1" ]]; then
         git add "$1"
         git commit --amend --no-edit
         git push --force-with-lease
@@ -114,31 +116,31 @@ alias gsu='git submodule update --force --init'
 alias guptag='git tag -l | xargs git tag -d && git fetch'
 alias gltag='git for-each-ref refs/tags/ --format "%(objecttype) %(refname:short)" |  while read ty name; do [ $ty = commit ] && echo $name; done'
 alias gva='(builtin \cd $(git rev-parse --show-toplevel); vim $(git status --porcelain | grep ^.M | sed -ne "s#.* ##p"))'
-alias gt='git tag'
 
-touchtag(){ tag=$1; export GIT_COMMITTER_DATE="$(git show $tag --format=%aD | head -1)"; git tag -a -m $tag -f $tag $tag; }
-uptag(){ git tag -f $1 $2; git push -f origin $1; }
-deltag() {
+gttouch(){ tag=$1; export GIT_COMMITTER_DATE="$(git show $tag --format=%aD | head -1)"; git tag -a -m $tag -f $tag $tag; }
+alias gt='git tag'
+gtup(){ git tag -f $1 $2; git push -f origin $1; }
+gtrm() {
     git tag -d $1
     git push -d origin $1
 }
-mvtag() {
+gtmv() {
     git tag $2 $1
     git tag -d $1
     git push -d origin $1&
     git push origin $2&
     wait
 }
-delbr() {
+gbrm() {
     git branch -D $1
     git push -d origin $1
 }
-mvbr() {
+gbmv() {
     git branch -m $1 $2
     git push -d origin $1&
     git push origin $2&
 }
-br2tag() {
+gbr2tag() {
     for br
     do
         git branch -D $br
@@ -154,7 +156,7 @@ alias ag='ag --hidden --ignore=.git --ignore=*~'
 #-------------------------------------------------------------
 # Admin assistant
 #-------------------------------------------------------------
-alias adu='sudo apt-get update && sudo apt-get dist-upgrade --auto-remove --purge -f -y'
+alias aptup='sudo apt-get update && sudo apt-get dist-upgrade --auto-remove --purge -f -y'
 alias myip='dig +short myip.opendns.com @resolver1.opendns.com'
 
 #-------------------------------------------------------------

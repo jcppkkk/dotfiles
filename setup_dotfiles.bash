@@ -65,8 +65,10 @@ if command -v powerline-daemon 2>/dev/null; then
 	powerline-daemon -k || true
 fi
 
-retry_root pip3 install -U pip
-retry_root pip3 install -U -r requirements_dotfiles.txt
+set -x
+sudo pip3 install -U pip
+sudo pip3 install -U -r requirements_dotfiles.txt
+set +x
 PATH=$PATH:$HOME/.local/bin
 if command -v pyenv; then
 	pyenv rehash
@@ -141,7 +143,12 @@ find $HOME/.vim/ -name \*.vim -exec dos2unix -q {} \;
 #######################
 ## install tmux plugins
 #######################
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+if [[ ! -d ~/.tmux/plugins/tpm ]]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+else
+    cd ~/.tmux/plugins/tpm
+    git pull --rebase
+fi
 
 
 #######################

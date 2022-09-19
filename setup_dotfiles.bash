@@ -58,19 +58,16 @@ esac
 #######################
 ## install pips & powerline
 #######################
-packages+=(python)
+packages+=(python3-pip)
 install_pkg ${packages[@]}
 # Remove deprecated pyenv version powerline
 if command -v powerline-daemon 2>/dev/null; then
 	powerline-daemon -k || true
 fi
 
-if ! command -v pip; then
-	wget https://bootstrap.pypa.io/get-pip.py -q -O get-pip.py
-	retry_root python get-pip.py
-fi
-retry_root pip install -U pip
-retry_root pip install -U -r requirements_dotfiles.txt
+retry_root pip3 install -U pip
+retry_root pip3 install -U -r requirements_dotfiles.txt
+PATH=$PATH:$HOME/.local/bin
 if command -v pyenv; then
 	pyenv rehash
 fi

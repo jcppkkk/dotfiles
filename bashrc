@@ -185,26 +185,28 @@ _bash_history_sync() {
 }
 
 # Powerline prompt
-
-srcfiles=(
-    /usr/share/powerline/bindings/bash/powerline.sh
-	/usr/local/lib/python*/dist-packages/powerline/bindings/bash/powerline.sh
-	/Library/Python/*/site-packages/powerline/bindings/bash/powerline.sh
-	"/home/$SUDO_USER/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh"
-	"$HOME/.local/lib/python*/site-packages/powerline/bindings/bash/powerline.sh"
-)
-for powerline in "${srcfiles[@]}"; do
-	if [ -f "$powerline" ]; then
-        echo "$powerline"
-		powerline-daemon -q || true
-		export POWERLINE_CONFIG_COMMAND="powerline-config"
-		export POWERLINE_BASH_CONTINUATION=1
-		export POWERLINE_BASH_SELECT=1
-        # shellcheck source=/dev/null
-		source "$powerline"
-		break
-	fi
-done
+if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
+        || "$platform" == "mac" \
+        || "$platform" == "linux" \
+        || "$TMUX" != "" \
+        || "$SUDO_USER" != "" ]]; then
+    PATH="$PATH:$(python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
+    for site in $(python3 -c 'import site; print(" ".join(site.getsitepackages()))')
+    do
+        powerline="$site/powerline/bindings/bash/powerline.sh"
+        if [ -f "$powerline" ]; then
+            echo $powerline
+            powerline-daemon -q || true
+            POWERLINE_CONFIG_COMMAND=powerline-config
+            POWERLINE_BASH_CONTINUATION=1
+            POWERLINE_BASH_SELECT=1
+            source "$powerline"
+            # update tmux config
+            sed --follow-symlinks -i "s@source .*/powerline/bindings/tmux/powerline.conf@source $site/powerline/bindings/tmux/powerline.conf@" ~/.tmux.conf
+            break
+        fi
+    done
+fi
 unset srcfiles powerline
 
 #-------------------------------------------------------------

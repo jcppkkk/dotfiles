@@ -118,6 +118,7 @@ case $platform in
 	packages+=(vim)
 	packages+=(cmake) # vim YouCompleteMe
 	packages+=(bikeshed)
+	packages+=(fonts-firacode)
 	;;
 'mac')
 	packages+=(ctags)

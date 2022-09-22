@@ -109,7 +109,10 @@ packages=(git dos2unix wget curl)
 
 case $platform in
 'linux')
+        sudo snap install lnav
 	sudo add-apt-repository -y ppa:git-core/ppa
+	packages+=(sshfs)
+	packages+=(cifs-utils)
 	packages+=(apt-file)
 	packages+=(bmon)
 	packages+=(build-essential)

@@ -1,20 +1,20 @@
-vim/bundle
 *~
 *.pyc
 # ignore local setting
-/bashrc.d/bashrc_local
-/bashrc.d/local_env
 /.gitconfig
-/fonts/.uuid
 
 *.pyc
 *.tags
-/local/share
-/vim/.netrwhist
-/vim/spell/
-/vim/autoload/
-/vim/plugged/
-/vim/sessions/
+/files/.fonts/.uuid
+/files/.bashrc.d/bashrc_local
+/files/.bashrc.d/local_env
+/files/.local/share
+/files/.vim/.netrwhist
+/files/.vim/autoload/
+/files/.vim/bundle
+/files/.vim/plugged/
+/files/.vim/sessions/
+/files/.vim/spell/
 
 # ignore ansible temprary file
 /site.retry

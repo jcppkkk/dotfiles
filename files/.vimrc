@@ -51,10 +51,10 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 1
 let g:syntastic_aggregate_errors = 1
 "let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
-let g:syntastic_python_checkers=['flake8']
-let g:syntastic_python_flake8_args='--ignore=E501,E265,W503'
+let g:syntastic_python_checkers = ['flake8']
+let g:syntastic_python_flake8_args = '--ignore=E501,E265,W503'
 let g:syntastic_sh_checkers = ['shellcheck']
-let g:syntastic_sh_shellcheck_args="-x"
+let g:syntastic_sh_shellcheck_args = "-x -P SCRIPTDIR"
 
 """"""""""""""""""" language support - others
 Plug 'luochen1990/rainbow'

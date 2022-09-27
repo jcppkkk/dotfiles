@@ -450,3 +450,6 @@ PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 export PNPM_HOME="/home/jethro/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

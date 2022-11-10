@@ -62,17 +62,19 @@ esac
 packages+=(python3-pip)
 install_pkg "${packages[@]}"
 # Remove deprecated pyenv version powerline
-if command -v powerline-daemon 2>/dev/null; then
-    powerline-daemon -k || true
-fi
 
 set -x
-sudo pip3 install -U pip
-sudo pip3 install -U -r requirements_dotfiles.txt
+sudo pip install -U pip
+sudo pip install -U -r requirements_dotfiles.txt
 set +x
 PATH=$PATH:$HOME/.local/bin
 if command -v pyenv; then
     pyenv rehash
+fi
+
+# reload powerline after install powerline-gitstatus
+if command -v powerline-daemon 2>/dev/null; then
+    powerline-daemon -k || true
 fi
 
 #
@@ -109,20 +111,25 @@ case $platform in
     'linux')
         sudo snap install lnav
         sudo add-apt-repository -y ppa:git-core/ppa
-        packages+=(sshfs)
-        packages+=(sshpass)
-        packages+=(moreutils) # sponge
-        packages+=(shellcheck) # for vim syntastic
-        packages+=(cifs-utils)
-        packages+=(apt-file)
-        packages+=(bmon)
-        packages+=(build-essential)
-        packages+=(exuberant-ctags silversearcher-ag) # Coding tools
-        packages+=(meld tig) # SVC tools
+        packages+=(sshfs)                             # fs
+        packages+=(sshpass)                           # fs
+        packages+=(cifs-utils)                        # fs
+        packages+=(plocate)                           # fs: search
+        packages+=(silversearcher-ag)                 # fs: search
+        packages+=(jq)                                # shell tool
+        packages+=(moreutils)                         # shell tool: sponge
+        packages+=(apt-file)                          # sysadmin
+        packages+=(bmon)                              # sysadmin
+        packages+=(ncdu)                              # sysadmin
+        packages+=(build-essential)                   # dev: build tool
+        packages+=(vim)                               # dev: build tool
+        packages+=(meld tig)                          # dev: SVC tools
+        packages+=(direnv)                            # dev: env control
+        packages+=(exuberant-ctags)                   # dev: Coding tools
         packages+=(unzip)
         packages+=(manpages-dev manpages-posix-dev)
-        packages+=(vim)
-        packages+=(cmake) # vim YouCompleteMe
+        packages+=(cmake)                             # vim YouCompleteMe
+        packages+=(shellcheck)                        # for vim syntastic
         packages+=(bikeshed)
         packages+=(fonts-firacode)
         ;;

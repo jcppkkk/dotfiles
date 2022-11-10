@@ -57,7 +57,7 @@ case $platform in
         ;;
 esac
 #######################
-## install pips & powerline
+## install pip
 #######################
 packages+=(python3-pip)
 install_pkg "${packages[@]}"
@@ -68,6 +68,12 @@ sudo pip install -U pip
 sudo pip install -U -r requirements_dotfiles.txt
 set +x
 PATH=$PATH:$HOME/.local/bin
+
+#######################
+## install pyenv
+#######################
+curl https://pyenv.run | bash
+
 if command -v pyenv; then
     pyenv rehash
 fi

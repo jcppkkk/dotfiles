@@ -47,7 +47,7 @@ Plug 'scrooloose/syntastic'
 let g:syntastic_reuse_loc_lists = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 1
 let g:syntastic_aggregate_errors = 1
 "let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [] ,'passive_filetypes': [] }
@@ -468,7 +468,7 @@ augroup qf
 	autocmd FileType qf set nobuflisted
 augroup END
 
-set clipboard=exclude:.*
+set clipboard=unnamedplus
 
 set pastetoggle=<LocalLeader>p
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

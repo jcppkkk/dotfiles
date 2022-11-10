@@ -1,7 +1,0 @@
-for _d in /usr/share /usr/local/share; do
-    _f="$_d/cdhist/cdhist.rc"
-    if [[ -r $_f ]]; then
-        source $_f
-        break
-    fi
-done

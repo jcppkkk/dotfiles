@@ -404,7 +404,9 @@ __py_envs_cd_set() {
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 if [[ -f /usr/local/bin/cdhist ]] && type -t __zsh_like_cd > /dev/null 2>&1 ; then
     echo install cdhist, __py_envs_cd_set with rvm hooks
-    chpwd_functions=( "${chpwd_functions[@]}" __py_envs_cd_set )
+    if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
+        chpwd_functions=( "${chpwd_functions[@]}" __py_envs_cd_set )
+    fi
     # merge cdhist and rvm wraper
     cd() {
         local d

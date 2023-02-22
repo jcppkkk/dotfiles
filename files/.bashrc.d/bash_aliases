@@ -150,6 +150,14 @@ gbr2tag() {
     done
 }
 
+gcmvbr() {
+    echo "Move the most recent commit(s) to a new branch with Git"
+    git branch $1             # Create a new branch, saving the desired commits
+    git checkout -            # checkout origin branch, this is the place you want to go back
+    git reset --hard HEAD~1   # Move branch back by 1 commit (Make sure you know how many commits you need to go back)
+    git checkout $1           # Go to the new branch that still has the desired commits
+}
+
 alias tig='tig --stat=$COLUMNS'
 alias ag='ag --hidden --ignore=.git --ignore=*~'
 

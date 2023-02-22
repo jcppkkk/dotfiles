@@ -35,13 +35,14 @@
 	algorithm = histogram
 	renames = true
 	submodule = log
-	tool = vimdiff
+	tool = meld
 [diff "tar-gz"]
     binary = true
     textconv = tar -tvzf
-
 [difftool]
 	prompt = false
+[difftool "meld"]
+	cmd = meld \"$LOCAL\" \"$REMOTE\"
 [filter "gitconfig"]
 [filter "lfs"]
 	clean = git-lfs clean -- %f

@@ -41,6 +41,7 @@ autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent = 4
 Plug 'vim-scripts/Modeliner'
+Plug 'ambv/black'
 
 " syntax checker
 Plug 'scrooloose/syntastic'
@@ -428,6 +429,7 @@ autocmd BufNewFile,BufReadPost *.hbs      setl shiftwidth=4 softtabstop=4 expand
 autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.toml      setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               log        AnsiEsc
 autocmd FileType               Dockerfile setl shiftwidth=2 softtabstop=2 tabstop=8
 autocmd FileType               Podfile    setl shiftwidth=2 softtabstop=2 expandtab

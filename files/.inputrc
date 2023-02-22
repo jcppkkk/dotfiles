@@ -6,9 +6,9 @@ $include /etc/inputrc
 "\e[B": history-search-forward
 "/e[1~":        beginning-of-line
 "/e[4~":        end-of-line
-set completion-ignore-case On
+set completion-ignore-case on
 set mark-symlinked-directories on
-set visible-stats On
+set visible-stats on
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
 

@@ -38,9 +38,16 @@ begin
     line = "\n\nhttps://redmine.teamt5.net/issues/#{tid} ##{tid}\n#{commentchar}prepare-commit-msg: set REDMINE_TOKEN to get full issue title"
   end
 
-  File.open(ARGV[0], "a") do |f|
-    f.puts line
+  original_file = ARGV[0]
+  new_file = original_file + '.new'
+  File.open(new_file, 'w') do |fo|
+    fo.puts line
+    File.foreach(original_file) do |li|
+      fo.puts li
+    end
   end
+  File.rename(new_file, original_file)
+
 
 rescue
 end

@@ -295,6 +295,9 @@ command_timer_stop() {
         color_reset=""
     fi
     echo -e "${color_status}#### Command ${color_cmd}$_cmd${color_status} ${status} ${str_dur} #### ${color_reset}"
+    if [[ "$_cmd" == vim* ]] || [[ "$_cmd" == ssh* ]]; then
+        return
+    fi
     if [[ $duration -gt $show_timer_after ]]; then
         if [[ "$1" == "0" ]]; then
             (_beep "Done" "$_cmd" "$str_dur" &)
@@ -418,6 +421,16 @@ if [[ -f /usr/local/bin/cdhist ]] && type -t __zsh_like_cd > /dev/null 2>&1 ; th
     }
 fi
 
+cd-widget() {
+    d="$(cat $HOME/.cd_history | percol)"
+    if ! /usr/local/bin/cdhist "$d"; then
+        return 0
+    fi
+    __zsh_like_cd cd "$d"
+}
+
+bind '"\e\c":"\C-ex\C-u cd-widget\C-m\C-y\C-b\C-d"'
+
 # Powerline prompt
 # shellcheck disable=SC2154
 if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
@@ -441,15 +454,12 @@ if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
             # update tmux config
             sed --follow-symlinks -i "s@source .*/powerline/bindings/tmux/powerline.conf@source $site/powerline/bindings/tmux/powerline.conf@" ~/.tmux.conf
             break
+        else
+            echo no powerline
         fi
     done
 fi
 unset srcfiles powerline
-
-#-------------------------------------------------------------
-# dedup PATH
-#-------------------------------------------------------------
-PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 
 # pnpm
 export PNPM_HOME="/home/jethro/.local/share/pnpm"
@@ -458,3 +468,15 @@ export PATH="$PNPM_HOME:$PATH"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
+
+export PYTHONSTARTUP=~/.pythonrc
+
+#-------------------------------------------------------------
+# END of script
+#-------------------------------------------------------------
+#-------------------------------------------------------------
+#-------------------------------------------------------------
+# dedup PATH
+#-------------------------------------------------------------
+PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
+

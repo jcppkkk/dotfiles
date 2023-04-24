@@ -24,3 +24,4 @@ fi
 # Fix pycharm cannot recevice key events
 export IBUS_ENABLE_SYNC_MODE=1
 
+. "$HOME/.cargo/env"

@@ -386,12 +386,18 @@ unset list
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
 
 __py_envs_cd_set() {
-    if [[ -z "$PIPENV_ACTIVE" ]] && [[ -f "Pipfile" ]]; then
+    if [[ -f "Pipfile" ]]; then
+        if type -t deactivate >/dev/null; then
+            deactivate
+        fi
         echo Active pipenv
         export PIPENV_IGNORE_VIRTUALENVS=1
         # shellcheck source=/dev/null
         source "$(pipenv --venv)/bin/activate"
     elif [[ -f poetry.lock ]] && [[ -n "$(poetry env info -p)" ]]; then
+        if type -t deactivate >/dev/null; then
+            deactivate
+        fi
         penv="$(poetry env info -p)"
         if [[ -n "$penv" ]]; then
             echo Active "$penv"
@@ -480,3 +486,4 @@ export PYTHONSTARTUP=~/.pythonrc
 #-------------------------------------------------------------
 PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 
+. "$HOME/.cargo/env"

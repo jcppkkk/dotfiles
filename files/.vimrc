@@ -36,7 +36,7 @@ Plug 'mfukar/robotframework-vim'
 
 " format / indent
 Plug 'roryokane/detectindent'
-autocmd BufReadPost *.jade DetectIndent
+autocmd BufReadPost *.jade   DetectIndent
 autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent = 4
@@ -69,8 +69,6 @@ Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-AutoAdapt'
 let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
 Plug 'stephpy/vim-yaml'
-""""""""""""""""""" language support - Shell
-Plug 'Clavelito/indent-sh.vim'
 """"""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
 """"""""""""""""""" language support - Python
@@ -321,17 +319,20 @@ function! SaveAllExit()
 	endtry
 endfun
 
-let g:indent_mod = 2
+let g:indent_mod = -1
 function! Switch_indent()
-	let g:indent_mod = (g:indent_mod + 1 ) % 3
+	let g:indent_mod = (g:indent_mod + 1 ) % 4
 	if g:indent_mod == 0
-		set softtabstop=0 sw=8 tabstop=8 noexpandtab
+		DetectIndent
 	endif
 	if g:indent_mod == 1
-		set softtabstop=0 sw=4 tabstop=4 noexpandtab
+		set softtabstop=0 sw=4 tabstop=4 expandtab
 	endif
 	if g:indent_mod == 2
-		set softtabstop=0 sw=4 tabstop=4 expandtab
+		set softtabstop=0 sw=8 tabstop=8 noexpandtab
+	endif
+	if g:indent_mod == 3
+		set softtabstop=0 sw=4 tabstop=4 noexpandtab
 	endif
 	echom "softtabstop"&softtabstop "sw"&sw "tabstop"&tabstop "expandtab"&expandtab
 endfunction
@@ -429,7 +430,7 @@ autocmd BufNewFile,BufReadPost *.hbs      setl shiftwidth=4 softtabstop=4 expand
 autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.toml      setl shiftwidth=2 softtabstop=2 expandtab
+autocmd BufNewFile,BufReadPost *.toml     setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               log        AnsiEsc
 autocmd FileType               Dockerfile setl shiftwidth=2 softtabstop=2 tabstop=8
 autocmd FileType               Podfile    setl shiftwidth=2 softtabstop=2 expandtab
@@ -447,7 +448,8 @@ autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expand
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               gitcommit  setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               yaml       setl ts=2 sts=2 sw=2 expandtab indentkeys-=0# indentkeys-=<:> iskeyword=-,@,48-57,_,192-255
-autocmd FileType               sh,bash    setl shiftwidth=4 softtabstop=4 expandtab|syntax sync fromstart
+autocmd FileType               sh         syntax sync fromstart | DetectIndent
+autocmd FileType               bash       syntax sync fromstart | DetectIndent
 autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])|call ToggleSpell()
 
 

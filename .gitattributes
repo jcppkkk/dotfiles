@@ -3,3 +3,5 @@
 /bashrc text eol=lf
 /vimrc filter=vimrc
 /gitconfig filter=gitconfig
+*.ttc filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text

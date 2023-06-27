@@ -1,5 +1,5 @@
 ---
-exclude: ^files/.bashrc.d/git-flow-completion.bash|files/.bashrc.d/git-prompt.sh|files/.bashrc.d/git-completion.bash$
+exclude: ^files/.bashrc.d/git-flow-completion.bash|files/.bashrc.d/git-prompt.sh|files/.bashrc.d/git-completion.bash|files/.bashrc.d/zz-alias-completion.bash$
 repos:
   - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
     rev: 0.2.1 # or other specific tag

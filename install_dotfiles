@@ -1,5 +1,5 @@
 #!/bin/bash
-# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 : 
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
 if [[ $EUID -eq 0 ]]; then
     echo "This script must NOT be run as root" 1>&2
     exit 1
@@ -31,7 +31,7 @@ source /etc/lsb-release
 DIST=${DISTRIB_CODENAME/serena/xenial}
 DIST=${DIST/sonya/xenial}
 
-function install_pkg () {
+function install_pkg() {
     if ! _install_pkg "$@"; then
         update_pkg_list
         _install_pkg "$@"
@@ -51,7 +51,7 @@ case $platform in
         check_pkg() { brew list -1 | grep -q "^${1}\$"; }
         _install_pkg() { brew install "$@"; }
         update_pkg_list() { :; }
-        if ! brew help > /dev/null; then
+        if ! brew help >/dev/null; then
             ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         fi
         ;;
@@ -95,7 +95,7 @@ ansible-playbook -i "localhost," -c local site.yml
 find -L ~ -maxdepth 1 -type l -delete
 (
     unset GREP_OPTIONS
-    if [[ -d ~/.config && ! -h ~/.config ]]; then
+    if [[ -d ~/.config && ! -L ~/.config ]]; then
         rm -rvf ~/.config
     fi
     find "$here/files/" -maxdepth 1 -mindepth 1 | while read -r src; do
@@ -117,25 +117,25 @@ case $platform in
     'linux')
         sudo snap install lnav
         sudo add-apt-repository -y ppa:git-core/ppa
-        packages+=(sshfs)                             # fs
-        packages+=(sshpass)                           # fs
-        packages+=(cifs-utils)                        # fs
-        packages+=(plocate)                           # fs: search
-        packages+=(silversearcher-ag)                 # fs: search
-        packages+=(jq)                                # shell tool
-        packages+=(moreutils)                         # shell tool: sponge
-        packages+=(apt-file)                          # sysadmin
-        packages+=(bmon)                              # sysadmin
-        packages+=(ncdu)                              # sysadmin
-        packages+=(build-essential)                   # dev: build tool
-        packages+=(vim)                               # dev: build tool
-        packages+=(meld tig)                          # dev: SVC tools
-        packages+=(direnv)                            # dev: env control
-        packages+=(exuberant-ctags)                   # dev: Coding tools
+        packages+=(sshfs)             # fs
+        packages+=(sshpass)           # fs
+        packages+=(cifs-utils)        # fs
+        packages+=(plocate)           # fs: search
+        packages+=(silversearcher-ag) # fs: search
+        packages+=(jq)                # shell tool
+        packages+=(moreutils)         # shell tool: sponge
+        packages+=(apt-file)          # sysadmin
+        packages+=(bmon)              # sysadmin
+        packages+=(ncdu)              # sysadmin
+        packages+=(build-essential)   # dev: build tool
+        packages+=(vim)               # dev: build tool
+        packages+=(meld tig)          # dev: SVC tools
+        packages+=(direnv)            # dev: env control
+        packages+=(exuberant-ctags)   # dev: Coding tools
         packages+=(unzip)
         packages+=(manpages-dev manpages-posix-dev)
-        packages+=(cmake)                             # vim YouCompleteMe
-        packages+=(shellcheck)                        # for vim syntastic
+        packages+=(cmake)      # vim YouCompleteMe
+        packages+=(shellcheck) # for vim syntastic
         packages+=(bikeshed)
         packages+=(fonts-firacode)
         ;;
@@ -167,7 +167,6 @@ else
     git pull --rebase
 fi
 
-
 #######################
 ## Local changes
 #######################
@@ -180,7 +179,10 @@ git config branch.master.rebase true
 # Daily Update dotfiles repo
 if ! (crontab -l | grep -q git_update_dotfiles.bash); then
     crontab -l \
-        | { cat; echo "@daily $here/git_update_dotfiles.bash"; } \
+        | {
+            cat
+            echo "@daily $here/git_update_dotfiles.bash"
+        } \
         | crontab -
 fi
 
@@ -198,4 +200,3 @@ if [[ -n "$(\which purge-old-kernels)" ]]; then
     sudo ln -fs "$(\which purge-old-kernels)" /etc/cron.daily/
     sudo purge-old-kernels
 fi
-

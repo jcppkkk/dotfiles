@@ -73,7 +73,7 @@ vag() {
         shift
     fi
     tmp=$(mktemp)
-    ag --hidden --ignore .git/ --ignore .tags --ignore "*~" --vimgrep "$@" > "$tmp"
+    ag --hidden --ignore .git/ --ignore .tags --ignore "*~" --vimgrep "$@" >"$tmp"
     vim -c "cfile $tmp" -c "1bd"
     rm -f "$tmp"
 }
@@ -129,14 +129,16 @@ path=(
     /usr/local/bin
     node_modules/.bin
 )
-PATH="$(IFS=:; echo "${path[*]}"):$PATH"
+PATH="$(
+    IFS=:
+    echo "${path[*]}"
+):$PATH"
 unset path
 
 if [[ -d $HOME/.pyenv/bin ]]; then
     export PYENV_ROOT="$HOME/.pyenv"
     eval "$(pyenv init -)"
 fi
-
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -156,7 +158,6 @@ if ! shopt -oq posix; then
     fi
 fi
 
-
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
 #-------------------------------------------------------------
@@ -175,7 +176,7 @@ _bash_history_sync() {
 #-------------------------------------------------------------
 shopt -s cmdhist
 export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
-export HOSTFILE=$HOME/.hosts   # Put list of remote hosts in ~/.hosts ...
+export HOSTFILE=$HOME/.hosts # Put list of remote hosts in ~/.hosts ...
 
 # HSTR configuration - add this to ~/.bashrc
 alias hh=hstr                  # hh to be alias for hstr
@@ -358,7 +359,6 @@ fi
 
 export DOCKER_BUILDKIT=1
 
-
 if [ -f ~/bin/vault ]; then
     complete -C ~/bin/vault vault
 fi
@@ -386,7 +386,7 @@ unset list
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
 
 __py_envs_cd_set() {
-    if [[ -f "Pipfile" ]]; then
+    if [[ -f Pipfile ]]; then
         if type -t deactivate >/dev/null; then
             deactivate
         fi
@@ -394,18 +394,31 @@ __py_envs_cd_set() {
         export PIPENV_IGNORE_VIRTUALENVS=1
         # shellcheck source=/dev/null
         source "$(pipenv --venv)/bin/activate"
-    elif [[ -f poetry.lock ]] && [[ -n "$(poetry env info -p)" ]]; then
-        if type -t deactivate >/dev/null; then
-            deactivate
-        fi
+    elif [[ -f poetry.lock ]]; then
         penv="$(poetry env info -p)"
         if [[ -n "$penv" ]]; then
+            if type -t deactivate >/dev/null; then
+                deactivate
+            fi
             echo Active "$penv"
             # shellcheck source=/dev/null
             source "$penv/bin/activate"
         else
             echo Active poetry failed, empty 'poetry env info -p'
         fi
+    elif [[ -f ../Pipfile ]] && ! type -t deactivate >/dev/null; then
+        cd ..
+        # shellcheck source=/dev/null
+        source "$(pipenv --venv)/bin/activate"
+        cd -
+    elif [[ -f ../poetry.lock ]] && ! type -t deactivate >/dev/null; then
+        cd ..
+        penv="$(poetry env info -p)"
+        if [[ -n "$penv" ]]; then
+            # shellcheck source=/dev/null
+            source "$penv/bin/activate"
+        fi
+        cd -
     fi
 }
 
@@ -414,10 +427,10 @@ __py_envs_cd_set() {
 
 # shellcheck source=/dev/null
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-if [[ -f /usr/local/bin/cdhist ]] && type -t __zsh_like_cd > /dev/null 2>&1 ; then
+if [[ -f /usr/local/bin/cdhist ]] && type -t __zsh_like_cd >/dev/null 2>&1; then
     echo install cdhist, __py_envs_cd_set with rvm hooks
     if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
-        chpwd_functions=( "${chpwd_functions[@]}" __py_envs_cd_set )
+        chpwd_functions=("${chpwd_functions[@]}" __py_envs_cd_set)
     fi
     # merge cdhist and rvm wraper
     cd() {
@@ -431,7 +444,7 @@ if [[ -f /usr/local/bin/cdhist ]] && type -t __zsh_like_cd > /dev/null 2>&1 ; th
 fi
 
 cd-widget() {
-    d="$(cat $HOME/.cd_history | percol)"
+    d="$(percol <"$HOME/.cd_history")"
     if ! /usr/local/bin/cdhist "$d"; then
         return 0
     fi
@@ -442,14 +455,13 @@ bind '"\e\c":"\C-ex\C-u cd-widget\C-m\C-y\C-b\C-d"'
 
 # Powerline prompt
 # shellcheck disable=SC2154
-if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ \
-        || "$platform" == "mac" \
-        || "$platform" == "linux" \
-        || "$TMUX" != "" \
-        || "$SUDO_USER" != "" ]]; then
+if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ ||
+"$platform" == "mac" ||
+"$platform" == "linux" ||
+"$TMUX" != "" ||
+"$SUDO_USER" != "" ]]; then
     PATH="$PATH:$(PYENV_VERSION=system python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
-    for site in $(PYENV_VERSION=system python3 -c 'import site; print(" ".join(site.getsitepackages()))')
-    do
+    for site in $(PYENV_VERSION=system python3 -c 'import site; print(" ".join(site.getsitepackages()))'); do
         powerline="$site/powerline/bindings/bash/powerline.sh"
         if [ -f "$powerline" ]; then
             echo "$powerline"
@@ -489,4 +501,5 @@ export PYTHONSTARTUP=~/.pythonrc
 #-------------------------------------------------------------
 PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 
+# shellcheck source=/dev/null
 . "$HOME/.cargo/env"

@@ -12,7 +12,7 @@
     }
   },
   "gitstatus": {
-    "args": { 
+    "args": {
       "formats": {
         "branch": "\ue0a0 {}",
         "tag": " ★ {}",

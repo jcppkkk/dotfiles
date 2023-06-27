@@ -14,7 +14,7 @@ begin
 
   input = tty.gets&.chop
   begin
-    tid = Integer(input.match(%r'issues/(\d+)')&.[](1) || input) 
+    tid = Integer(input.match(%r'issues/(\d+)')&.[](1) || input)
   rescue
     puts "no input id"
     exit

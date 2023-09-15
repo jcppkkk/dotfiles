@@ -117,6 +117,7 @@ extract() { # Handy Extract Program.
 # customize PATH
 #-------------------------------------------------------------
 path=(
+    /home/linuxbrew/.linuxbrew/bin
     "$HOME"/.local/bin
     "$HOME"/bin
     "$HOME"/.bin
@@ -385,41 +386,49 @@ done
 unset list
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
 
-__py_envs_cd_set() {
-    if [[ -f Pipfile ]]; then
+_active_pipfile() {
+    if type -t deactivate >/dev/null; then
+        # shellcheck source=/dev/null
+        source deactivate
+    fi
+    echo Active pipenv
+    export PIPENV_IGNORE_VIRTUALENVS=1
+    # shellcheck source=/dev/null
+    source "$(pipenv --venv)/bin/activate"
+}
+_active_poetry() {
+    penv="$(poetry env info -p)"
+    if [[ -n "$penv" ]]; then
         if type -t deactivate >/dev/null; then
-            deactivate
-        fi
-        echo Active pipenv
-        export PIPENV_IGNORE_VIRTUALENVS=1
-        # shellcheck source=/dev/null
-        source "$(pipenv --venv)/bin/activate"
-    elif [[ -f poetry.lock ]]; then
-        penv="$(poetry env info -p)"
-        if [[ -n "$penv" ]]; then
-            if type -t deactivate >/dev/null; then
-                deactivate
-            fi
-            echo Active "$penv"
             # shellcheck source=/dev/null
-            source "$penv/bin/activate"
-        else
-            echo Active poetry failed, empty 'poetry env info -p'
+            source deactivate
         fi
-    elif [[ -f ../Pipfile ]] && ! type -t deactivate >/dev/null; then
-        cd ..
+        echo Active poetry
         # shellcheck source=/dev/null
-        source "$(pipenv --venv)/bin/activate"
+        source "$penv/bin/activate"
+    else
+        echo "poetry env not found"
+    fi
+}
+__py_envs_cd_set() {
+    if [[ -n $_LOADING_PY_ENV ]]; then
+        return
+    fi
+    _LOADING_PY_ENV=1
+    if [[ -f poetry.lock ]]; then
+        _active_poetry
+    elif [[ -f ../poetry.lock ]]; then
+        cd ..
+        _active_poetry
         cd -
-    elif [[ -f ../poetry.lock ]] && ! type -t deactivate >/dev/null; then
+    elif [[ -f Pipfile ]]; then
+        _active_pipfile
+    elif [[ -f ../Pipfile ]]; then
         cd ..
-        penv="$(poetry env info -p)"
-        if [[ -n "$penv" ]]; then
-            # shellcheck source=/dev/null
-            source "$penv/bin/activate"
-        fi
+        _active_pipfile
         cd -
     fi
+    unset _LOADING_PY_ENV
 }
 
 # shellcheck source=/dev/null
@@ -427,19 +436,24 @@ __py_envs_cd_set() {
 
 # shellcheck source=/dev/null
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-if [[ -f /usr/local/bin/cdhist ]] && type -t __zsh_like_cd >/dev/null 2>&1; then
-    echo install cdhist, __py_envs_cd_set with rvm hooks
+
+if [[ -f /usr/local/bin/cdhist ]]; then
+    echo "install cdhist, __py_envs_cd_set with rvm hooks"
     if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
         chpwd_functions=("${chpwd_functions[@]}" __py_envs_cd_set)
     fi
     # merge cdhist and rvm wraper
     cd() {
         local d
-        if ! d=$(/usr/local/bin/cdhist "$@"); then
+        if ! d=$(/usr/local/bin/cdhist -am 300 "$@"); then
             return 0
         fi
 
-        __zsh_like_cd cd "$d"
+        if type -t __zsh_like_cd >/dev/null 2>&1; then
+            __zsh_like_cd cd "$d"
+        else
+            builtin cd "$d"
+        fi
     }
 fi
 

@@ -126,15 +126,22 @@ path=(
     "$HOME"/.pyenv/bin
     "$HOME"/.rbenv/shims
     "$HOME"/.pyenv/shims
+    "$HOME"/venv/bin
     /usr/sbin
     /usr/local/bin
     node_modules/.bin
 )
+# filter out non-exist path
+for p in "${path[@]}"; do
+    if [[ -d $p ]]; then
+        path2+=("$p")
+    fi
+done
 PATH="$(
     IFS=:
-    echo "${path[*]}"
+    echo "${path2[*]}"
 ):$PATH"
-unset path
+unset path path2
 
 if [[ -d $HOME/.pyenv/bin ]]; then
     export PYENV_ROOT="$HOME/.pyenv"
@@ -437,7 +444,9 @@ __py_envs_cd_set() {
 # shellcheck source=/dev/null
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-if [[ -f /usr/local/bin/cdhist ]]; then
+# setup cdhist if command exists
+if type -t cdhist >/dev/null; then
+    abs_cdhist="$(command -v cdhist)"
     echo "install cdhist, __py_envs_cd_set with rvm hooks"
     if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
         chpwd_functions=("${chpwd_functions[@]}" __py_envs_cd_set)
@@ -445,7 +454,7 @@ if [[ -f /usr/local/bin/cdhist ]]; then
     # merge cdhist and rvm wraper
     cd() {
         local d
-        if ! d=$(/usr/local/bin/cdhist -am 300 "$@"); then
+        if ! d=$($abs_cdhist -am 300 "$@"); then
             return 0
         fi
 
@@ -459,7 +468,7 @@ fi
 
 cd-widget() {
     d="$(percol <"$HOME/.cd_history")"
-    if ! /usr/local/bin/cdhist "$d"; then
+    if ! $abs_cdhist "$d"; then
         return 0
     fi
     __zsh_like_cd cd "$d"
@@ -469,16 +478,14 @@ bind '"\e\c":"\C-ex\C-u cd-widget\C-m\C-y\C-b\C-d"'
 
 # Powerline prompt
 # shellcheck disable=SC2154
-if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ ||
-"$platform" == "mac" ||
-"$platform" == "linux" ||
-"$TMUX" != "" ||
-"$SUDO_USER" != "" ]]; then
+if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" == "mac" || "$platform" == "linux" || "$TMUX" != "" || "$SUDO_USER" != "" ]]; then
     PATH="$PATH:$(PYENV_VERSION=system python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
-    for site in $(PYENV_VERSION=system python3 -c 'import site; print(" ".join(site.getsitepackages()))'); do
+    mapfile -t sites < <(PYENV_VERSION=system python3 -c 'import site; print(" ".join(site.getsitepackages()))')
+    sites=(/usr/share "${sites[@]}")
+    for site in "${sites[@]}"; do
         powerline="$site/powerline/bindings/bash/powerline.sh"
         if [ -f "$powerline" ]; then
-            echo "$powerline"
+            echo "Powerline found at $powerline"
             powerline-daemon -q || true
             # shellcheck disable=SC2034
             POWERLINE_BASH_CONTINUATION=1
@@ -488,9 +495,12 @@ if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ ||
             source "$powerline"
             # update tmux config
             sed --follow-symlinks -i "s@source .*/powerline/bindings/tmux/powerline.conf@source $site/powerline/bindings/tmux/powerline.conf@" ~/.tmux.conf
+            if [ -n "$TMUX" ]; then
+                tmux source-file ~/.tmux.conf
+            fi
             break
         else
-            echo no powerline
+            echo "No powerline at $powerline"
         fi
     done
 fi

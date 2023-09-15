@@ -42,7 +42,7 @@
 [difftool]
 	prompt = false
 [difftool "meld"]
-	cmd = meld \"$LOCAL\" \"$REMOTE\"
+	cmd = meld "$LOCAL" "$REMOTE"
 [filter "gitconfig"]
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -65,10 +65,8 @@
 	tool = meld
 [mergetool]
 	keepBackup = false
-[mergetool "kdiff3"]
-	trustExitCode = false
-[mergetool "mymeld"]
-	cmd = meld --diff $BASE $LOCAL --diff $BASE $REMOTE --diff $LOCAL $BASE $REMOTE $MERGED
+[mergetool "meld"]
+	cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
 [push]
 	default = current
 [rebase]

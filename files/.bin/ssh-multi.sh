@@ -8,12 +8,15 @@
 starttmux() {
     if [ -z "$HOSTS" ]; then
         echo -n "Please provide of list of hosts separated by spaces [ENTER]: "
-        read -r -a HOSTS
+        read -r HOSTS
     fi
 
-    tmux new-window "ssh ${HOSTS[0]}"
-    shift HOSTS
-    for i in "${HOSTS[@]}"; do
+    local hosts
+    IFS=" " read -r -a hosts <<<"$HOSTS"
+
+    tmux new-window "ssh ${hosts[0]}"
+    unset "hosts[0]"
+    for i in "${hosts[@]}"; do
         tmux split-window -h "ssh $i"
         tmux select-layout tiled >/dev/null
     done

@@ -8,6 +8,29 @@ if `git branch --list`.include? "no branch, rebasing"
   exit
 end
 
+def get_parent_pid(pid)
+  stat_file = "/proc/#{pid}/stat"
+  stat_content = File.read(stat_file)
+  parent_pid = stat_content.split(" ")[3].to_i
+  parent_pid
+end
+
+def process_ancestors_names(pid)
+  parent_pid = get_parent_pid(pid)
+  return false if parent_pid == 0 # Stop recursion when reaching the init process
+  parent_name = `ps -o comm= -p #{parent_pid}`.strip
+
+  if parent_name == "lazygit"
+    exit
+  end
+
+  process_ancestors_names(parent_pid)
+end
+
+
+current_pid = Process.pid
+process_ancestors_names(current_pid)
+
 begin
   tty = open("/dev/tty", "w+")
   tty.puts "Related redmine issue: "

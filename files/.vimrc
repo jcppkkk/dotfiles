@@ -30,10 +30,6 @@ if has("patch-8.1.0360")
 endif
 
 call plug#begin()
-
-" Testing
-Plug 'mfukar/robotframework-vim'
-
 " format / indent
 Plug 'roryokane/detectindent'
 autocmd BufReadPost *.jade   DetectIndent
@@ -41,7 +37,6 @@ autocmd BufReadPost *.coffee DetectIndent
 let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent = 4
 Plug 'vim-scripts/Modeliner'
-Plug 'ambv/black'
 
 " syntax checker
 Plug 'scrooloose/syntastic'
@@ -52,7 +47,6 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-
 let g:syntastic_reuse_loc_lists = 1
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_python_checkers = ['flake8']
@@ -61,69 +55,40 @@ let g:syntastic_sh_checkers = ['shellcheck']
 let g:syntastic_sh_shellcheck_args = "-x -P SCRIPTDIR"
 
 """"""""""""""""""" language support - others
-Plug 'luochen1990/rainbow'
-let g:rainbow_active = 1
-Plug 'stephpy/vim-yaml'
-Plug 'avakhov/vim-yaml' " indent yaml
-Plug 'kchmck/vim-coffee-script'
 Plug 'PProvost/vim-ps1'
-Plug 'vim-scripts/Improved-AnsiEsc'
-Plug 'inkarkat/vim-ingo-library'
+Plug 'avakhov/vim-yaml' " indent yaml
 Plug 'inkarkat/vim-AutoAdapt'
-let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
+Plug 'inkarkat/vim-ingo-library'
+Plug 'kchmck/vim-coffee-script'
+Plug 'luochen1990/rainbow'
 Plug 'stephpy/vim-yaml'
+Plug 'vim-scripts/Improved-AnsiEsc'
+let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
+let g:rainbow_active = 1
 """"""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
+
 """"""""""""""""""" language support - Python
 Plug 'vim-python/python-syntax'
 let g:python_highlight_all = 1
-"Plug 'davidhalter/jedi-vim'
-
-" Track the engine.
-Plug 'SirVer/ultisnips'
-" Snippets are separated from the engine. Add this if you want them:
-Plug 'honza/vim-snippets'
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<c-tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-x>"
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
+Plug 'ambv/black'
 
 """"""""""""""""""" language support - C/C++
-Plug 'scrooloose/nerdcommenter'
-let g:NERDSpaceDelims = 1
-let g:NERDTrimTrailingWhitespace = 1
-Plug 'vim-scripts/valgrind.vim'
-let g:valgrind_arguments=''
 Plug 'vim-scripts/taglist.vim'
-Plug 'xolox/vim-misc'
-"Plug 'xolox/vim-easytags'
-let g:easytags_async = 1
-let g:easytags_events = ['BufWritePost', 'BufReadPost']
-let gitroot = system("git rev-parse --show-superproject-working-tree --show-toplevel | head -n1 | tr -d '\\n'")
-set tags=
-setl tags=
-autocmd BufReadPre,FileReadPre * execute !empty(gitroot) ? 'setl tags=' . gitroot . "/.git/vimtags" : 'setl tags=~/.vimtags'
-let g:easytags_dynamic_files = 2
 Plug 'vim-scripts/cuteErrorMarker'
 autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
 autocmd FileType qf wincmd J
-"let g:tagbar_width = 60
-Plug 'vim-scripts/gcov.vim'
-""""""""""""""""""" language support - csv
+"========================== language support - csv
 Plug 'chrisbra/csv.vim'
-""""""""""""""""""" language support - ruby
+"========================== language support - ruby
 Plug 'vim-ruby/vim-ruby'
 Plug 'ngmy/vim-rubocop'
-
-" Tools - Git
+"========================== Tools - Git
 Plug 'airblade/vim-gitgutter'
 let g:gitgutter_escape_grep = 1
 let g:gitgutter_max_signs = 5000
 Plug 'tpope/vim-fugitive'
-
-" Editing Tools
+"========================== Editing Tools
 Plug 'vim-scripts/lastmod.vim'
 let g:lastmod_format = '%Y-%m-%d %H:%M:%S (%z)'
 Plug 'farmergreg/vim-lastplace'
@@ -145,16 +110,17 @@ Plug 'junegunn/vim-easy-align'
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
-"let g:easy_align_delimiters = { ';': {
-"			\		'pattern': ';;\|;',
-"			\		'left_margin': 0 },
-"			\       '"': { 'pattern': ' "' }
-"			\ }
 Plug 'Valloric/ListToggle'
 let g:lt_location_list_toggle_map = '<leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader>q'
 
-" Themes
+"========================== AI
+Plug 'github/copilot.vim'
+imap <silent> <C-j> <Plug>(copilot-previous)
+imap <silent> <C-k> <Plug>(copilot-next)
+imap <silent> <C-\> <Plug>(copilot-suggest)
+
+"========================== Themes
 Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -169,10 +135,14 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#excludes = []
 let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
+
+
+
+
 call plug#end()
+
 set wildmode=longest,list
 set wildmenu
-
 syntax enable
 set background=dark
 colorscheme gruvbox " ignore error on first initialize
@@ -286,7 +256,8 @@ let g:notmuch_debug = 0
 " termcaps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set notitle
-set timeoutlen=1000 ttimeoutlen=0
+set timeout ttimeoutlen=50
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " import other files...
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -305,8 +276,8 @@ set nobinary
 " create the directory there if it doesn't exist yet.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 augroup Mkdir
-  autocmd!
-  autocmd BufWritePre * call mkdir(expand("<afile>:p:h"), "p")
+	autocmd!
+	autocmd BufWritePre * call mkdir(expand("<afile>:p:h"), "p")
 augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -500,13 +471,10 @@ elseif &term == "terminator"
 elseif &term == "putty-256color"
 	set term=xterm-256color
 endif
-
 let g:multi_cursor_start_word_key      = '<C-d>'
 let g:multi_cursor_next_key            = '<C-d>'
 let g:multi_cursor_select_all_word_key = 'g<C-d>'
 let g:multi_cursor_select_all_key      = 'g<C-f>'
-map  <silent> <Home>          ^
-imap <silent> <Home>          <Esc>^i
 map  <silent> <M-Up>          :call <SID>LocationPrevious()<CR>
 map  <silent> <S-Up>          :call Pre_err()<CR>
 map  <silent> <C-Up>          <Plug>(GitGutterPrevHunk)

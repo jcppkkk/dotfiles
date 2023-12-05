@@ -95,6 +95,7 @@ Plug 'farmergreg/vim-lastplace'
 Plug 'ctrlpvim/ctrlp.vim'
 let g:ctrlp_cmd = 'CtrlPMRU'
 Plug 'vim-scripts/renamer.vim'
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_auto_colors = 0
@@ -449,6 +450,12 @@ augroup END
 set clipboard=unnamedplus
 
 set pastetoggle=<LocalLeader>p
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" tags
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set tags=~/myctags
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " maps
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

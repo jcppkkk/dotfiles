@@ -12,9 +12,9 @@
 
 # Colors
 ESC=$(printf "\033")
-YELLOW="$ESC[1;33;01m"
-BLUE="$ESC[1;34;01m"
-DEFAULT="$ESC[0m"
+YELLOW="${ESC}[1;33;01m"
+BLUE="${ESC}[1;34;01m"
+DEFAULT="${ESC}[0m"
 
 start_agent() {
     eval "$(ssh-agent -s -a "$ssh_auth_sock" &)" >/dev/null

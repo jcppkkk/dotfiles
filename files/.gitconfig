@@ -21,9 +21,8 @@
 	status = auto
 	ui = true
 [core]
-	attributesfile = /home/jethro/.gitattributes
+	attributesfile = ~/.gitattributes
 	autocrlf = input
-	commentchar = @
 	editor = vim
 	excludesfile = ~/.gitignore_global
 	pager = sed 's/\\t/        /g' | less -R
@@ -79,8 +78,3 @@
 [status]
 	submoduleSummary = false
 [user]
-[safe]
-	directory = /builds/sonar/sonar_web
-[url "http://10.21.1.40:8080/github.com"]
-	insteadOf = git://github.com
-	insteadOf = https://github.com

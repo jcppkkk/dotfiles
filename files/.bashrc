@@ -127,6 +127,7 @@ path=(
     "$HOME"/.rbenv/shims
     "$HOME"/.pyenv/shims
     "$HOME"/venv/bin
+    "${KREW_ROOT:-$HOME/.krew}/bin"
     /usr/sbin
     /usr/local/bin
     node_modules/.bin
@@ -286,24 +287,34 @@ command_timer_stop() {
         return "$1"
     fi
     # Print on error or wainting too long
+    # Get the number of colors supported by the terminal
     local ncolors
     ncolors=$(tput colors 2>/dev/null)
+
+    # Define color codes and status based on the first argument
     if [[ $1 -eq 0 ]]; then
-        local status=success
-        local color_status="\e[0;32m"
-        local color_cmd="\e[7m"
+        local color_status="\e[0;32m" # Green for success
+        local color_cmd="\e[7m"       # Reversed colors for command
+        local status="success"
     else
-        local color_status="\e[0;31m"
-        local color_cmd="\e[00m\e[3;41m"
-        local status="failed with code ${color_cmd}${1}${color_status}"
+        local color_status="\e[0;31m" # Red for failure
+        local color_cmd="\e[1;33m"    # Normal text on red background for command
+        local status="failed with code [${color_cmd}${1}${color_status}]"
     fi
+
+    # Reset color code
     local color_reset="\e[00m"
+
+    # If the terminal supports less than 8 colors, don't use color codes
     if [[ ${ncolors:=0} -lt 8 ]]; then
         color_status=""
         color_cmd=""
         color_reset=""
     fi
-    echo -e "${color_status}#### Command ${color_cmd}$_cmd${color_status} ${status} ${str_dur} #### ${color_reset}"
+
+    # Display the command status
+    echo -e "${color_status}▶ Command [${color_cmd}$_cmd${color_status}] ${status} ${str_dur}${color_reset}"
+
     if [[ "$_cmd" == vim* ]] || [[ "$_cmd" == ssh* ]]; then
         return
     fi
@@ -393,47 +404,67 @@ done
 unset list
 [ "$e" = "e" ] && set -e && unset e # restore -e flag
 
-_active_pipfile() {
+get_env_type() {
+    if [[ -f poetry.lock ]] || [[ -f ../poetry.lock ]]; then
+        echo "poetry"
+        return
+    elif [[ -f Pipfile ]] || [[ -f ../Pipfile ]]; then
+        echo "pipenv"
+        return
+    else
+        return
+    fi
+}
+
+activate_env() {
+    local envType="$1"
+    local dirChange=0
+
+    if [[ "$envType" == "poetry" && -f ../poetry.lock ]] || [[ "$envType" == "pipenv" && -f ../Pipfile ]]; then
+        builtin cd ..
+        dirChange=1
+    fi
+
     if type -t deactivate >/dev/null; then
         # shellcheck source=/dev/null
         source deactivate
     fi
-    echo Active pipenv
-    export PIPENV_IGNORE_VIRTUALENVS=1
-    # shellcheck source=/dev/null
-    source "$(pipenv --venv)/bin/activate"
-}
-_active_poetry() {
-    penv="$(poetry env info -p)"
-    if [[ -n "$penv" ]]; then
-        if type -t deactivate >/dev/null; then
-            # shellcheck source=/dev/null
-            source deactivate
-        fi
-        echo Active poetry
+
+    if [[ "$envType" == "pipenv" ]]; then
+        echo Active pipenv
+        export PIPENV_IGNORE_VIRTUALENVS=1
         # shellcheck source=/dev/null
-        source "$penv/bin/activate"
+        source "$(pipenv --venv)/bin/activate"
+    elif [[ "$envType" == "poetry" ]]; then
+        local penv
+        penv="$(poetry env info -p)"
+        if [[ -n "$penv" ]]; then
+            echo Active poetry
+            # shellcheck source=/dev/null
+            source "$penv/bin/activate"
+        else
+            echo "poetry env not found"
+        fi
     else
-        echo "poetry env not found"
+        echo "No environment detected. ($envType)"
+    fi
+
+    if [[ $dirChange -eq 1 ]]; then
+        builtin cd -
     fi
 }
+
 __py_envs_cd_set() {
     if [[ -n $_LOADING_PY_ENV ]]; then
         return
     fi
     _LOADING_PY_ENV=1
-    if [[ -f poetry.lock ]]; then
-        _active_poetry
-    elif [[ -f ../poetry.lock ]]; then
-        cd ..
-        _active_poetry
-        cd -
-    elif [[ -f Pipfile ]]; then
-        _active_pipfile
-    elif [[ -f ../Pipfile ]]; then
-        cd ..
-        _active_pipfile
-        cd -
+    local envType
+    envType=$(get_env_type)
+    if [[ "$envType" != "No environment detected." ]]; then
+        activate_env "$envType"
+    else
+        echo "$envType"
     fi
     unset _LOADING_PY_ENV
 }
@@ -454,7 +485,9 @@ if type -t cdhist >/dev/null; then
     # merge cdhist and rvm wraper
     cd() {
         local d
-        if ! d=$($abs_cdhist -am 300 "$@"); then
+        local lockfile="/tmp/cdhist.lock"
+        # Run cdhist with locking
+        if ! d=$(flock -x "$lockfile" -c "$abs_cdhist -am 300 $(printf '\"%s\" ' "$@" | sed 's/ $//')"); then
             return 0
         fi
 
@@ -527,3 +560,9 @@ PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 
 # shellcheck source=/dev/null
 . "$HOME/.cargo/env"
+
+export NVM_DIR="$HOME/.nvm"
+# shellcheck source=/dev/null
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# shellcheck source=/dev/null
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion

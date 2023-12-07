@@ -407,12 +407,8 @@ unset list
 get_env_type() {
     if [[ -f poetry.lock ]] || [[ -f ../poetry.lock ]]; then
         echo "poetry"
-        return
     elif [[ -f Pipfile ]] || [[ -f ../Pipfile ]]; then
         echo "pipenv"
-        return
-    else
-        return
     fi
 }
 
@@ -446,7 +442,7 @@ activate_env() {
             echo "poetry env not found"
         fi
     else
-        echo "No environment detected. ($envType)"
+        echo "No environment detected."
     fi
 
     if [[ $dirChange -eq 1 ]]; then
@@ -461,7 +457,7 @@ __py_envs_cd_set() {
     _LOADING_PY_ENV=1
     local envType
     envType=$(get_env_type)
-    if [[ "$envType" != "No environment detected." ]]; then
+    if [[ "$envType" == "poetry" ]] || [[ "$envType" == "pipenv" ]]; then
         activate_env "$envType"
     else
         echo "$envType"
@@ -475,36 +471,51 @@ __py_envs_cd_set() {
 # shellcheck source=/dev/null
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-# setup cdhist if command exists
-if type -t cdhist >/dev/null; then
-    abs_cdhist="$(command -v cdhist)"
-    echo "install cdhist, __py_envs_cd_set with rvm hooks"
-    if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
-        chpwd_functions=("${chpwd_functions[@]}" __py_envs_cd_set)
-    fi
-    # merge cdhist and rvm wraper
-    cd() {
-        local d
-        local lockfile="/tmp/cdhist.lock"
-        # Run cdhist with locking
-        if ! d=$(flock -x "$lockfile" -c "$abs_cdhist -am 300 $(printf '\"%s\" ' "$@" | sed 's/ $//')"); then
-            return 0
-        fi
+cdhist() {
+    local histfile="$HOME/.cd_history"
+    mkdir -p "$(dirname "$histfile")"
+    touch "$histfile"
 
-        if type -t __zsh_like_cd >/dev/null 2>&1; then
-            __zsh_like_cd cd "$d"
-        else
-            builtin cd "$d"
-        fi
-    }
+    local path="$1"
+    if [ "$#" -eq 0 ]; then
+        cat "$histfile"
+    elif [ -d "$path" ]; then
+        path=$(realpath "$path")
+        # Remove path if already exists in history, append new path, and keep last 300 paths
+        grep -Fxv "$path" "$histfile" | cat - <(echo "$path") | tail -n 300 >"/dev/shm/cd_history.tmp"
+        mv -f "/dev/shm/cd_history.tmp" "$histfile"
+    else
+        echo "Directory $path does not exist."
+    fi
+}
+
+# setup cdhist
+if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
+    chpwd_functions=("${chpwd_functions[@]}" __py_envs_cd_set)
 fi
+# merge cdhist and rvm wraper
+cd() {
+    if [[ "$1" == "-" ]]; then
+        builtin cd -
+        return
+    fi
+
+    if [ "$#" -eq 0 ]; then
+        set -- "$HOME"
+    fi
+
+    cdhist "$1"
+
+    if type -t __zsh_like_cd >/dev/null 2>&1; then
+        __zsh_like_cd cd "$1"
+    else
+        builtin cd "$1"
+    fi
+}
 
 cd-widget() {
-    d="$(percol <"$HOME/.cd_history")"
-    if ! $abs_cdhist "$d"; then
-        return 0
-    fi
-    __zsh_like_cd cd "$d"
+    d="$(tac ~/.cd_history | percol)"
+    cd "$d"
 }
 
 bind '"\e\c":"\C-ex\C-u cd-widget\C-m\C-y\C-b\C-d"'

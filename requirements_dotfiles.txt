@@ -1,6 +1,5 @@
 git-up
 percol
 ansible
-cdhist
 pre-commit
 pip

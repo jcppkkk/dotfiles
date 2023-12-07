@@ -9,7 +9,9 @@ PATH=$PATH:/usr/local/bin
 
 # Update python pkgs
 { hash powerline-daemon && powerline-daemon -k; } || true
-sudo -H pip install --upgrade -r requirements_dotfiles.txt
+# shellcheck source=/dev/null
+source ~/venv/bin/activate
+pip install -U -r requirements_dotfiles.txt
 
 # Update vim plugins
 if [ -e vim/bundle/vundle ]; then

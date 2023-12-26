@@ -21,15 +21,13 @@ if hash greadlink 2>/dev/null; then readlink=greadlink; fi
 if hash readlink 2>/dev/null; then readlink=readlink; fi
 
 if ! [[ ${BASH_SOURCE[0]} == *"/dev/fd/"* ]]; then
-    current="$(
-        cd "$(dirname "$($readlink -f "${BASH_SOURCE[0]}")")"
-        pwd
-    )"
-    (
-        cd "$current"
-        pwd
-        git diff --stat
-    )
+    d=$(dirname "$($readlink -f "${BASH_SOURCE[0]}")")
+    if [[ -d $d/../.git ]]; then
+        (
+            cd "$d/.."
+            git diff --stat
+        )
+    fi
 fi
 
 #-------------------------------------------------------------
@@ -460,16 +458,10 @@ __py_envs_cd_set() {
     if [[ "$envType" == "poetry" ]] || [[ "$envType" == "pipenv" ]]; then
         activate_env "$envType"
     else
-        echo "$envType"
+        echo unsupport env "$envType"
     fi
     unset _LOADING_PY_ENV
 }
-
-# shellcheck source=/dev/null
-[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
-
-# shellcheck source=/dev/null
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 cdhist() {
     local histfile="$HOME/.cd_history"
@@ -485,7 +477,7 @@ cdhist() {
         grep -Fxv "$path" "$histfile" | cat - <(echo "$path") | tail -n 300 >"/dev/shm/cd_history.tmp"
         mv -f "/dev/shm/cd_history.tmp" "$histfile"
     else
-        echo "Directory $path does not exist."
+        echo "Directory [$path] does not exist."
     fi
 }
 
@@ -561,14 +553,8 @@ export PATH="$PATH:$HOME/.rvm/bin"
 export PYTHONSTARTUP=~/.pythonrc
 
 #-------------------------------------------------------------
-# END of script
+# END of script declarations, loading package managers
 #-------------------------------------------------------------
-#-------------------------------------------------------------
-#-------------------------------------------------------------
-# dedup PATH
-#-------------------------------------------------------------
-PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
-
 # shellcheck source=/dev/null
 . "$HOME/.cargo/env"
 
@@ -577,3 +563,16 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 # shellcheck source=/dev/null
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+# shellcheck source=/dev/null
+[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
+# shellcheck source=/dev/null
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+#-------------------------------------------------------------
+# dedup PATH
+#-------------------------------------------------------------
+PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
+
+#-------------------------------------------------------------
+# init pyenv for first new shell
+#-------------------------------------------------------------
+__py_envs_cd_set

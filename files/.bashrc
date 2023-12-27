@@ -575,4 +575,33 @@ PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 #-------------------------------------------------------------
 # init pyenv for first new shell
 #-------------------------------------------------------------
+if [ -n "$TMUX" ]; then
+
+    # render /etc/issue or else fall back to kernel/system info
+    agetty --show-issue 2>/dev/null || uname -a
+
+    # message of the day
+    for motd in /run/motd.dynamic /etc/motd; do
+        if [ -s "$motd" ]; then
+            cat "$motd"
+            break
+        fi
+    done
+
+    # last login
+    last "$USER" | awk 'NR==2 {
+    if (NF==10) { i=1; if ($3!~/^:/) from = " from " $3 }
+    printf("Last login: %s %s %s %s%s on %s\n",
+      $(3+i), $(4+i), $(5+i), $(6+i), from, $2);
+    exit
+  }'
+
+    # mail check
+    if [ -s "/var/mail/$USER" ]; then # may need to change to /var/spool/mail/$USER
+        echo "You have $(grep -c '^From ' "/var/mail/$USER") mails."
+    else
+        echo "You have no mail."
+    fi
+fi
+
 __py_envs_cd_set

@@ -3,3 +3,4 @@ percol
 ansible
 pre-commit
 pip
+ruff

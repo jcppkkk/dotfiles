@@ -457,8 +457,8 @@ __py_envs_cd_set() {
     envType=$(get_env_type)
     if [[ "$envType" == "poetry" ]] || [[ "$envType" == "pipenv" ]]; then
         activate_env "$envType"
-    else
-        echo unsupport env "$envType"
+    elif [[ "${#envType}" -gt 0 ]]; then
+        echo "Unsupport pyenv [$envType]"
     fi
     unset _LOADING_PY_ENV
 }
@@ -473,9 +473,10 @@ cdhist() {
         cat "$histfile"
     elif [ -d "$path" ]; then
         path=$(realpath "$path")
-        # Remove path if already exists in history, append new path, and keep last 300 paths
-        grep -Fxv "$path" "$histfile" | cat - <(echo "$path") | tail -n 300 >"/dev/shm/cd_history.tmp"
-        mv -f "/dev/shm/cd_history.tmp" "$histfile"
+        # Remove path if already exists in history, append new path
+        echo "$path" >>"$histfile"
+        # keep last 300 uniq lines
+        tac "$histfile" | awk '!x[$0]++' | tac | head -n 300 | sponge "$histfile"
     else
         echo "Directory [$path] does not exist."
     fi
@@ -506,7 +507,7 @@ cd() {
 }
 
 cd-widget() {
-    d="$(tac ~/.cd_history | percol)"
+    d="$(tac "$HOME/.cd_history" | percol)"
     cd "$d"
 }
 

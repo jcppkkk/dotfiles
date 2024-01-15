@@ -39,20 +39,13 @@ let g:detectindent_preferred_indent = 4
 Plug 'vim-scripts/Modeliner'
 
 " syntax checker
-Plug 'scrooloose/syntastic'
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_reuse_loc_lists = 1
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_python_checkers = ['flake8']
-let g:syntastic_python_flake8_args = '--ignore=E501,E265,W503'
-let g:syntastic_sh_checkers = ['shellcheck']
-let g:syntastic_sh_shellcheck_args = "-x -P SCRIPTDIR"
+Plug 'dense-analysis/ale'
+let g:ale_fix_on_save = 1
+let g:ale_linters = { 'python': ['ruff'] }
+let g:ale_fixers = {
+			\  '*': ['remove_trailing_lines', 'trim_whitespace'],
+			\  "python": ["black", "ruff"],
+			\}
 
 """"""""""""""""""" language support - others
 Plug 'PProvost/vim-ps1'
@@ -136,6 +129,7 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#excludes = []
 let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
+let g:airline#extensions#ale#enabled = 1
 
 
 

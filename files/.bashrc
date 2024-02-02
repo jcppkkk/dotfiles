@@ -429,6 +429,7 @@ activate_env() {
         export PIPENV_IGNORE_VIRTUALENVS=1
         # shellcheck source=/dev/null
         source "$(pipenv --venv)/bin/activate"
+        eval "$cd_definition"
     elif [[ "$envType" == "poetry" ]]; then
         local penv
         penv="$(poetry env info -p)"
@@ -436,6 +437,7 @@ activate_env() {
             echo Active poetry
             # shellcheck source=/dev/null
             source "$penv/bin/activate"
+            eval "$cd_definition"
         else
             echo "poetry env not found"
         fi
@@ -486,7 +488,9 @@ cdhist() {
 if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
     chpwd_functions=("${chpwd_functions[@]}" __py_envs_cd_set)
 fi
+
 # merge cdhist and rvm wraper
+
 cd() {
     if [[ "$1" == "-" ]]; then
         builtin cd -
@@ -505,6 +509,7 @@ cd() {
         builtin cd "$1"
     fi
 }
+cd_definition=$(declare -f cd)
 
 cd-widget() {
     d="$(tac "$HOME/.cd_history" | percol)"

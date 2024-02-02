@@ -44,7 +44,7 @@ let g:ale_fix_on_save = 1
 let g:ale_linters = { 'python': ['ruff'] }
 let g:ale_fixers = {
 			\  '*': ['remove_trailing_lines', 'trim_whitespace'],
-			\  "python": ["black", "ruff"],
+			\  "python": ["ruff", "ruff_format"],
 			\}
 
 """"""""""""""""""" language support - others
@@ -69,7 +69,6 @@ Plug 'ambv/black'
 """"""""""""""""""" language support - C/C++
 Plug 'vim-scripts/taglist.vim'
 Plug 'vim-scripts/cuteErrorMarker'
-autocmd VimEnter *.c,*.py,*.js nested :silent! call tagbar#autoopen(1)
 autocmd FileType qf wincmd J
 "========================== language support - csv
 Plug 'chrisbra/csv.vim'

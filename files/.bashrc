@@ -116,6 +116,7 @@ extract() { # Handy Extract Program.
 #-------------------------------------------------------------
 path=(
     /home/linuxbrew/.linuxbrew/bin
+    "$HOME"/.local/share/JetBrains/Toolbox/apps
     "$HOME"/.local/bin
     "$HOME"/bin
     "$HOME"/.bin
@@ -128,7 +129,6 @@ path=(
     "${KREW_ROOT:-$HOME/.krew}/bin"
     /usr/sbin
     /usr/local/bin
-    node_modules/.bin
 )
 # filter out non-exist path
 for p in "${path[@]}"; do

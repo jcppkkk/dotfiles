@@ -29,4 +29,4 @@ pip install -U -r "${script_dir}/requirements_dotfiles.txt"
 if [ -d "$HOME"/.vim/vundle ]; then
     mv -f "$HOME"/.vim/{vundle,Vundle.vim}
 fi
-vim +PlugUpdate +qa 2>/dev/null
+vim -c 'PlugUpgrade | PlugUpdate | qa'

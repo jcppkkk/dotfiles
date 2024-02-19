@@ -4,3 +4,4 @@ ansible
 pre-commit
 pip
 ruff
+ruff-lsp

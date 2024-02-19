@@ -112,6 +112,12 @@ Plug 'github/copilot.vim'
 imap <silent> <C-j> <Plug>(copilot-previous)
 imap <silent> <C-k> <Plug>(copilot-next)
 imap <silent> <C-\> <Plug>(copilot-suggest)
+let g:copilot_filetypes = {
+    \ 'gitcommit': v:true,
+    \ 'markdown': v:true,
+    \ 'yaml': v:true,
+    \ 'perl': v:true
+    \ }
 
 "========================== Themes
 Plug 'morhetz/gruvbox'

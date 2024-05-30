@@ -496,9 +496,8 @@ map  <silent> <C-right>       :bn<CR>|                       " next buffer
 map  <silent> <C-S-left>      <C-W><C-H>
 map  <silent> <C-S-right>     <C-W><C-L>
 map  <silent> <F12>           :call Switch_indent()<CR>
-map  <silent> <F4>            :SyntasticToggleMode\|:silent w<CR>
 map  <silent> <F5>            :w<CR>:ll<CR>|
-map  <silent> <F7>            :set invnumber \| :GitGutterSignsToggle \| :SyntasticToggleMode<CR>
+map  <silent> <F7>            :set invnumber \| :GitGutterSignsToggle \| :ALEToggle<CR>
 map  <silent> <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
 map  <silent> <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
 map  <silent> <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file

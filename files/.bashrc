@@ -114,6 +114,11 @@ extract() { # Handy Extract Program.
 #-------------------------------------------------------------
 # customize PATH
 #-------------------------------------------------------------
+# golang
+export GOPATH=$HOME/go
+# pnpm
+export PNPM_HOME="/home/jethro/.local/share/pnpm"
+
 path=(
     /home/linuxbrew/.linuxbrew/bin
     "$HOME"/.local/share/JetBrains/Toolbox/apps
@@ -127,8 +132,12 @@ path=(
     "$HOME"/.pyenv/shims
     "$HOME"/venv/bin
     "${KREW_ROOT:-$HOME/.krew}/bin"
+    "$GOPATH"/bin
+    "$PNPM_HOME"
     /usr/sbin
     /usr/local/bin
+    /usr/local/go/bin
+    "$HOME"/.cargo/bin
 )
 # filter out non-exist path
 for p in "${path[@]}"; do

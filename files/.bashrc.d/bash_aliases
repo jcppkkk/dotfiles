@@ -45,7 +45,7 @@ alias ivm='vim'
 alias j='jobs -l'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 alias path='echo -e ${PATH//:/\\n}'
-alias tt='tmux -2 new -D -A -s main'
+alias tt='tmux -u -2 new -D -A -s main'
 alias wt='curl "v2.wttr.in/新莊區?1p&lang=zh-tw"'
 alias zz='vim ~/.vimrc'
 

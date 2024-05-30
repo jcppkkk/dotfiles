@@ -402,7 +402,8 @@ shopt -s extglob
 list=()
 list+=(/etc/bashrc)
 # /etc/bashrc need to run after bashrc.d
-list+=("$HOME"/.bashrc.d/!(*~))
+rm -f "$HOME"/.bashrc.d/*~
+list+=("$HOME"/.bashrc.d/*)
 list+=("$HOME"/.bashrc_local)
 for file in "${list[@]}"; do
     if [ -f "$file" ]; then

@@ -238,8 +238,10 @@ fi
 #-------------------------------------------------------------
 if [ -z "$TMUX" ]; then
     [ -f /var/run/motd ] && cat /var/run/motd
+else
+    export DISPLAY
+    DISPLAY="$(tmux show-env | sed -n 's/^DISPLAY=//p')"
 fi
-true
 
 #-------------------------------------------------------------
 # thefuck

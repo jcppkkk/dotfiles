@@ -24,6 +24,12 @@
 # will have the old DISPLAY variable.  In these cases manually run this script later.
 
 NEW_DISPLAY=$(tmux show-env | sed -n 's/^DISPLAY=//p')
+# skip if it's already executed in 60 seconds
+if [[ -n "$NEW_DISPLAY" && $(($(date +%s) - $(date -r /tmp/tmux_display_update +%s))) -lt 60 ]]; then
+    exit 0
+fi
+touch /tmp/tmux_display_update
+
 tmux list-panes -s -F "#{session_name}:#{window_index}.#{pane_index} #{pane_current_command}" \
     | while read -r pane_process; do
         IFS=' ' read -ra pane_process <<<"$pane_process"

@@ -41,10 +41,11 @@ Plug 'vim-scripts/Modeliner'
 " syntax checker
 Plug 'dense-analysis/ale'
 let g:ale_fix_on_save = 1
-let g:ale_linters = { 'python': ['ruff'] }
+let g:ale_linters = { 'python': ['ruff'], 'go': ['golangci_lint'] }
 let g:ale_fixers = {
 			\  '*': ['remove_trailing_lines', 'trim_whitespace'],
 			\  "python": ["ruff", "ruff_format"],
+			\  "go": ["gofmt", "goimports"]
 			\}
 
 """"""""""""""""""" language support - others

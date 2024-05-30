@@ -164,7 +164,7 @@ gbr2tag() {
 
 
 alias tig='tig --stat=$COLUMNS'
-alias ag='ag --hidden --ignore=.git --ignore=*~'
+alias ag='ag --hidden --ignore=.git --ignore=tags --ignore="*~"'
 
 #-------------------------------------------------------------
 # Admin assistant

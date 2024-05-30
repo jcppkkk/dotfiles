@@ -59,6 +59,7 @@ Plug 'stephpy/vim-yaml'
 Plug 'vim-scripts/Improved-AnsiEsc'
 let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
 let g:rainbow_active = 1
+Plug 'ludovicchabant/vim-gutentags'
 """"""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
 
@@ -67,8 +68,7 @@ Plug 'vim-python/python-syntax'
 let g:python_highlight_all = 1
 Plug 'ambv/black'
 
-""""""""""""""""""" language support - C/C++
-Plug 'vim-scripts/taglist.vim'
+""""""""""""""""""" language support - C / C++
 Plug 'vim-scripts/cuteErrorMarker'
 autocmd FileType qf wincmd J
 "========================== language support - csv
@@ -450,11 +450,6 @@ augroup END
 set clipboard=unnamedplus
 
 set pastetoggle=<LocalLeader>p
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" tags
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set tags=~/myctags
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " maps

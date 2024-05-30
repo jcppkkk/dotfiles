@@ -5,6 +5,7 @@
 
 *.pyc
 *.tags
+/tags
 /files/.fonts/.uuid
 /files/.bashrc.d/bashrc_local
 /files/.bashrc.d/local_env

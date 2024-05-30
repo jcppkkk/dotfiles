@@ -1,5 +1,0 @@
-#!/bin/bash
-
-if [[ "$2" != "message" ]]; then
-    codegpt commit --file "$1" --preview
-fi

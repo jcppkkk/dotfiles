@@ -235,6 +235,7 @@ endif
 autocmd FileType  python highlight OverLength ctermbg=LightCyan|match OverLength /\%142v.*/
 set cursorline
 set foldlevelstart=1
+set ambiwidth=double
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " force making paths relative to `pwd`

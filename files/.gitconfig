@@ -34,14 +34,10 @@
 	algorithm = histogram
 	renames = true
 	submodule = log
-	tool = meld
+	tool = bc
 [diff "tar-gz"]
     binary = true
     textconv = tar -tvzf
-[difftool]
-	prompt = false
-[difftool "meld"]
-	cmd = meld "$LOCAL" "$REMOTE"
 [filter "gitconfig"]
 [filter "lfs"]
 	clean = git-lfs clean -- %f
@@ -59,13 +55,14 @@
 	path = ~/.gitconfig_local
 [init]
 	templatedir = ~/.git-templates
+	defaultBranch = main
 [merge]
 	conflictstyle = diff3
-	tool = meld
+	tool = bc
 [mergetool]
 	keepBackup = false
 [mergetool "meld"]
-	cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+	cmd = flatpak run org.gnome.meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
 [push]
 	default = current
 [rebase]
@@ -77,4 +74,7 @@
 	editor = interactive-rebase-tool
 [status]
 	submoduleSummary = false
-[user]
+[mergetool "bc"]
+	trustExitCode = true
+[difftool "bc"]
+	trustExitCode = true

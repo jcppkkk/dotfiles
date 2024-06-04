@@ -27,10 +27,6 @@ ssh() {
     fi
 }
 
-sshfs() {
-    mkdir -pv "$2"
-    command sshfs "$@"
-}
 alias mv='mv -i'
 alias mkdir='mkdir -p'
 alias grep='grep --color=auto --binary-files=without-match'

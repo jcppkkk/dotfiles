@@ -60,6 +60,7 @@ Plug 'vim-scripts/Improved-AnsiEsc'
 let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
 let g:rainbow_active = 1
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'wellle/context.vim'
 """"""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
 

@@ -3,9 +3,7 @@
     "above": [
       {
         "left": [
-          {
-            "function": "powerline.segments.shell.mode"
-          },
+          { "function": "powerline.segments.shell.mode" },
           {
             "function": "powerline.segments.common.net.hostname",
             "args": {
@@ -13,51 +11,16 @@
             },
             "priority": 10
           },
-          {
-            "function": "powerline.segments.common.env.user",
-            "priority": 30
-          },
-          {
-            "function": "powerline.segments.shell.cwd",
-            "priority": 10,
-            "args": {
-              "dir_shorten_len": 0,
-              "dir_limit_depth": 10,
-              "use_path_separator": true
-            }
-          },
-          {
-            "function": "powerline.segments.shell.jobnum",
-            "priority": 20
-          },
-          {
-            "function": "powerline.segments.common.env.environment",
-            "priority": 50,
-            "before": "⏳",
-            "args": {
-              "variable": "SECONDS"
-            }
-          }
+          { "function": "powerline.segments.common.env.virtualenv", "priority": 50 },
+          { "function": "powerline_gitstatus.gitstatus", "priority": 40 },
+          { "function": "powerline.segments.shell.last_status", "priority": 10 }
         ],
         "right": []
       }
     ],
     "left": [
-      {
-        "function": "powerline.segments.shell.mode"
-      },
-      {
-        "function": "powerline.segments.common.env.virtualenv",
-        "priority": 50
-      },
-      {
-        "function": "powerline_gitstatus.gitstatus",
-        "priority": 40
-      },
-      {
-        "function": "powerline.segments.shell.last_status",
-        "priority": 10
-      }
+      { "function": "powerline.segments.shell.cwd", "priority": 10, "args": { "dir_shorten_len": 0, "dir_limit_depth": 10, "use_path_separator": true } },
+      { "function": "powerline.segments.shell.mode" }
     ],
     "right": []
   }

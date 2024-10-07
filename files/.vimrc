@@ -41,12 +41,19 @@ Plug 'vim-scripts/Modeliner'
 " syntax checker
 Plug 'dense-analysis/ale'
 let g:ale_fix_on_save = 1
-let g:ale_linters = { 'python': ['ruff'], 'go': ['golangci_lint'] }
-let g:ale_fixers = {
-			\  '*': ['remove_trailing_lines', 'trim_whitespace'],
-			\  "python": ["ruff", "ruff_format"],
-			\  "go": ["gofmt", "goimports"]
+let g:ale_linters = {
+			\ 'python': ['ruff'],
+			\ 'sh': ['shellcheck'],
+			\ 'go': ['golangci_lint']
 			\}
+let g:ale_fixers = {
+			\ '*': ['remove_trailing_lines', 'trim_whitespace'],
+			\ 'python': ['ruff', 'ruff_format'],
+			\ 'sh': ['shfmt'],
+			\ 'go': ['gofmt', 'goimports']
+			\}
+let g:ale_sh_shfmt_options = '-i 4 -ci -bn'
+
 
 """"""""""""""""""" language support - others
 Plug 'PProvost/vim-ps1'
@@ -60,6 +67,7 @@ Plug 'vim-scripts/Improved-AnsiEsc'
 let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
 let g:rainbow_active = 1
 Plug 'ludovicchabant/vim-gutentags'
+let g:gutentags_ctags_tagfile = ".tags"
 Plug 'wellle/context.vim'
 """"""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
@@ -86,8 +94,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/lastmod.vim'
 let g:lastmod_format = '%Y-%m-%d %H:%M:%S (%z)'
 Plug 'farmergreg/vim-lastplace'
-Plug 'ctrlpvim/ctrlp.vim'
-let g:ctrlp_cmd = 'CtrlPMRU'
 Plug 'vim-scripts/renamer.vim'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'nathanaelkane/vim-indent-guides'
@@ -137,8 +143,6 @@ let g:airline#extensions#tabline#excludes = []
 let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
 let g:airline#extensions#ale#enabled = 1
-
-
 
 
 call plug#end()
@@ -408,6 +412,7 @@ autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expand
 autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
 autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
 autocmd BufNewFile,BufReadPost *.toml     setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               nginx      setl shiftwidth=4 softtabstop=4 expandtab
 autocmd FileType               log        AnsiEsc
 autocmd FileType               Dockerfile setl shiftwidth=2 softtabstop=2 tabstop=8
 autocmd FileType               Podfile    setl shiftwidth=2 softtabstop=2 expandtab
@@ -449,8 +454,6 @@ augroup qf
 	autocmd FileType qf set nobuflisted
 augroup END
 
-set clipboard=unnamedplus
-
 set pastetoggle=<LocalLeader>p
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -475,10 +478,6 @@ elseif &term == "terminator"
 elseif &term == "putty-256color"
 	set term=xterm-256color
 endif
-let g:multi_cursor_start_word_key      = '<C-d>'
-let g:multi_cursor_next_key            = '<C-d>'
-let g:multi_cursor_select_all_word_key = 'g<C-d>'
-let g:multi_cursor_select_all_key      = 'g<C-f>'
 map  <silent> <M-Up>          :call <SID>LocationPrevious()<CR>
 map  <silent> <S-Up>          :call Pre_err()<CR>
 map  <silent> <C-Up>          <Plug>(GitGutterPrevHunk)
@@ -496,6 +495,7 @@ map  <silent> <C-left>        :bp<CR>|                       " previous buffer
 map  <silent> <C-right>       :bn<CR>|                       " next buffer
 map  <silent> <C-S-left>      <C-W><C-H>
 map  <silent> <C-S-right>     <C-W><C-L>
+vmap  <F2> :w! >> sonar<cr>:'<,'>d<cr>
 map  <silent> <F12>           :call Switch_indent()<CR>
 map  <silent> <F5>            :w<CR>:ll<CR>|
 map  <silent> <F7>            :set invnumber \| :GitGutterSignsToggle \| :ALEToggle<CR>

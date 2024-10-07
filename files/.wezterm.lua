@@ -12,7 +12,7 @@ config.font = wezterm.font_with_fallback {
   {family = 'Noto Sans Mono CJK TC', weight='Medium', stretch='Normal', style='Normal'},
   'Noto Color Emoji',
 }
-config.font_size = 16.0
+config.font_size = 16
 config.mouse_bindings = {
   {
     event = { Down = { streak = 1, button = "Right" } },
@@ -20,12 +20,17 @@ config.mouse_bindings = {
     action = wezterm.action({ PasteFrom = "Clipboard" }),
   },
 }
-config.use_ime = true
-
 config.keys = {
   { key = 'LeftArrow', mods = 'SHIFT|CTRL', action = wezterm.action.DisableDefaultAssignment },
   { key = 'RightArrow', mods = 'SHIFT|CTRL', action = wezterm.action.DisableDefaultAssignment }
 }
-
+config.use_ime = true
+config.hide_tab_bar_if_only_one_tab = true
+config.window_padding = {
+  left = '0px',
+  right = '0px',
+  top = '0px',
+  bottom = '0px',
+}
 -- and finally, return the configuration to wezterm
 return config

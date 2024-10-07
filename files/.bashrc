@@ -14,6 +14,23 @@ fi
 export LC_TIME="en_US.utf8"
 #export LC_CTYPE="zh_TW.UTF-8"
 export LC_COLLATE=C
+export -a chpwd_functions
+
+_add_prompt_command() {
+    local action="$1"
+    shift
+    local cmd="$1"
+    shift
+    # skip the command if it already exists
+    if echo -e "$PROMPT_COMMAND" | grep -q "$cmd"; then
+        return
+    fi
+    if test "$action" = "append"; then
+        PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'"$cmd"
+    else
+        PROMPT_COMMAND="$cmd"$'\n'"$PROMPT_COMMAND"
+    fi
+}
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
@@ -30,6 +47,14 @@ if ! [[ ${BASH_SOURCE[0]} == *"/dev/fd/"* ]]; then
     fi
 fi
 
+function stacktrace {
+    local size=${#BASH_SOURCE[@]}
+    i=0
+    for (( ; i < size - 1; i++)); do ## -1 to exclude main()
+        read -r line func file < <(caller $i)
+        echo >&2 "[$i] $file +$line $func(): $(sed -n "${line}p" "$file")"
+    done
+}
 #-------------------------------------------------------------
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when
@@ -51,7 +76,7 @@ fi
 alias more='less'
 export EDITOR=vim
 export PAGER='less'
-export LESS='-i -z-4 -MFXRS -x4 --quit-if-one-screen'
+export LESS='-i -z-4 -MFXRS -x4'
 export LESSCHARDEF="8bcccbcc18b95.."
 export LESS_TERMCAP_mb='[1;31m' # begin blinking
 export LESS_TERMCAP_md='[4;32m' # begin bold
@@ -111,46 +136,6 @@ extract() { # Handy Extract Program.
     fi
 }
 
-#-------------------------------------------------------------
-# customize PATH
-#-------------------------------------------------------------
-# golang
-export GOPATH=$HOME/go
-# pnpm
-export PNPM_HOME="/home/jethro/.local/share/pnpm"
-
-path=(
-    /home/linuxbrew/.linuxbrew/bin
-    "$HOME"/.local/share/JetBrains/Toolbox/apps
-    "$HOME"/.local/bin
-    "$HOME"/bin
-    "$HOME"/.bin
-    "$HOME"/.poetry/bin
-    "$HOME"/.rbenv/bin
-    "$HOME"/.pyenv/bin
-    "$HOME"/.rbenv/shims
-    "$HOME"/.pyenv/shims
-    "$HOME"/venv/bin
-    "${KREW_ROOT:-$HOME/.krew}/bin"
-    "$GOPATH"/bin
-    "$PNPM_HOME"
-    /usr/sbin
-    /usr/local/bin
-    /usr/local/go/bin
-    "$HOME"/.cargo/bin
-)
-# filter out non-exist path
-for p in "${path[@]}"; do
-    if [[ -d $p ]]; then
-        path2+=("$p")
-    fi
-done
-PATH="$(
-    IFS=:
-    echo "${path2[*]}"
-):$PATH"
-unset path path2
-
 if [[ -d $HOME/.pyenv/bin ]]; then
     export PYENV_ROOT="$HOME/.pyenv"
     eval "$(pyenv init -)"
@@ -180,14 +165,6 @@ fi
 eval "$(dircolors -b "$HOME/.dircolors.ansi-universal")" || :
 
 #-------------------------------------------------------------
-# Prompt_command
-#-------------------------------------------------------------
-_bash_history_sync() {
-    builtin history -a
-    builtin history -r
-}
-
-#-------------------------------------------------------------
 # History
 #-------------------------------------------------------------
 shopt -s cmdhist
@@ -195,18 +172,22 @@ export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
 export HOSTFILE=$HOME/.hosts # Put list of remote hosts in ~/.hosts ...
 
 # HSTR configuration - add this to ~/.bashrc
-alias hh=hstr                  # hh to be alias for hstr
-export HSTR_CONFIG=hicolor     # get more colors
-shopt -s histappend            # append new history items to .bash_history
-export HISTCONTROL=ignorespace # leading space hides commands from history
-export HISTIGNORE='&:ls:[bf]g:exit:printf "\\033*'
+alias hh=hstr                   # hh to be alias for hstr
+export HSTR_CONFIG=hicolor      # get more colors
+shopt -s histappend             # append new history items to .bash_history
+export HISTCONTROL=ignorespace  # leading space hides commands from history
 export HISTFILESIZE=10000       # increase history file size (default is 500)
 export HISTSIZE=${HISTFILESIZE} # increase history size (default is 500)
-# ensure synchronization between Bash memory and history file
+# ensure synchronization between bash memory and history file
+_add_prompt_command append 'history -a;history -n'
+
+function hstrnotiocsti {
+    { READLINE_LINE="$({ hstr </dev/tty "${READLINE_LINE}"; } 2>&1 1>&3 3>&-)"; } 3>&1
+    READLINE_POINT=${#READLINE_LINE}
+}
 # if this is interactive shell, then bind hstr to Ctrl-r (for Vi mode check doc)
-if [[ $- =~ .*i.* ]]; then bind '"\C-r": "\C-a hstr -- \C-j"'; fi
-# if this is interactive shell, then bind 'kill last command' to Ctrl-x k
-if [[ $- =~ .*i.* ]]; then bind '"\C-xk": "\C-a hstr -k \C-j"'; fi
+if [[ $- =~ .*i.* ]]; then bind -x '"\C-r": "hstrnotiocsti"'; fi
+export HSTR_TIOCSTI=n
 
 #-------------------------------------------------------------
 # mintty-colors-solarized (for windows::mintty)
@@ -340,7 +321,7 @@ set_screen_title() {
     echo -ne "\ek$1\e\\"
 }
 
-BEBUG_TRAP() {
+command_tracking_start() {
     if [[ "$PROMPT_COMMAND" == *"$BASH_COMMAND"* || "$BASH_SUBSHELL" != 0 ]]; then
         return
     fi
@@ -348,16 +329,15 @@ BEBUG_TRAP() {
     _cmd="$BASH_COMMAND"
     echo -ne "\033]0;${_cmd::20}\007"
 }
-while trap -p | grep -q BEBUG_TRAP; do trap - DEBUG; done
-trap 'BEBUG_TRAP' DEBUG
+while trap -p | grep -q command_tracking_start; do trap - DEBUG; done
+trap 'command_tracking_start' DEBUG
 
-POST_COMMAND() {
+command_tracking_end() {
     local r=$?
 
     if [[ -n "$_cmd" ]]; then
         command_timer_stop $r
         SECONDS=0
-        _bash_history_sync
         _cmd=
     else
         r=0
@@ -368,11 +348,7 @@ POST_COMMAND() {
     return $r
 }
 
-if [[ -z "$PROMPT_COMMAND" ]]; then
-    PROMPT_COMMAND="POST_COMMAND"
-elif [[ "$PROMPT_COMMAND" != *"POST_COMMAND"* ]]; then
-    PROMPT_COMMAND=$'POST_COMMAND\n'"$PROMPT_COMMAND"
-fi
+_add_prompt_command append "command_tracking_end"
 
 # ensure X forwarding is setup correctly, even for screen
 XAUTH=~/.Xauthority
@@ -441,7 +417,6 @@ activate_env() {
         export PIPENV_IGNORE_VIRTUALENVS=1
         # shellcheck source=/dev/null
         source "$(pipenv --venv)/bin/activate"
-        eval "$cd_definition"
     elif [[ "$envType" == "poetry" ]]; then
         local penv
         penv="$(poetry env info -p)"
@@ -449,7 +424,6 @@ activate_env() {
             echo Active poetry
             # shellcheck source=/dev/null
             source "$penv/bin/activate"
-            eval "$cd_definition"
         else
             echo "poetry env not found"
         fi
@@ -476,97 +450,83 @@ __py_envs_cd_set() {
     fi
     unset _LOADING_PY_ENV
 }
+[[ " ${chpwd_functions[*]} " == *" __py_envs_cd_set "* ]] || chpwd_functions+=(__py_envs_cd_set)
 
+export cdhist_path="$HOME/.cd_history"
 cdhist() {
-    local histfile="$HOME/.cd_history"
-    mkdir -p "$(dirname "$histfile")"
-    touch "$histfile"
+    if [[ ! -f "$cdhist_path" ]]; then
+        touch "$cdhist_path"
+    fi
 
     local path="$1"
-    if [ "$#" -eq 0 ]; then
-        cat "$histfile"
-    elif [ -d "$path" ]; then
-        path=$(realpath "$path")
-        # Remove path if already exists in history, append new path
-        echo "$path" >>"$histfile"
-        # keep last 300 uniq lines
-        tac "$histfile" | awk '!x[$0]++' | tac | head -n 300 | sponge "$histfile"
+    if [[ "$#" -eq 0 ]]; then
+        cat "$cdhist_path"
+    elif [[ -d "$path" ]]; then
+        if ! grep -q "^$path$" "$cdhist_path"; then
+            echo "[cdhist] add <$path> to hist"
+        fi
+        # - Keep 300 lines
+        {
+            echo "$path"
+            cat "$cdhist_path"
+        } | {
+            while IFS= read -r line; do
+                if [[ -d "$line" ]]; then
+                    realpath "$line"
+                fi
+            done
+        } | awk '!x[$0]++ { if (count < 300) { print; count++ } }' | sponge "$cdhist_path"
+    else
+        echo "[cdhist] <$path> does not exist."
+    fi
+}
+
+_log_cd_path() {
+    if [[ -d "$PWD" ]]; then
+        cdhist "$PWD"
+    fi
+}
+[[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
+
+cd_widget() {
+    path="$(percol "$cdhist_path")"
+    if timeout 1 bash -c "[[ -d $path ]]"; then
+        cdhist "$path"
+        cd "$path"
     else
         echo "Directory [$path] does not exist."
+        sed -i "\#$path#d" "$cdhist_path"
     fi
 }
 
-# setup cdhist
-if ! printf '%s\0' "${chpwd_functions[@]}" | grep -Fxqz -- '__py_envs_cd_set'; then
-    chpwd_functions=("${chpwd_functions[@]}" __py_envs_cd_set)
-fi
-
-# merge cdhist and rvm wraper
-
-cd() {
-    if [[ "$1" == "-" ]]; then
-        builtin cd -
-        return
-    fi
-
-    if [ "$#" -eq 0 ]; then
-        set -- "$HOME"
-    fi
-
-    cdhist "$1"
-
-    if type -t __zsh_like_cd >/dev/null 2>&1; then
-        __zsh_like_cd cd "$1"
-    else
-        builtin cd "$1"
-    fi
-}
-cd_definition=$(declare -f cd)
-
-cd-widget() {
-    d="$(tac "$HOME/.cd_history" | percol)"
-    cd "$d"
-}
-
-bind '"\e\c":"\C-ex\C-u cd-widget\C-m\C-y\C-b\C-d"'
+bind '"\e\c":"\C-ex\C-u cd_widget\C-m\C-y\C-b\C-d"'
 
 # Powerline prompt
 # shellcheck disable=SC2154
-if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" == "mac" || "$platform" == "linux" || "$TMUX" != "" || "$SUDO_USER" != "" ]]; then
-    PATH="$PATH:$(PYENV_VERSION=system python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
-    mapfile -t sites < <(PYENV_VERSION=system python3 -c 'import site; print(" ".join(site.getsitepackages()))')
-    sites=(/usr/share "${sites[@]}")
-    for site in "${sites[@]}"; do
-        powerline="$site/powerline/bindings/bash/powerline.sh"
-        if [ -f "$powerline" ]; then
-            echo "Powerline found at $powerline"
-            powerline-daemon -q || true
-            # shellcheck disable=SC2034
-            POWERLINE_BASH_CONTINUATION=1
-            # shellcheck disable=SC2034
-            POWERLINE_BASH_SELECT=1
-            # shellcheck source=/dev/null
-            source "$powerline"
-            # update tmux config
-            sed --follow-symlinks -i "s@source .*/powerline/bindings/tmux/powerline.conf@source $site/powerline/bindings/tmux/powerline.conf@" ~/.tmux.conf
-            if [ -n "$TMUX" ]; then
-                tmux source-file ~/.tmux.conf
+init_powerline() {
+    if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" == "mac" || "$platform" == "linux" || "$TMUX" != "" || "$SUDO_USER" != "" ]]; then
+        PATH="$PATH:$(PYENV_VERSION=system python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
+        mapfile -t sites < <(PYENV_VERSION=system python3 -c 'import site; print(" ".join(site.getsitepackages()))')
+        sites=(/usr/share "${sites[@]}")
+        for site in "${sites[@]}"; do
+            powerline="$site/powerline/bindings/bash/powerline.sh"
+            if [ -f "$powerline" ]; then
+                echo "Powerline found at $powerline"
+                powerline-daemon -q || true
+                # shellcheck disable=SC2034
+                POWERLINE_BASH_CONTINUATION=1
+                # shellcheck disable=SC2034
+                POWERLINE_BASH_SELECT=1
+                # shellcheck source=/dev/null
+                source "$powerline"
+                break
+            else
+                echo "No powerline at $powerline"
             fi
-            break
-        else
-            echo "No powerline at $powerline"
-        fi
-    done
-fi
-unset srcfiles powerline
-
-# pnpm
-export PNPM_HOME="/home/jethro/.local/share/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+        done
+    fi
+    unset srcfiles powerline
+}
 
 export PYTHONSTARTUP=~/.pythonrc
 
@@ -584,11 +544,6 @@ export NVM_DIR="$HOME/.nvm"
 # shellcheck source=/dev/null
 [[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 # shellcheck source=/dev/null
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-#-------------------------------------------------------------
-# dedup PATH
-#-------------------------------------------------------------
-PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 
 #-------------------------------------------------------------
 # init pyenv for first new shell
@@ -622,4 +577,57 @@ if [ -n "$TMUX" ]; then
     fi
 fi
 
-__py_envs_cd_set
+init_powerline
+# append a command at the last line, inside curly brackets  of function _powerline_prompt
+original_function=$(declare -f _powerline_prompt)
+APPEND_LINE='echo -n " "'
+if [[ $original_function != *"$APPEND_LINE"* ]]; then
+    eval "$(echo "$original_function" | sed -e "/^}$/i$APPEND_LINE")"
+fi
+
+#-------------------------------------------------------------
+# customize PATH
+#-------------------------------------------------------------
+# golang
+export GOPATH=$HOME/go
+# pnpm
+export PNPM_HOME="/home/jethro/.local/share/pnpm"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+path=(
+    /home/linuxbrew/.linuxbrew/bin
+    "$HOME"/.local/share/JetBrains/Toolbox/apps
+    "$HOME"/.local/bin
+    "$HOME"/bin
+    "$HOME"/.bin
+    "$HOME"/.rvm/bin
+    "$HOME"/.poetry/bin
+    "$HOME"/.rbenv/bin
+    "$HOME"/.pyenv/bin
+    "$HOME"/.rbenv/shims
+    "$HOME"/.pyenv/shims
+    "$HOME"/venv/bin
+    "${KREW_ROOT:-$HOME/.krew}/bin"
+    "$GOPATH"/bin
+    "$PNPM_HOME"
+    /usr/sbin
+    /usr/local/bin
+    /usr/local/go/bin
+    "$HOME"/.cargo/bin
+)
+# filter out non-exist path
+for p in "${path[@]}"; do
+    if [[ -d $p ]]; then
+        path2+=("$p")
+    fi
+done
+#shellcheck disable=SC2116
+PATH="$(IFS=: echo "${path2[*]}"):$PATH"
+unset path path2
+
+#-------------------------------------------------------------
+# dedup PATH
+#-------------------------------------------------------------
+PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"

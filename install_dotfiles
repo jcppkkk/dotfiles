@@ -194,3 +194,5 @@ rm -rf "$here/local"
 if [[ -L ~/.local ]]; then
     rm ~/.local
 fi
+
+gsettings set org.gnome.desktop.wm.preferences focus-new-windows 'smart'

@@ -5,3 +5,4 @@
 /gitconfig filter=gitconfig
 *.ttc filter=lfs diff=lfs merge=lfs -text
 *.otf filter=lfs diff=lfs merge=lfs -text
+.gitconfig filter=ignore-safe

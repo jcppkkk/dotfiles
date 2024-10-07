@@ -78,3 +78,15 @@
 	trustExitCode = true
 [difftool "bc"]
 	trustExitCode = true
+[alias]
+	auto-mr = "!f() { \
+		main_branch=`git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`; \
+		echo \"Creating merge request for branch $main_branch\"; \
+		git config --local --unset-all push.pushOption; \
+		git config --local --add push.pushOption \"merge_request.create\"; \
+		git config --local --add push.pushOption \"merge_request.target=$main_branch\"; \
+		git config --local --add push.pushOption \"merge_request.merge_when_pipeline_succeeds\"; \
+		git config --local --add push.pushOption \"merge_request.remove_source_branch\"; \
+		}; f"
+[fetch]
+	prune = true

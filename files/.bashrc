@@ -530,24 +530,6 @@ init_powerline() {
 
 export PYTHONSTARTUP=~/.pythonrc
 
-#-------------------------------------------------------------
-# END of script declarations, loading package managers
-#-------------------------------------------------------------
-# shellcheck source=/dev/null
-. "$HOME/.cargo/env"
-
-export NVM_DIR="$HOME/.nvm"
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-# shellcheck source=/dev/null
-[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
-# shellcheck source=/dev/null
-
-#-------------------------------------------------------------
-# init pyenv for first new shell
-#-------------------------------------------------------------
 if [ -n "$TMUX" ]; then
 
     # render /etc/issue or else fall back to kernel/system info
@@ -596,38 +578,51 @@ export PNPM_HOME="/home/jethro/.local/share/pnpm"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
+# the latter path will be added to the front of PATH
 path=(
-    /home/linuxbrew/.linuxbrew/bin
-    "$HOME"/.local/share/JetBrains/Toolbox/apps
-    "$HOME"/.local/bin
-    "$HOME"/bin
-    "$HOME"/.bin
-    "$HOME"/.rvm/bin
+    /usr/local/go/bin
+    /usr/local/bin
+    /usr/sbin
+    "$HOME"/.cargo/bin
+    "$PNPM_HOME"
+    "$GOPATH"/bin
+    "${KREW_ROOT:-$HOME/.krew}/bin"
+    "$HOME"/venv/bin
     "$HOME"/.poetry/bin
-    "$HOME"/.rbenv/bin
+    "$HOME"/.pyenv/shims
     "$HOME"/.pyenv/bin
     "$HOME"/.rbenv/shims
-    "$HOME"/.pyenv/shims
-    "$HOME"/venv/bin
-    "${KREW_ROOT:-$HOME/.krew}/bin"
-    "$GOPATH"/bin
-    "$PNPM_HOME"
-    /usr/sbin
-    /usr/local/bin
-    /usr/local/go/bin
-    "$HOME"/.cargo/bin
+    "$HOME"/.rbenv/bin
+    "$HOME"/.rvm/bin
+    /home/linuxbrew/.linuxbrew/bin
+    "$HOME"/.bin
+    "$HOME"/bin
+    "$HOME"/.local/bin
+    "$HOME"/.local/share/JetBrains/Toolbox/apps
 )
 # filter out non-exist path
 for p in "${path[@]}"; do
     if [[ -d $p ]]; then
-        path2+=("$p")
+        PATH="$p:$PATH"
     fi
 done
-#shellcheck disable=SC2116
-PATH="$(IFS=: echo "${path2[*]}"):$PATH"
-unset path path2
+unset path
+
+#-------------------------------------------------------------
+# Loading package managers
+#-------------------------------------------------------------
+# shellcheck source=/dev/null
+. "$HOME/.cargo/env"
+export NVM_DIR="$HOME/.nvm"
+# shellcheck source=/dev/null
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# shellcheck source=/dev/null
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+# shellcheck source=/dev/null
+[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 
 #-------------------------------------------------------------
 # dedup PATH
 #-------------------------------------------------------------
 PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
+export PATH="$HOME/.local/bin:$PATH"

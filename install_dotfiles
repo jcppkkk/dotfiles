@@ -101,11 +101,6 @@ esac
 install_pkg "${packages[@]}"
 packages=()
 
-python3 -m venv ~/venv
-# shellcheck source=/dev/null
-source ~/venv/bin/activate
-pip install -U -r requirements_dotfiles.txt
-
 #######################
 ## install pyenv
 #######################
@@ -122,8 +117,16 @@ if command -v pyenv; then
     pyenv rehash
 fi
 
+pyenv global 3
+
+# install user venv (include ansible)
+python3 -m venv ~/venv
+# shellcheck source=/dev/null
+source ~/venv/bin/activate
+pip install -I -U -r requirements_dotfiles.txt
+
 #
-# Main script start, install ansible
+# Use ansible
 #
 ansible-playbook -i "localhost," -c local site.yml
 

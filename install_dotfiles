@@ -35,12 +35,31 @@ function install_pkg() {
         _install_pkg "$@"
     fi
 }
+
+ubuntu_apt_update() {
+    LOG_FILE="/var/log/apt/history.log"
+    if [[ ! -f "$LOG_FILE" ]]; then
+        return
+    fi
+    LAST_UPDATE=$(grep -m 1 "Start-Date" "$LOG_FILE" | awk '{print $2, $3}')
+    if [[ -z "$LAST_UPDATE" ]]; then
+        echo "未找到 apt update 的執行記錄。"
+        return
+    fi
+    LAST_UPDATE_TIMESTAMP=$(date -d "$LAST_UPDATE" +%s)
+    CURRENT_TIMESTAMP=$(date +%s)
+    SECONDS_SINCE_LAST_UPDATE=$((CURRENT_TIMESTAMP - LAST_UPDATE_TIMESTAMP))
+    if [[ $SECONDS_SINCE_LAST_UPDATE -gt 86400 ]]; then
+        echo "已超過一天未執行 apt update。"
+        sudo apt-get update
+    fi
+}
 case $platform in
     'linux')
         check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
         # aptitude can solve depenency problem for clang-*
         _install_pkg() { sudo apt-get install -y "$@"; }
-        update_pkg_list() { sudo apt-get update; }
+        update_pkg_list() { ubuntu_apt_update; }
         # setup aptitude first
         install_pkg aptitude
         _install_pkg() { sudo aptitude install -y "$@"; }
@@ -63,42 +82,39 @@ packages=(git dos2unix wget curl)
 
 case $platform in
     'linux')
+        # Install lnav using snap
         sudo snap install lnav
-        # test if /etc/apt/sources.list.d/git-core-ubuntu-ppa-*.list existed
-        files=(/etc/apt/sources.list.d/git-core-ubuntu-ppa-*.list)
-        if [[ ! -f "${files[0]}" ]]; then
+
+        # Add Git PPA if not already present
+        if ! find /etc/apt/sources.list.d/ -name 'git-core-ubuntu-ppa-*.list'; then
             sudo add-apt-repository -y ppa:git-core/ppa
         fi
-        packages+=(sshfs)             # fs
-        packages+=(sshpass)           # fs
-        packages+=(cifs-utils)        # fs
-        packages+=(plocate)           # fs: search
-        packages+=(silversearcher-ag) # fs: search
-        packages+=(jq)                # shell tool
-        packages+=(moreutils)         # shell tool: sponge
-        packages+=(apt-file)          # sysadmin
-        packages+=(bmon)              # sysadmin
-        packages+=(ncdu)              # sysadmin
-        packages+=(build-essential)   # dev: build tool
-        packages+=(vim)               # dev: build tool
-        packages+=(meld tig)          # dev: SVC tools
-        packages+=(direnv)            # dev: env control
-        packages+=(exuberant-ctags)   # dev: Coding tools
-        packages+=(unzip)
-        packages+=(manpages-dev manpages-posix-dev)
-        packages+=(cmake)      # vim YouCompleteMe
-        packages+=(shellcheck) # for vim syntastic
-        packages+=(fonts-firacode)
-        packages+=(powerline)
-        packages+=(powerline-gitstatus)
+
+        # Define Linux-specific packages
+        linux_packages=(
+            # Filesystem tools
+            sshfs sshpass cifs-utils plocate silversearcher-ag
+            # Shell and system admin tools
+            jq moreutils apt-file bmon ncdu
+            # Development tools
+            build-essential vim meld tig direnv exuberant-ctags
+            unzip manpages-dev manpages-posix-dev cmake shellcheck
+            # Fonts and UI
+            fonts-firacode powerline powerline-gitstatus
+        )
+        packages+=("${linux_packages[@]}")
         ;;
     'mac')
-        packages+=(ctags)
-        packages+=(python)
-        packages+=(coreutils)
+        # Define macOS-specific packages
+        mac_packages=(ctags python coreutils)
+        packages+=("${mac_packages[@]}")
         ;;
 esac
+
+# Install all packages
 install_pkg "${packages[@]}"
+
+# Clear the packages array
 packages=()
 
 #######################
@@ -119,16 +135,19 @@ fi
 
 pyenv global 3
 
-# install user venv (include ansible)
-python3 -m venv ~/venv
-# shellcheck source=/dev/null
-source ~/venv/bin/activate
-pip install -I -U -r requirements_dotfiles.txt
+# Install pipx if not already installed
+if ! command -v pipx &>/dev/null; then
+    python3 -m pip install --user pipx
+    python3 -m pipx ensurepath
+fi
 
-#
+# Install packages using pipx
+while IFS= read -r package; do
+    pipx install --include-deps "$package"
+done <requirements_dotfiles.txt
+
 # Use ansible
-#
-ansible-playbook -i "localhost," -c local site.yml
+pipx run ansible-playbook -i "localhost," -c local site.yml
 
 #######################
 ## Backup dotfiles and replace with link

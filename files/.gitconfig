@@ -88,5 +88,6 @@
 		git config --local --add push.pushOption \"merge_request.merge_when_pipeline_succeeds\"; \
 		git config --local --add push.pushOption \"merge_request.remove_source_branch\"; \
 		}; f"
+	dunk = !git diff | dunk
 [fetch]
 	prune = true

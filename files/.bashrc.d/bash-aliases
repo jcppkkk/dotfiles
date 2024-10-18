@@ -35,7 +35,7 @@ alias du='du -kh'       # Makes a more readable output.
 # Custom Commands
 alias aa='vim ~/.bashrc && source ~/.bashrc'
 alias an='source ~/.bashrc'
-alias as='vim ~/.bashrc.d/bash_aliases && source ~/.bashrc'
+alias as='vim ~/.bashrc.d/bash-aliases && source ~/.bashrc'
 alias h='history'
 alias ivm='vim'
 alias j='jobs -l'
@@ -105,6 +105,7 @@ complete -F _complete_alias co
 
 alias cs='git checkout $(__git_refs | percol)'
 alias gd='git diff'
+alias gdd='git diff | dunk'
 alias gr=$'git log --graph --pretty=format:\'%Cred%h%Creset%x09%C(yellow) %d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\' --abbrev-commit --date=relative'
 alias gra='gr --all'
 

@@ -609,6 +609,12 @@ done
 unset path
 
 #-------------------------------------------------------------
+# dedup PATH
+#-------------------------------------------------------------
+PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
+export PATH="$HOME/.local/bin:$PATH"
+
+#-------------------------------------------------------------
 # Loading package managers
 #-------------------------------------------------------------
 # shellcheck source=/dev/null
@@ -621,8 +627,5 @@ export NVM_DIR="$HOME/.nvm"
 # shellcheck source=/dev/null
 [[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 
-#-------------------------------------------------------------
-# dedup PATH
-#-------------------------------------------------------------
-PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
-export PATH="$HOME/.local/bin:$PATH"
+# Created by `pipx` on 2024-10-18 04:15:36
+export PATH="$PATH:/home/jethro/.local/bin"

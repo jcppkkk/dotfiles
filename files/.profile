@@ -17,14 +17,13 @@ if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
     if [ -f "$HOME/.bashrc" ]; then
     export BPATH="$PATH"
-	. "$HOME/.bashrc"
+    . "$HOME/.bashrc"
     fi
 fi
 
 # Fix pycharm cannot recevice key events
 export IBUS_ENABLE_SYNC_MODE=1
 
-. "$HOME/.cargo/env"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"

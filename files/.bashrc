@@ -453,6 +453,7 @@ __py_envs_cd_set() {
 [[ " ${chpwd_functions[*]} " == *" __py_envs_cd_set "* ]] || chpwd_functions+=(__py_envs_cd_set)
 
 export cdhist_path="$HOME/.cd_history"
+touch "$cdhist_path"
 cdhist() {
     if [[ ! -f "$cdhist_path" ]]; then
         touch "$cdhist_path"
@@ -490,7 +491,10 @@ _log_cd_path() {
 
 cd_widget() {
     path="$(percol "$cdhist_path")"
-    if timeout 1 bash -c "[[ -d $path ]]"; then
+    if [[ ${#path} == 0 ]]; then
+        return
+    fi
+    if timeout 1 test -d "$path"; then
         cdhist "$path"
         cd "$path"
     else
@@ -617,8 +621,10 @@ export PATH="$HOME/.local/bin:$PATH"
 #-------------------------------------------------------------
 # Loading package managers
 #-------------------------------------------------------------
-# shellcheck source=/dev/null
-. "$HOME/.cargo/env"
+if [[ -f "$HOME/.cargo/env" ]]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.cargo/env"
+fi
 export NVM_DIR="$HOME/.nvm"
 # shellcheck source=/dev/null
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
@@ -629,3 +635,4 @@ export NVM_DIR="$HOME/.nvm"
 
 # Created by `pipx` on 2024-10-18 04:15:36
 export PATH="$PATH:/home/jethro/.local/bin"
+eval "$(/home/jethro/.local/bin/mise activate bash)"

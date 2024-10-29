@@ -2,6 +2,5 @@ git-up
 percol
 ansible
 pre-commit
-ruff
 ruff-lsp
 flameshow

@@ -6,9 +6,27 @@
 *.pyc
 *.tags
 /tags
-/files/.fonts/.uuid
 /files/.bashrc.d/bashrc_local
 /files/.bashrc.d/local_env
+/files/.config/Mattermost/
+/files/.config/cinnamon/
+/files/.config/dconf/
+/files/.config/electron-flag.conf
+/files/.config/enchant/
+/files/.config/fcitx/
+/files/.config/fcitx5/
+/files/.config/google-chrome/
+/files/.config/gtk-3.0/
+/files/.config/ibus/
+/files/.config/lnav/
+/files/.config/menus/
+/files/.config/mimeapps.list
+/files/.config/nemo/
+/files/.config/pulse/
+/files/.config/sticky/
+/files/.config/user-dirs.dirs
+/files/.config/user-dirs.locale
+/files/.fonts/.uuid
 /files/.local/share
 /files/.vim/.netrwhist
 /files/.vim/autoload/
@@ -16,6 +34,7 @@
 /files/.vim/plugged/
 /files/.vim/sessions/
 /files/.vim/spell/
+
 
 # ignore ansible temprary file
 /site.retry

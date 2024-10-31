@@ -1,0 +1,10 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+if [[ $(uname) == Linux ]] && command -v flatpak &>/dev/null; then
+    flatpak --user override --filesystem=/usr/share/icons:ro
+    flatpak install -y org.telegram.desktop
+    flatpak install -y app/com.mattermost.Desktop/x86_64/stable
+    flatpak install -y com.ticktick.TickTick
+fi

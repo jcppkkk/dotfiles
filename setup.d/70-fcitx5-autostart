@@ -1,0 +1,5 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+install /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart

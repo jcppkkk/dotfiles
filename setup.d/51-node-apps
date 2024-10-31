@@ -1,0 +1,8 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+eval "$("$HOME/.local/bin/mise" activate bash)"
+mise use --global node@20
+npm install -g npm
+npm install -g opencommit

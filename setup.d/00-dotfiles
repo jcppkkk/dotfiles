@@ -1,0 +1,25 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+realpath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+#######################
+## Backup dotfiles and replace with link
+#######################
+
+find -L ~ -maxdepth 1 -type l -delete
+(
+    unset GREP_OPTIONS
+    if [[ -d ~/.config && ! -L ~/.config ]]; then
+        rm -rvf ~/.config
+    fi
+    find "../files/" -maxdepth 1 -mindepth 1 | while read -r src; do
+        if [[ "$(realpath "$HOME/${src##*/}")" -ef "$src" ]]; then
+            echo "$HOME/${src##*/}" is ready
+        else
+            ln -sfv "$src" ~/
+        fi
+    done
+)

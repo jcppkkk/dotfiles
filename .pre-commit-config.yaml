@@ -30,7 +30,7 @@ repos:
       - id: shfmt
         args: [-i 4, -ci, -bn]
       - id: shellcheck
-        args: [-x]
+        args: [-x, -P, SCRIPTDIR]
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.32.0
     hooks:

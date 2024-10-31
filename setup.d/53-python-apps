@@ -1,0 +1,26 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+eval "$("$HOME/.local/bin/mise" activate bash)"
+mise use --global python@3.12
+
+pip install --upgrade pip
+if ! command -v pipx &>/dev/null; then
+    pip install --user pipx
+fi
+
+mise settings set experimental true
+# Install packages using pipx
+pips=(
+    git-up
+    percol
+    ansible
+    pre-commit
+    ruff-lsp
+    ruff
+    flameshow
+)
+for package in "${pips[@]}"; do
+    mise use -g pipx:"$package"
+done

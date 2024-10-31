@@ -1,6 +1,0 @@
-git-up
-percol
-ansible
-pre-commit
-ruff-lsp
-flameshow

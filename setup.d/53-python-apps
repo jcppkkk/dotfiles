@@ -3,6 +3,8 @@
 . common-lib
 
 eval "$("$HOME/.local/bin/mise" activate bash)"
+
+mise plugin add poetry
 mise use --global python@3.12
 
 pip install --upgrade pip

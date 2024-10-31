@@ -483,13 +483,7 @@ _log_cd_path() {
     fi
 }
 
-if [[ -v chpwd_functions ]]; then
-    if [[ " ${chpwd_functions[*]} " != *" _log_cd_path "* ]]; then
-        chpwd_functions+=(_log_cd_path)
-    fi
-else
-    _add_prompt_command append _log_cd_path
-fi
+[[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
 
 cd_widget() {
     path="$(percol "$cdhist_path")"

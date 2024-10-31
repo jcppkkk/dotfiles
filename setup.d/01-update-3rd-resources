@@ -1,0 +1,6 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+wget https://github.com/rvm/rvm/raw/refs/heads/master/scripts/extras/bash_zsh_support/chpwd/function.sh -O ../files/.bashrc.d/01-function.sh
+wget https://github.com/rvm/rvm/raw/refs/heads/master/scripts/extras/bash_zsh_support/chpwd/load.sh -O ../files/.bashrc.d/02-load.sh

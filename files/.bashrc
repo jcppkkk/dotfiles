@@ -157,7 +157,7 @@ fi
 #-------------------------------------------------------------
 # Set colorful PS1 only on colorful terminals.
 #-------------------------------------------------------------
-eval "$(dircolors -b "$HOME/.dircolors.ansi-universal")" || :
+eval "$(dircolors -b "$HOME/.config/gruvbox.dircolors")" || :
 
 #-------------------------------------------------------------
 # History
@@ -376,102 +376,46 @@ list+=(/etc/bashrc)
 rm -f "$HOME"/.bashrc.d/*~
 list+=("$HOME"/.bashrc.d/*)
 list+=("$HOME"/.bashrc_local)
+touch "$HOME"/.bashrc_local
+# sort the list
+readarray -t list < <(printf "%s\n" "${list[@]}" | sort)
 for file in "${list[@]}"; do
     if [ -f "$file" ]; then
+        echo "source $file"
         # shellcheck source=/dev/null
         source "$file"
     fi
 done
 unset list
-[ "$e" = "e" ] && set -e && unset e # restore -e flag
 
-get_env_type() {
-    if [[ -f poetry.lock ]] || [[ -f ../poetry.lock ]]; then
-        echo "poetry"
-    elif [[ -f Pipfile ]] || [[ -f ../Pipfile ]]; then
-        echo "pipenv"
-    fi
-}
+[[ "$e" == "e" ]] && set -e && unset e # restore -e flag
 
-activate_env() {
-    local envType="$1"
-    local dirChange=0
+export cdhist_file="$HOME/.cd_history"
 
-    if [[ "$envType" == "poetry" && -f ../poetry.lock ]] || [[ "$envType" == "pipenv" && -f ../Pipfile ]]; then
-        builtin cd ..
-        dirChange=1
-    fi
-
-    if type -t deactivate >/dev/null; then
-        # shellcheck source=/dev/null
-        source deactivate
-    fi
-
-    if [[ "$envType" == "pipenv" ]]; then
-        echo Active pipenv
-        export PIPENV_IGNORE_VIRTUALENVS=1
-        # shellcheck source=/dev/null
-        source "$(pipenv --venv)/bin/activate"
-    elif [[ "$envType" == "poetry" ]]; then
-        local penv
-        penv="$(poetry env info -p)"
-        if [[ -n "$penv" ]]; then
-            echo Active poetry
-            # shellcheck source=/dev/null
-            source "$penv/bin/activate"
-        else
-            echo "poetry env not found"
-        fi
-    else
-        echo "No environment detected."
-    fi
-
-    if [[ $dirChange -eq 1 ]]; then
-        builtin cd -
-    fi
-}
-
-__py_envs_cd_set() {
-    if [[ -n $_LOADING_PY_ENV ]]; then
-        return
-    fi
-    _LOADING_PY_ENV=1
-    local envType
-    envType=$(get_env_type)
-    if [[ "$envType" == "poetry" ]] || [[ "$envType" == "pipenv" ]]; then
-        activate_env "$envType"
-    elif [[ "${#envType}" -gt 0 ]]; then
-        echo "Unsupport env [$envType]"
-    fi
-    unset _LOADING_PY_ENV
-}
-[[ " ${chpwd_functions[*]} " == *" __py_envs_cd_set "* ]] || chpwd_functions+=(__py_envs_cd_set)
-
-export cdhist_path="$HOME/.cd_history"
-touch "$cdhist_path"
+touch "$cdhist_file"
 cdhist() {
-    if [[ ! -f "$cdhist_path" ]]; then
-        touch "$cdhist_path"
+    if [[ ! -f "$cdhist_file" ]]; then
+        touch "$cdhist_file"
     fi
 
     local path="$1"
     if [[ "$#" -eq 0 ]]; then
-        cat "$cdhist_path"
+        cat "$cdhist_file"
     elif [[ -d "$path" ]]; then
-        if ! grep -q "^$path$" "$cdhist_path"; then
+        if ! grep -q "^$path$" "$cdhist_file"; then
             echo "[cdhist] add <$path> to hist"
         fi
         # - Keep 300 lines
         {
             echo "$path"
-            cat "$cdhist_path"
+            cat "$cdhist_file"
         } | {
             while IFS= read -r line; do
                 if [[ -d "$line" ]]; then
                     realpath "$line"
                 fi
             done
-        } | awk '!x[$0]++ { if (count < 300) { print; count++ } }' | sponge "$cdhist_path"
+        } | awk '!x[$0]++ { if (count < 300) { print; count++ } }' | sponge "$cdhist_file"
     else
         echo "[cdhist] <$path> does not exist."
     fi
@@ -486,20 +430,21 @@ _log_cd_path() {
 [[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
 
 cd_widget() {
-    path="$(percol "$cdhist_path")"
-    if [[ ${#path} == 0 ]]; then
+    local cd_target
+    cd_target="$(percol "$cdhist_file")"
+    if [[ ${#cd_target} == 0 ]]; then
         return
     fi
-    if timeout 1 test -d "$path"; then
-        cdhist "$path"
-        cd "$path"
+    if timeout 1 test -d "$cd_target"; then
+        cdhist "$cd_target"
+        cd "$cd_target"
     else
-        echo "Directory [$path] does not exist."
-        sed -i "\#$path#d" "$cdhist_path"
+        echo "Directory [$cd_target] does not exist."
+        sed -i "\#$cd_target#d" "$cdhist_file"
     fi
 }
 
-bind '"\e\c":"\C-ex\C-u cd_widget\C-m\C-y\C-b\C-d"'
+bind '"\M-c": "cd_widget\C-m"'
 
 # Powerline prompt
 # shellcheck disable=SC2154
@@ -560,6 +505,7 @@ if [ -n "$TMUX" ]; then
 fi
 
 init_powerline
+
 # append a command at the last line, inside curly brackets  of function _powerline_prompt
 original_function=$(declare -f _powerline_prompt)
 APPEND_LINE='echo -n " "'
@@ -578,7 +524,6 @@ path=(
     /usr/local/bin
     /home/linuxbrew/.linuxbrew/bin
     "${KREW_ROOT:-$HOME/.krew}/bin"
-    "$HOME"/.poetry/bin
     "$HOME"/.bin
     "$HOME"/.local/bin
     "$HOME"/.local/share/JetBrains/Toolbox/apps
@@ -593,7 +538,12 @@ unset path
 
 # Created by `pipx` on 2024-10-18 04:15:36
 export PATH="$PATH:$HOME/.local/bin"
+
+#-------------------------------------------------------------
+# *env Setup
+#-------------------------------------------------------------
 eval "$("$HOME/.local/bin/mise" activate bash)"
+export MISE_POETRY_AUTO_INSTALL=1 # Automatically run poetry install to create the virtualenv
 
 #-------------------------------------------------------------
 # dedup PATH

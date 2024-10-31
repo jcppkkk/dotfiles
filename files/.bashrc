@@ -136,11 +136,6 @@ extract() { # Handy Extract Program.
     fi
 }
 
-if [[ -d $HOME/.pyenv/bin ]]; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    eval "$(pyenv init -)"
-fi
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -446,7 +441,7 @@ __py_envs_cd_set() {
     if [[ "$envType" == "poetry" ]] || [[ "$envType" == "pipenv" ]]; then
         activate_env "$envType"
     elif [[ "${#envType}" -gt 0 ]]; then
-        echo "Unsupport pyenv [$envType]"
+        echo "Unsupport env [$envType]"
     fi
     unset _LOADING_PY_ENV
 }
@@ -487,7 +482,14 @@ _log_cd_path() {
         cdhist "$PWD"
     fi
 }
-[[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
+
+if [[ -v chpwd_functions ]]; then
+    if [[ " ${chpwd_functions[*]} " != *" _log_cd_path "* ]]; then
+        chpwd_functions+=(_log_cd_path)
+    fi
+else
+    _add_prompt_command append _log_cd_path
+fi
 
 cd_widget() {
     path="$(percol "$cdhist_path")"
@@ -574,33 +576,16 @@ fi
 #-------------------------------------------------------------
 # customize PATH
 #-------------------------------------------------------------
-# golang
-export GOPATH=$HOME/go
-# pnpm
-export PNPM_HOME="/home/jethro/.local/share/pnpm"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
 
 # the latter path will be added to the front of PATH
 path=(
+    /usr/sbin
     /usr/local/go/bin
     /usr/local/bin
-    /usr/sbin
-    "$HOME"/.cargo/bin
-    "$PNPM_HOME"
-    "$GOPATH"/bin
-    "${KREW_ROOT:-$HOME/.krew}/bin"
-    "$HOME"/venv/bin
-    "$HOME"/.poetry/bin
-    "$HOME"/.pyenv/shims
-    "$HOME"/.pyenv/bin
-    "$HOME"/.rbenv/shims
-    "$HOME"/.rbenv/bin
-    "$HOME"/.rvm/bin
     /home/linuxbrew/.linuxbrew/bin
+    "${KREW_ROOT:-$HOME/.krew}/bin"
+    "$HOME"/.poetry/bin
     "$HOME"/.bin
-    "$HOME"/bin
     "$HOME"/.local/bin
     "$HOME"/.local/share/JetBrains/Toolbox/apps
 )
@@ -612,27 +597,12 @@ for p in "${path[@]}"; do
 done
 unset path
 
+# Created by `pipx` on 2024-10-18 04:15:36
+export PATH="$PATH:$HOME/.local/bin"
+eval "$("$HOME/.local/bin/mise" activate bash)"
+
 #-------------------------------------------------------------
 # dedup PATH
 #-------------------------------------------------------------
 PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 export PATH="$HOME/.local/bin:$PATH"
-
-#-------------------------------------------------------------
-# Loading package managers
-#-------------------------------------------------------------
-if [[ -f "$HOME/.cargo/env" ]]; then
-    # shellcheck source=/dev/null
-    . "$HOME/.cargo/env"
-fi
-export NVM_DIR="$HOME/.nvm"
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-# shellcheck source=/dev/null
-[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
-
-# Created by `pipx` on 2024-10-18 04:15:36
-export PATH="$PATH:/home/jethro/.local/bin"
-eval "$(/home/jethro/.local/bin/mise activate bash)"

@@ -2,10 +2,20 @@
   always_split_with_profile = True
   link_single_click = True
 [keybindings]
+  zoom_in = <Primary>plus
+  zoom_out = <Primary>underscore
+  zoom_normal = <Primary>0
+  zoom_in_all = <Primary>KP_Add
+  zoom_out_all = <Primary>KP_Subtract
+  zoom_normal_all = <Primary>KP_0
+  go_up = ""
+  go_down = ""
+  go_left = ""
+  go_right = ""
 [profiles]
   [[default]]
     background_color = "#282828"
-    font = Fira Code weight=450 16
+    font = Source Code Pro Medium 16
     foreground_color = "#ebdbb2"
     palette = "#282828:#cc241d:#98971a:#d79921:#458588:#b16286:#689d6a:#a89984:#928374:#fb4934:#b8bb26:#fabd2f:#83a598:#d3869b:#8ec07c:#ebdbb2"
     use_system_font = False

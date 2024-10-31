@@ -151,7 +151,9 @@ set wildmode=longest,list
 set wildmenu
 syntax enable
 set background=dark
-colorscheme gruvbox " ignore error on first initialize
+
+" error occors on first install
+silent! colorscheme gruvbox " ignore error on first initialize
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

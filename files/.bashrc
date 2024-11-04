@@ -394,53 +394,28 @@ export cdhist_file="$HOME/.cd_history"
 
 touch "$cdhist_file"
 cdhist() {
-    if [[ ! -f "$cdhist_file" ]]; then
-        touch "$cdhist_file"
-    fi
-
     local path="$1"
-    if [[ "$#" -eq 0 ]]; then
-        cat "$cdhist_file"
-    elif [[ -d "$path" ]]; then
-        if ! grep -q "^$path$" "$cdhist_file"; then
-            echo "[cdhist] add <$path> to hist"
-        fi
-        # - Keep 300 lines
-        {
-            echo "$path"
-            cat "$cdhist_file"
-        } | {
-            while IFS= read -r line; do
-                if [[ -d "$line" ]]; then
-                    realpath "$line"
-                fi
-            done
-        } | awk '!x[$0]++ { if (count < 300) { print; count++ } }' | sponge "$cdhist_file"
-    else
-        echo "[cdhist] <$path> does not exist."
-    fi
+    echo "$path" >>"$cdhist_file"
 }
 
 _log_cd_path() {
-    if [[ -d "$PWD" ]]; then
-        cdhist "$PWD"
-    fi
+    cdhist "$PWD"
 }
 
 [[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
 
 cd_widget() {
-    local cd_target
-    cd_target="$(percol "$cdhist_file")"
-    if [[ ${#cd_target} == 0 ]]; then
-        return
-    fi
-    if timeout 1 test -d "$cd_target"; then
-        cdhist "$cd_target"
+    tac "$cdhist_file" \
+        | awk '!x[$0]++' \
+        | while read -r line; do
+            timeout 0.5 test -d "$line" && echo "$line"
+        done \
+        | head -n 300 \
+        | tac \
+        | sponge "$cdhist_file"
+    cd_target="$(percol --prompt-bottom --result-bottom-up --reverse "$cdhist_file")"
+    if ((${#cd_target} != 0)); then
         cd "$cd_target"
-    else
-        echo "Directory [$cd_target] does not exist."
-        sed -i "\#$cd_target#d" "$cdhist_file"
     fi
 }
 

@@ -4,3 +4,6 @@
 
 # set moving window to Super+click
 gsettings set org.cinnamon.desktop.wm.preferences mouse-button-modifier '<Super>'
+
+# start fcitx5 on login
+install /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart

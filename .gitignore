@@ -8,7 +8,8 @@
 /tags
 /files/.bashrc.d/bashrc_local
 /files/.bashrc.d/local_env
-/files/.config/Mattermost/
+/files/.config/Code/
+/files/.config/Mattermost
 /files/.config/X-Cinnamon-xdg-terminals.list
 /files/.config/appman/
 /files/.config/autostart/

@@ -1,6 +1,5 @@
 [global_config]
   always_split_with_profile = True
-  link_single_click = True
 [keybindings]
   zoom_in = <Primary>plus
   zoom_out = <Primary>underscore

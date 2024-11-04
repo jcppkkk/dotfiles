@@ -50,3 +50,9 @@
 
 # ignore ansible temprary file
 /site.retry
+files/.config/QtProject.conf
+files/.config/k9s/
+files/.config/keepassxc/
+files/.config/libreoffice/
+files/.config/org.keshavnrj.ubuntu/
+files/.config/pix/

@@ -12,13 +12,14 @@ if ! command -v pipx &>/dev/null; then
     pip install --user pipx
 fi
 
-pip install -U ansible
+pip install -U \
+    ansible \
+    ruff-lsp \
+    ruff
 
 mise settings set experimental true
 mise use -g \
     pipx:git-up \
     pipx:percol \
     pipx:pre-commit \
-    pipx:ruff-lsp \
-    pipx:ruff \
     pipx:flameshow

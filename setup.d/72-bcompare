@@ -1,0 +1,8 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+sudo wget https://www.scootersoftware.com/DEB-GPG-KEY-scootersoftware.asc -O /etc/apt/trusted.gpg.d/DEB-GPG-KEY-scootersoftware.asc
+sudo wget https://www.scootersoftware.com/scootersoftware.list -O /etc/apt/sources.list.d/scootersoftware.list
+sudo apt update
+sudo apt install bcompare -y

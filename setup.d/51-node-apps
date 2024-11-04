@@ -4,5 +4,4 @@
 
 eval "$("$HOME/.local/bin/mise" activate bash)"
 mise use --global node@20
-npm install -g npm
-npm install -g opencommit
+mise use --global npm:opencommit

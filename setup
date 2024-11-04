@@ -85,7 +85,7 @@ case $platform in
             build-essential vim meld tig direnv exuberant-ctags
             unzip manpages-dev manpages-posix-dev cmake shellcheck
             # Fonts and UI
-            fonts-firacode powerline powerline-gitstatus tmux
+            fonts-firacode tmux
             # GUI
             diodon
         )
@@ -110,11 +110,6 @@ ansible-playbook -i "localhost," -c local site.yml -vvv
 mkdir -p ~/.backup
 curl -fLo files/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-# Setup  https://github.com/powerline/fonts
-wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf -P ~/.local/share/fonts/
-wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf -P ~/.config/fontconfig/conf.d/
-fc-cache -vf ~/.local/share/fonts/
 
 #######################
 ## install vim plugins

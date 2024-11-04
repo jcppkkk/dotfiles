@@ -2,6 +2,12 @@
 # vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
 . common-lib
 
+# Require mise python
 eval "$("$HOME/.local/bin/mise" activate bash)"
-mise use --global go@1.23
-go install mvdan.cc/sh/v3/cmd/shfmt@latest
+
+pip install -U powerline-status powerline-gitstatus
+
+# Setup  https://github.com/powerline/fonts
+wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf -P ~/.local/share/fonts/
+wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf -P ~/.config/fontconfig/conf.d/
+fc-cache -vf ~/.local/share/fonts/

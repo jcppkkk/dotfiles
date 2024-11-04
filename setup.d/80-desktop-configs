@@ -1,0 +1,6 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+# set moving window to Super+click
+gsettings set org.cinnamon.desktop.wm.preferences mouse-button-modifier '<Super>'

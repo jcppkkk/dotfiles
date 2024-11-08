@@ -274,7 +274,11 @@ def dump_bcache(bcache_sysfs_path, stats, print_subdevices, devices):
         ("readahead_cache_policy", "Readahead Cache", None),
         ("writeback_delay", "Writeback Delay", pretty_time),
         ("writeback_percent", "Writeback Percent", lambda x: "%s" % x + "%"),
-        ("writeback_rate", "Writeback rate", lambda x: "%s sectors" % x),
+        (
+            "writeback_rate",
+            "Writeback rate",
+            lambda x: "%.2f MB/s" % (interpret_sectors(x) * 512 / (1024 * 1024)),
+        ),
     ]
 
     bdevs = []

@@ -40,6 +40,17 @@ Plug 'vim-scripts/Modeliner'
 
 " syntax checker
 Plug 'dense-analysis/ale'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'rhysd/vim-lsp-ale'
+
+if executable('ruff')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'ruff',
+        \ 'cmd': ['ruff', 'server'],
+        \ 'allowlist': ['python'],
+        \ 'workspace_config': {},
+        \ })
+endif
 let g:ale_fix_on_save = 1
 let g:ale_linters = {
 			\ 'python': ['ruff'],
@@ -48,8 +59,8 @@ let g:ale_linters = {
 			\}
 let g:ale_fixers = {
 			\ '*': ['remove_trailing_lines', 'trim_whitespace'],
-			\ 'python': ['ruff', 'ruff_format'],
 			\ 'sh': ['shfmt'],
+			\ 'python': ['ruff_format'],
 			\ 'go': ['gofmt', 'goimports']
 			\}
 let g:ale_sh_shfmt_options = '-i 4 -ci -bn'

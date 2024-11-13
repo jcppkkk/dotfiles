@@ -60,7 +60,7 @@ let g:ale_linters = {
 let g:ale_fixers = {
 			\ '*': ['remove_trailing_lines', 'trim_whitespace'],
 			\ 'sh': ['shfmt'],
-			\ 'python': ['ruff_format'],
+			\ 'python': ['ruff_format', 'ruff'],
 			\ 'go': ['gofmt', 'goimports']
 			\}
 let g:ale_sh_shfmt_options = '-i 4 -ci -bn'

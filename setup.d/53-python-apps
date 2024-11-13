@@ -5,6 +5,7 @@
 eval "$("$HOME/.local/bin/mise" activate bash)"
 
 mise use --global python@3.12
+mise use --global poetry
 mise plugin add poetry
 
 pip install --upgrade pip

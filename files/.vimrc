@@ -511,7 +511,23 @@ map  <silent> <C-S-right>     <C-W><C-L>
 vmap  <F2> :w! >> sonar<cr>:'<,'>d<cr>
 map  <silent> <F12>           :call Switch_indent()<CR>
 map  <silent> <F5>            :w<CR>:ll<CR>|
-map  <silent> <F7>            :set invnumber \| :GitGutterSignsToggle \| :ALEToggle<CR>
+
+function! ToggleColumn()
+    " Toggle the display of the line number
+    set invnumber
+    " Toggle GitGutter signs
+    GitGutterSignsToggle
+    " Toggle ALE signs
+    ALEToggle
+    " Toggle vim-lsp signs
+    if &signcolumn == 'auto'
+        setlocal signcolumn=no
+    else
+        setlocal signcolumn=auto
+    endif
+endfunction
+map  <silent> <F7>            :call ToggleColumn()<CR>
+
 map  <silent> <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
 map  <silent> <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
 map  <silent> <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file

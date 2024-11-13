@@ -493,23 +493,26 @@ fi
 #-------------------------------------------------------------
 
 # the latter path will be added to the front of PATH
-path=(
-    /usr/sbin
-    /usr/local/go/bin
-    /usr/local/bin
-    /home/linuxbrew/.linuxbrew/bin
-    "${KREW_ROOT:-$HOME/.krew}/bin"
-    "$HOME"/.bin
-    "$HOME"/.local/bin
-    "$HOME"/.local/share/JetBrains/Toolbox/apps
-)
-# filter out non-exist path
-for p in "${path[@]}"; do
-    if [[ -d $p ]]; then
-        PATH="$p:$PATH"
-    fi
-done
-unset path
+prepend_custom_path() {
+    local custom_paths
+    custom_paths=(
+        /usr/sbin
+        /usr/local/go/bin
+        /usr/local/bin
+        /home/linuxbrew/.linuxbrew/bin
+        "${KREW_ROOT:-$HOME/.krew}/bin"
+        "$HOME"/.bin
+        "$HOME"/.local/bin
+        "$HOME"/.local/share/JetBrains/Toolbox/apps
+    )
+    # filter out non-exist path
+    for p in "${custom_paths[@]}"; do
+        if [[ -d $p ]]; then
+            PATH="$p:$PATH"
+        fi
+    done
+}
+prepend_custom_path
 
 # Created by `pipx` on 2024-10-18 04:15:36
 export PATH="$PATH:$HOME/.local/bin"
@@ -525,3 +528,8 @@ export MISE_POETRY_AUTO_INSTALL=1 # Automatically run poetry install to create t
 #-------------------------------------------------------------
 PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
 export PATH="$HOME/.local/bin:$PATH"
+removepath() {
+    local path="$1"
+    PATH="$(echo -e "${PATH//:/\\n}" | grep -v "$path" | paste -sd ":" -)"
+    export PATH
+}

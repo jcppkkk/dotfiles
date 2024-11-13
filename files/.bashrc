@@ -503,6 +503,7 @@ prepend_custom_path() {
         "${KREW_ROOT:-$HOME/.krew}/bin"
         "$HOME"/.bin
         "$HOME"/.local/bin
+        "$HOME"/.cargo/bin
         "$HOME"/.local/share/JetBrains/Toolbox/apps
     )
     # filter out non-exist path

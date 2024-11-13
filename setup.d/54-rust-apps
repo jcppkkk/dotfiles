@@ -2,6 +2,9 @@
 # vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
 . common-lib
 
-eval "$("$HOME/.local/bin/mise" activate bash)"
-
-mise use -g rust
+if ! command -v rustc &>/dev/null; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+fi
+# shellcheck source=/dev/null
+source "$HOME"/.cargo/env
+cargo install git-interactive-rebase-tool

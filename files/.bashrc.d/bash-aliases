@@ -94,6 +94,7 @@ alias bra='br -a'
 alias ci='git commit --verbose'
 alias cii='git update-index --again "$(git rev-parse --show-toplevel)" && git commit --verbose'
 alias cia='git commit --verbose --amend'
+alias xclip="xclip -selection c"
 
 fixup() {
     if [[ $# -eq 0 ]]; then

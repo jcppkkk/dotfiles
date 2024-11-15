@@ -24,3 +24,5 @@ if [[ -f "$FILE_PATH" ]]; then
         fi
     fi
 fi
+
+sudo apt install -y xclip

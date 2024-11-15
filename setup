@@ -80,7 +80,7 @@ case $platform in
             # Filesystem tools
             sshfs sshpass cifs-utils plocate silversearcher-ag
             # Shell and system admin tools
-            jq moreutils apt-file bmon ncdu lnav
+            jq moreutils apt-file bmon ncdu lnav htop
             # Development tools
             build-essential vim meld tig direnv exuberant-ctags
             unzip manpages-dev manpages-posix-dev cmake shellcheck

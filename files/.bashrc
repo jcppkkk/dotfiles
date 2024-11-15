@@ -479,8 +479,6 @@ if [ -n "$TMUX" ]; then
     fi
 fi
 
-init_powerline
-
 # append a command at the last line, inside curly brackets  of function _powerline_prompt
 original_function=$(declare -f _powerline_prompt)
 APPEND_LINE='echo -n " "'
@@ -534,3 +532,5 @@ removepath() {
     PATH="$(echo -e "${PATH//:/\\n}" | grep -v "$path" | paste -sd ":" -)"
     export PATH
 }
+
+init_powerline

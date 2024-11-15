@@ -79,7 +79,13 @@ let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
 let g:rainbow_active = 1
 Plug 'ludovicchabant/vim-gutentags'
 let g:gutentags_ctags_tagfile = ".tags"
+"shows the context of the currently visible buffer contents
 Plug 'wellle/context.vim'
+"quickly switch between files
+Plug 'mileszs/ack.vim'
+let g:ackprg = 'rg --vimgrep --smart-case'
+nnoremap <silent> <Leader>rg :Ack <C-R><C-W><CR>
+
 """"""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
 
@@ -239,7 +245,7 @@ if v:version >= 700
 		endif
 	endfunction
 
-	nmap <LocalLeader>ss :call ToggleSpell()<CR>
+	nmap <Leader>ss :call ToggleSpell()<CR>
 
 	setl spell spelllang=en_us
 	setl nospell
@@ -467,7 +473,7 @@ augroup qf
 	autocmd FileType qf set nobuflisted
 augroup END
 
-set pastetoggle=<LocalLeader>p
+set pastetoggle=<Leader>p
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " maps
@@ -529,11 +535,10 @@ endfunction
 map  <silent> <F7>            :call ToggleColumn()<CR>
 
 map  <silent> <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
-map  <silent> <LocalLeader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
-map  <silent> <LocalLeader>cs :source ~/.vimrc<CR>|          " quickly source this file
-map  <silent> <LocalLeader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
-map  <silent> <LocalLeader>nh :nohlsearch<CR>|               " disable last one highlight
-"map  <silent> <LocalLeader>t  :TlistToggle<CR>
+map  <silent> <Leader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
+map  <silent> <Leader>cs :source ~/.vimrc<CR>|          " quickly source this file
+map  <silent> <Leader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
+map  <silent> <Leader>nh :nohlsearch<CR>|               " disable last one highlight
 
 map! <silent> <S-Tab>         <C-D>|                        " tab indenta
 vmap <silent> <S-Tab>         <gv_|                         " tab indent

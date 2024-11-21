@@ -1,0 +1,6 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+curl -sL https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get | sudo -E bash -s install deb-get
+sudo deb-get install dbeaver-ce

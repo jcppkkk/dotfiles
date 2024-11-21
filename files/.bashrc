@@ -519,8 +519,9 @@ export PATH="$PATH:$HOME/.local/bin"
 #-------------------------------------------------------------
 # *env Setup
 #-------------------------------------------------------------
-eval "$("$HOME/.local/bin/mise" activate bash)"
 export MISE_POETRY_AUTO_INSTALL=1 # Automatically run poetry install to create the virtualenv
+eval "$("$HOME/.local/bin/mise" activate bash)"
+eval "$(direnv hook bash)"
 
 #-------------------------------------------------------------
 # dedup PATH

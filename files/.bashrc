@@ -405,14 +405,14 @@ _log_cd_path() {
 [[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
 
 cd_widget() {
-    tac "$cdhist_file" \
+    (tac "$cdhist_file" \
         | awk '!x[$0]++' \
         | while read -r line; do
             timeout 0.5 test -d "$line" && echo "$line"
         done \
         | head -n 300 \
         | tac \
-        | sponge "$cdhist_file"
+        | sponge "$cdhist_file" &)
     cd_target="$(percol --prompt-bottom --result-bottom-up --reverse "$cdhist_file")"
     if ((${#cd_target} != 0)); then
         cd "$cd_target"

@@ -179,6 +179,13 @@ silent! colorscheme gruvbox " ignore error on first initialize
 set modelines=5         " no modelines [http://www.guninski.com/vim1.html]
 set modeline
 let g:secure_modelines_verbose=1 " securemodelines vimscript
+function! AppendModeline()
+  let l:modeline = printf(" vim: set ts=%d sw=%d tw=%d %set :",
+        \ &tabstop, &shiftwidth, &textwidth, &expandtab ? '' : 'no')
+  let l:modeline = substitute(&commentstring, "%s", l:modeline, "")
+  call append(line("$"), l:modeline)
+endfunction
+nnoremap <silent> <Leader>ml :call AppendModeline()<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " operational settings

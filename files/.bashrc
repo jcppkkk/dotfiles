@@ -26,7 +26,7 @@ _add_prompt_command() {
         return
     fi
     if test "$action" = "append"; then
-        PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'"$cmd"
+        PROMPT_COMMAND="$PROMPT_COMMAND"$'\n"$(echo $cmd)"'$'\n'"$cmd"
     else
         PROMPT_COMMAND="$cmd"$'\n'"$PROMPT_COMMAND"
     fi
@@ -365,31 +365,6 @@ if [ -f /usr/local/bin/mc ]; then
     complete -C /usr/local/bin/mc mc
 fi
 
-#-------------------------------------------------------------
-# import scripts
-#-------------------------------------------------------------
-[[ "$-" == *e* ]] && set +e && e=e # store -e flag when sourcing external resource
-shopt -s extglob
-list=()
-list+=(/etc/bashrc)
-# /etc/bashrc need to run after bashrc.d
-rm -f "$HOME"/.bashrc.d/*~
-list+=("$HOME"/.bashrc.d/*)
-list+=("$HOME"/.bashrc_local)
-touch "$HOME"/.bashrc_local
-# sort the list
-readarray -t list < <(printf "%s\n" "${list[@]}" | sort)
-for file in "${list[@]}"; do
-    if [ -f "$file" ]; then
-        echo "source $file"
-        # shellcheck source=/dev/null
-        source "$file"
-    fi
-done
-unset list
-
-[[ "$e" == "e" ]] && set -e && unset e # restore -e flag
-
 export cdhist_file="$HOME/.cd_history"
 
 touch "$cdhist_file"
@@ -405,6 +380,10 @@ _log_cd_path() {
 [[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
 
 cd_widget() {
+    cd_target="$(percol --prompt-bottom --result-bottom-up --reverse "$cdhist_file")"
+    if ((${#cd_target} != 0)); then
+        cd "$cd_target"
+    fi
     (tac "$cdhist_file" \
         | awk '!x[$0]++' \
         | while read -r line; do
@@ -413,10 +392,6 @@ cd_widget() {
         | head -n 300 \
         | tac \
         | sponge "$cdhist_file" &)
-    cd_target="$(percol --prompt-bottom --result-bottom-up --reverse "$cdhist_file")"
-    if ((${#cd_target} != 0)); then
-        cd "$cd_target"
-    fi
 }
 
 bind '"\M-c": "cd_widget\C-m"'
@@ -499,6 +474,7 @@ prepend_custom_path() {
         /usr/local/bin
         /home/linuxbrew/.linuxbrew/bin
         "${KREW_ROOT:-$HOME/.krew}/bin"
+        "$HOME"/bin/gamadv-xtd3 # Google Apps Manager
         "$HOME"/.bin
         "$HOME"/.local/bin
         "$HOME"/.cargo/bin
@@ -522,6 +498,25 @@ export PATH="$PATH:$HOME/.local/bin"
 export MISE_POETRY_AUTO_INSTALL=1 # Automatically run poetry install to create the virtualenv
 eval "$("$HOME/.local/bin/mise" activate bash)"
 eval "$(direnv hook bash)"
+
+#-------------------------------------------------------------
+# import scripts
+#-------------------------------------------------------------
+[[ "$-" == *e* ]] && set +e && e=e # store -e flag when sourcing external resource
+shopt -s extglob
+rm -f "$HOME"/.bashrc.d/*~
+touch "$HOME"/.bashrc_local
+# /etc/bashrc need to run after bashrc.d
+list=(~/.bashrc.d/* ~/.bashrc_local /etc/bashrc)
+for file in "${list[@]}"; do
+    if [ -f "$file" ]; then
+        echo "source $file"
+        # shellcheck source=/dev/null
+        source "$file"
+    fi
+done
+unset list
+[[ "$e" == "e" ]] && set -e && unset e # restore -e flag
 
 #-------------------------------------------------------------
 # dedup PATH

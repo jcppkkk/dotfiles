@@ -188,10 +188,6 @@ alias dp='docker push'
 alias dip='docker inspect --format "{{.NetworkSettings.IPAddress}}"'
 alias rmi='docker rmi'
 
-#-------------------------------------------------------------
-# Google Apps Manager
-#-------------------------------------------------------------
-alias gam="/home/jethro/bin/gamadv-xtd3/gam"
 
 
 # 定義一個函數來切換（抑制或恢復）指定的函數，並設置 umask

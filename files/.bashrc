@@ -26,7 +26,7 @@ _add_prompt_command() {
         return
     fi
     if test "$action" = "append"; then
-        PROMPT_COMMAND="$PROMPT_COMMAND"$'\n"$(echo $cmd)"'$'\n'"$cmd"
+        PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'"$cmd"
     else
         PROMPT_COMMAND="$cmd"$'\n'"$PROMPT_COMMAND"
     fi

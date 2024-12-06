@@ -1,5 +1,6 @@
 [global_config]
   always_split_with_profile = True
+  putty_paste_style = True
 [keybindings]
   zoom_in = <Primary>plus
   zoom_out = <Primary>underscore

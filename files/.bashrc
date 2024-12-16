@@ -380,50 +380,25 @@ _log_cd_path() {
 [[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
 
 cd_widget() {
-    cd_target="$(percol --prompt-bottom --result-bottom-up --reverse "$cdhist_file")"
-    if ((${#cd_target} != 0)); then
-        cd "$cd_target"
-    fi
-    (tac "$cdhist_file" \
+    tac "$cdhist_file" \
+        | sed -e 's@^/data/repo@~/repo@' -e 's@^/home/jethro@~@' \
         | awk '!x[$0]++' \
-        | while read -r line; do
-            timeout 0.5 test -d "$line" && echo "$line"
-        done \
         | head -n 300 \
         | tac \
-        | sponge "$cdhist_file" &)
+        | sponge "$cdhist_file"
+    cd_target="$(percol --prompt-bottom --result-bottom-up --reverse "$cdhist_file")"
+    if ((${#cd_target} != 0)); then
+        cd "${cd_target/#\~/$HOME}"
+    fi
+    while read -r line; do
+        timeout 0.5 test -d "${line/#\~/$HOME}" && echo "$line"
+    done <"$cdhist_file" | sponge "$cdhist_file"
 }
 
 bind '"\M-c": "cd_widget\C-m"'
 
 # Powerline prompt
 # shellcheck disable=SC2154
-init_powerline() {
-    if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" == "mac" || "$platform" == "linux" || "$TMUX" != "" || "$SUDO_USER" != "" ]]; then
-        PATH="$PATH:$(PYENV_VERSION=system python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
-        mapfile -t sites < <(PYENV_VERSION=system python3 -c 'import site; print(" ".join(site.getsitepackages()))')
-        sites=(/usr/share "${sites[@]}")
-        for site in "${sites[@]}"; do
-            powerline="$site/powerline/bindings/bash/powerline.sh"
-            if [ -f "$powerline" ]; then
-                echo "Powerline found at $powerline"
-                powerline-daemon -q || true
-                # shellcheck disable=SC2034
-                POWERLINE_BASH_CONTINUATION=1
-                # shellcheck disable=SC2034
-                POWERLINE_BASH_SELECT=1
-                # shellcheck source=/dev/null
-                source "$powerline"
-                break
-            else
-                echo "No powerline at $powerline"
-            fi
-        done
-    fi
-    unset srcfiles powerline
-}
-
-export PYTHONSTARTUP=~/.pythonrc
 
 if [ -n "$TMUX" ]; then
 
@@ -469,34 +444,32 @@ fi
 prepend_custom_path() {
     local custom_paths
     custom_paths=(
-        /usr/sbin
+        "$HOME"/.bin
+        "$HOME"/.local/bin              # mise
+        "$HOME"/.cargo/bin              # rust
+        /home/linuxbrew/.linuxbrew/bin  # brew
+        "${KREW_ROOT:-$HOME/.krew}/bin" # plugin manager for kubectl
+        "$HOME"/bin/gamadv-xtd3         # Google Apps Manager
+        "$HOME"/.local/share/JetBrains/Toolbox/apps
         /usr/local/go/bin
         /usr/local/bin
-        /home/linuxbrew/.linuxbrew/bin
-        "${KREW_ROOT:-$HOME/.krew}/bin"
-        "$HOME"/bin/gamadv-xtd3 # Google Apps Manager
-        "$HOME"/.bin
-        "$HOME"/.local/bin
-        "$HOME"/.cargo/bin
-        "$HOME"/.local/share/JetBrains/Toolbox/apps
+        /usr/sbin
     )
+    local PATH_PREPEND=""
     # filter out non-exist path
     for p in "${custom_paths[@]}"; do
         if [[ -d $p ]]; then
-            PATH="$p:$PATH"
+            PATH_PREPEND="$PATH_PREPEND:$p"
         fi
     done
+    PATH="${PATH_PREPEND:1}:$PATH"
 }
 prepend_custom_path
-
-# Created by `pipx` on 2024-10-18 04:15:36
-export PATH="$PATH:$HOME/.local/bin"
 
 #-------------------------------------------------------------
 # *env Setup
 #-------------------------------------------------------------
-export MISE_POETRY_AUTO_INSTALL=1 # Automatically run poetry install to create the virtualenv
-eval "$("$HOME/.local/bin/mise" activate bash)"
+eval "$(mise activate bash)"
 eval "$(direnv hook bash)"
 
 #-------------------------------------------------------------
@@ -521,12 +494,37 @@ unset list
 #-------------------------------------------------------------
 # dedup PATH
 #-------------------------------------------------------------
-PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | paste -sd ":" -)"
-export PATH="$HOME/.local/bin:$PATH"
+PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | grep -v '^$' | paste -sd ":" -)"
 removepath() {
     local path="$1"
     PATH="$(echo -e "${PATH//:/\\n}" | grep -v "$path" | paste -sd ":" -)"
     export PATH
 }
 
+init_powerline() {
+    eval "$(mise hook-env -s bash)"
+    # shellcheck disable=SC2154
+    if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" == "mac" || "$platform" == "linux" || "$TMUX" != "" || "$SUDO_USER" != "" ]]; then
+        PATH="$PATH:$(python -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
+        mapfile -t sites < <(python -c 'import site; print(" ".join(site.getsitepackages()))')
+        sites=(/usr/share "${sites[@]}")
+        for site in "${sites[@]}"; do
+            powerline="$site/powerline/bindings/bash/powerline.sh"
+            if [ -f "$powerline" ]; then
+                echo "Powerline found at $powerline"
+                powerline-daemon -q || true
+                # shellcheck disable=SC2034
+                POWERLINE_BASH_CONTINUATION=1
+                # shellcheck disable=SC2034
+                POWERLINE_BASH_SELECT=1
+                # shellcheck source=/dev/null
+                source "$powerline"
+                break
+            else
+                echo "No powerline at $powerline"
+            fi
+        done
+    fi
+    unset srcfiles powerline
+}
 init_powerline

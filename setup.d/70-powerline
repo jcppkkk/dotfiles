@@ -5,7 +5,7 @@
 # Require mise python
 eval "$("$HOME/.local/bin/mise" activate bash)"
 
-pip install -U powerline-status powerline-gitstatus
+python -m pip install -U powerline-status powerline-gitstatus
 
 # Setup  https://github.com/powerline/fonts
 wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf -P ~/.local/share/fonts/

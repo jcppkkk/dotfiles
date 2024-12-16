@@ -7,3 +7,4 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 brew install gcc
 brew install derailed/k9s/k9s
+brew install fx

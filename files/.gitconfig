@@ -25,7 +25,7 @@
 	autocrlf = input
 	editor = vim
 	excludesfile = ~/.gitignore_global
-	pager = sed 's/\\t/        /g' | less -R
+	pager = delta
 	preloadindex = true
 	whitespace = cr-at-eol
 [credential]
@@ -57,7 +57,7 @@
 	templatedir = ~/.git-templates
 	defaultBranch = main
 [merge]
-	conflictstyle = diff3
+	conflictStyle = zdiff3
 	tool = bc
 [mergetool]
 	keepBackup = false
@@ -91,3 +91,8 @@
 	dunk = !git diff | dunk
 [fetch]
 	prune = true
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	side-by-side = true

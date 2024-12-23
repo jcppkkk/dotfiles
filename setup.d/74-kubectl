@@ -8,3 +8,16 @@ echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.
 sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
 sudo apt-get install -y kubectl
+
+# https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+# Krew is the plugin manager for kubectl command-line tool.
+(
+    set -x
+    cd "$(mktemp -d)" \
+        && OS="$(uname | tr '[:upper:]' '[:lower:]')" \
+        && ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" \
+        && KREW="krew-${OS}_${ARCH}" \
+        && curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" \
+        && tar zxvf "${KREW}.tar.gz" \
+        && ./"${KREW}" install krew
+)

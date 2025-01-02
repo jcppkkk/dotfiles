@@ -2,6 +2,6 @@
 .gdb_history
 compile_commands.json
 /.idea
-/.tags
+.tags
 *.pyc
 /.venv

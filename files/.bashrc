@@ -22,7 +22,7 @@ _add_prompt_command() {
     local cmd="$1"
     shift
     # skip the command if it already exists
-    if echo -e "$PROMPT_COMMAND" | grep -q "$cmd"; then
+    if [[ "$PROMPT_COMMAND" == *"$cmd"* ]]; then
         return
     fi
     if test "$action" = "append"; then
@@ -30,7 +30,10 @@ _add_prompt_command() {
     else
         PROMPT_COMMAND="$cmd"$'\n'"$PROMPT_COMMAND"
     fi
+    # normalize sep to be semicolon and newline
+    PROMPT_COMMAND=$(echo "$PROMPT_COMMAND" | sed -e 's/;/\n/g' -e 's/\n\n/\n/g' -e 's/\n/;/g')
 }
+
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
@@ -395,7 +398,7 @@ cd_widget() {
     done <"$cdhist_file" | sponge "$cdhist_file"
 }
 
-bind '"\M-c": "cd_widget\C-m"'
+bind -x '"\C-`": "cd_widget"'
 
 # Powerline prompt
 # shellcheck disable=SC2154
@@ -429,13 +432,6 @@ if [ -n "$TMUX" ]; then
     fi
 fi
 
-# append a command at the last line, inside curly brackets  of function _powerline_prompt
-original_function=$(declare -f _powerline_prompt)
-APPEND_LINE='echo -n " "'
-if [[ $original_function != *"$APPEND_LINE"* ]]; then
-    eval "$(echo "$original_function" | sed -e "/^}$/i$APPEND_LINE")"
-fi
-
 #-------------------------------------------------------------
 # customize PATH
 #-------------------------------------------------------------
@@ -445,9 +441,7 @@ prepend_custom_path() {
     local custom_paths
     custom_paths=(
         "$HOME"/.bin
-        "$HOME"/.local/bin              # mise
         "$HOME"/.cargo/bin              # rust
-        /home/linuxbrew/.linuxbrew/bin  # brew
         "${KREW_ROOT:-$HOME/.krew}/bin" # plugin manager for kubectl
         "$HOME"/bin/gamadv-xtd3         # Google Apps Manager
         "$HOME"/.local/share/JetBrains/Toolbox/apps
@@ -455,76 +449,38 @@ prepend_custom_path() {
         /usr/local/bin
         /usr/sbin
     )
-    local PATH_PREPEND=""
-    # filter out non-exist path
     for p in "${custom_paths[@]}"; do
         if [[ -d $p ]]; then
-            PATH_PREPEND="$PATH_PREPEND:$p"
+            PATH=$p${PATH:+:$PATH}
         fi
     done
-    PATH="${PATH_PREPEND:1}:$PATH"
 }
 prepend_custom_path
 
 #-------------------------------------------------------------
-# *env Setup
-#-------------------------------------------------------------
-eval "$(mise activate bash)"
-eval "$(direnv hook bash)"
-
-#-------------------------------------------------------------
 # import scripts
 #-------------------------------------------------------------
+YELLOW=$(tput setaf 3)
+CYAN=$(tput setaf 6)
+RED=$(tput setaf 1)
+RESET=$(tput sgr0)
 [[ "$-" == *e* ]] && set +e && e=e # store -e flag when sourcing external resource
 shopt -s extglob
 rm -f "$HOME"/.bashrc.d/*~
-touch "$HOME"/.bashrc_local
 # /etc/bashrc need to run after bashrc.d
-list=(~/.bashrc.d/* ~/.bashrc_local /etc/bashrc)
+list=(~/.bashrc.d/*)
+# save stderr
+exec 8>&2 7>&1
+exec 2>&1
 for file in "${list[@]}"; do
     if [ -f "$file" ]; then
-        echo "source $file"
+        name=$(basename "$file")
+        echo -e "${YELLOW}[Sourcing] ${name}${RESET}"
         # shellcheck source=/dev/null
-        source "$file"
+        source "$file" > >(sed -E "s/(.*)/  ${CYAN}${name}: &${RESET}/") 2> >(sed -E "s/(.*)/  ${RED}${name}: &${RESET}/" >&2)
     fi
 done
+# restore stderr
+exec 2>&8 1>&7 8>&- 7>&-
 unset list
 [[ "$e" == "e" ]] && set -e && unset e # restore -e flag
-
-#-------------------------------------------------------------
-# dedup PATH
-#-------------------------------------------------------------
-PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | grep -v '^$' | paste -sd ":" -)"
-removepath() {
-    local path="$1"
-    PATH="$(echo -e "${PATH//:/\\n}" | grep -v "$path" | paste -sd ":" -)"
-    export PATH
-}
-
-init_powerline() {
-    eval "$(mise hook-env -s bash)"
-    # shellcheck disable=SC2154
-    if [[ $(who am i) =~ \([0-9a-z.\-]+\)$ || "$platform" == "mac" || "$platform" == "linux" || "$TMUX" != "" || "$SUDO_USER" != "" ]]; then
-        PATH="$PATH:$(python -c "import sysconfig; print(sysconfig.get_path('scripts'))")"
-        mapfile -t sites < <(python -c 'import site; print(" ".join(site.getsitepackages()))')
-        sites=(/usr/share "${sites[@]}")
-        for site in "${sites[@]}"; do
-            powerline="$site/powerline/bindings/bash/powerline.sh"
-            if [ -f "$powerline" ]; then
-                echo "Powerline found at $powerline"
-                powerline-daemon -q || true
-                # shellcheck disable=SC2034
-                POWERLINE_BASH_CONTINUATION=1
-                # shellcheck disable=SC2034
-                POWERLINE_BASH_SELECT=1
-                # shellcheck source=/dev/null
-                source "$powerline"
-                break
-            else
-                echo "No powerline at $powerline"
-            fi
-        done
-    fi
-    unset srcfiles powerline
-}
-init_powerline

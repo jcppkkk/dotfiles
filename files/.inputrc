@@ -17,6 +17,5 @@ set show-all-if-unmodified on
 
 set meta-flag on
 set input-meta on
-set convert-meta on
 set output-meta on
 set enable-bracketed-paste off

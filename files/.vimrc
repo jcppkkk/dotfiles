@@ -108,6 +108,7 @@ let g:gitgutter_escape_grep = 1
 let g:gitgutter_max_signs = 5000
 Plug 'tpope/vim-fugitive'
 "========================== Editing Tools
+Plug 'dhruvasagar/vim-table-mode'
 Plug 'vim-scripts/lastmod.vim'
 let g:lastmod_format = '%Y-%m-%d %H:%M:%S (%z)'
 Plug 'farmergreg/vim-lastplace'

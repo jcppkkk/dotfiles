@@ -1,1 +1,5 @@
+#!/bin/bash
+
+PATH_add "$HOME"/.local/bin
+
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

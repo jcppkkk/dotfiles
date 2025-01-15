@@ -1,0 +1,91 @@
+#!/bin/bash
+
+_beep() {
+    if [[ $- =~ .*i.* ]]; then
+        paplay "${BASH_SOURCE%/*}/.15-complete.oga" --volume=60000
+    fi
+}
+
+command_timer_stop() {
+    local show_timer_after=10
+    local duration=$((SECONDS - ${command_timer:-$SECONDS}))
+    local str_dur=""
+    if [[ $duration -gt $show_timer_after ]]; then
+        local hours=$((duration / 3600))
+        local mins=$(((duration % 3600) / 60))
+        local secs=$((duration % 60))
+        if ((duration >= 3600)); then
+            str_dur=$(printf "(%02g:%02g:%02g)" $hours $mins $secs)
+        elif ((duration >= 60)); then
+            str_dur=$(printf "(%02g:%02g)" $mins $secs)
+        else
+            str_dur=$(printf "(%s sec)" $secs)
+        fi
+    fi
+    if [[ -z "$str_dur" ]] && [[ $1 -eq 0 ]]; then
+        return "$1"
+    fi
+    # Print on error or wainting too long
+    # Get the number of colors supported by the terminal
+    local ncolors
+    ncolors=$(tput colors 2>/dev/null)
+
+    # Define color codes and status based on the first argument
+    if [[ $1 -eq 0 ]]; then
+        local color_status="\e[0;32m" # Green for success
+        local color_cmd="\e[7m"       # Reversed colors for command
+        local status="success"
+    else
+        local color_status="\e[0;31m" # Red for failure
+        local color_cmd="\e[1;33m"    # Normal text on red background for command
+        local status="failed with code [${color_cmd}${1}${color_status}]"
+    fi
+
+    # Reset color code
+    local color_reset="\e[00m"
+
+    # If the terminal supports less than 8 colors, don't use color codes
+    if [[ ${ncolors:=0} -lt 8 ]]; then
+        color_status=""
+        color_cmd=""
+        color_reset=""
+    fi
+
+    # Display the command status
+    echo -e "${color_status}▶ Command [${color_cmd}$_cmd${color_status}] ${status} ${str_dur}${color_reset}"
+
+    if [[ "$_cmd" == vim* ]] || [[ "$_cmd" == ssh* ]]; then
+        return
+    fi
+    if [[ $duration -gt $show_timer_after ]]; then
+        (_beep &)
+    fi
+}
+command_tracking_start() {
+    if [[ "$PROMPT_COMMAND" == *"$BASH_COMMAND"* || "$BASH_SUBSHELL" != 0 ]]; then
+        return
+    fi
+    command_timer=$SECONDS
+    _cmd="$BASH_COMMAND"
+    echo -ne "\033]0;${_cmd::20}\007"
+}
+while trap -p | grep -q command_tracking_start; do trap - DEBUG; done
+trap 'command_tracking_start' DEBUG
+
+command_tracking_end() {
+    local r=$?
+
+    if [[ -n "$_cmd" ]]; then
+        command_timer_stop $r
+        SECONDS=0
+        _cmd=
+    else
+        r=0
+    fi
+    _last_cmd=$_cmd
+    _last_r=$r
+
+    return $r
+}
+
+_add_prompt_command append "command_tracking_end"

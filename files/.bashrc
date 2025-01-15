@@ -21,17 +21,21 @@ _add_prompt_command() {
     shift
     local cmd="$1"
     shift
+    # normalize sep to be semicolon
+    IFS=$';\n'
+    # shellcheck disable=SC2016
+    mapfile -t arr <<<"$PROMPT_COMMAND"
+    PROMPT_COMMAND="${arr[*]}"
+    unset IFS
     # skip the command if it already exists
-    if [[ "$PROMPT_COMMAND" == *"$cmd"* ]]; then
+    if [[ ";$PROMPT_COMMAND;" =~ $cmd ]]; then
         return
     fi
-    if test "$action" = "append"; then
-        PROMPT_COMMAND="$PROMPT_COMMAND"$'\n'"$cmd"
+    if [[ "$action" = "append" ]]; then
+        PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}$cmd"
     else
-        PROMPT_COMMAND="$cmd"$'\n'"$PROMPT_COMMAND"
+        PROMPT_COMMAND="$cmd${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
     fi
-    # normalize sep to be semicolon and newline
-    PROMPT_COMMAND=$(echo "$PROMPT_COMMAND" | sed -e 's/;/\n/g' -e 's/\n\n/\n/g' -e 's/\n/;/g')
 }
 
 #-------------------------------------------------------------
@@ -169,24 +173,6 @@ shopt -s cmdhist
 export TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n'
 export HOSTFILE=$HOME/.hosts # Put list of remote hosts in ~/.hosts ...
 
-# HSTR configuration - add this to ~/.bashrc
-alias hh=hstr                   # hh to be alias for hstr
-export HSTR_CONFIG=hicolor      # get more colors
-shopt -s histappend             # append new history items to .bash_history
-export HISTCONTROL=ignorespace  # leading space hides commands from history
-export HISTFILESIZE=10000       # increase history file size (default is 500)
-export HISTSIZE=${HISTFILESIZE} # increase history size (default is 500)
-# ensure synchronization between bash memory and history file
-_add_prompt_command append 'history -a;history -n'
-
-function hstrnotiocsti {
-    { READLINE_LINE="$({ hstr </dev/tty "${READLINE_LINE}"; } 2>&1 1>&3 3>&-)"; } 3>&1
-    READLINE_POINT=${#READLINE_LINE}
-}
-# if this is interactive shell, then bind hstr to Ctrl-r (for Vi mode check doc)
-if [[ $- =~ .*i.* ]]; then bind -x '"\C-r": "hstrnotiocsti"'; fi
-export HSTR_TIOCSTI=n
-
 #-------------------------------------------------------------
 # mintty-colors-solarized (for windows::mintty)
 #-------------------------------------------------------------
@@ -247,106 +233,10 @@ winscp() { echo -ne "\033];__ws:${PWD}\007"; }
 #-------------------------------------------------------------
 # Report command takes long time
 #-------------------------------------------------------------
-_beep() {
-    paplay /usr/share/sounds/sound-icons/finish --volume=60000
-}
-
-timer_start() {
-    timer=${timer:-$SECONDS}
-}
-
-command_timer_stop() {
-    local show_timer_after=30
-    local duration=$((SECONDS - ${command_timer:-$SECONDS}))
-    local str_dur=""
-    if [[ $duration -gt $show_timer_after ]]; then
-        local hours=$((duration / 3600))
-        local mins=$(((duration % 3600) / 60))
-        local secs=$((duration % 60))
-        if ((duration >= 3600)); then
-            str_dur=$(printf "(%02g:%02g:%02g)" $hours $mins $secs)
-        elif ((duration >= 60)); then
-            str_dur=$(printf "(%02g:%02g)" $mins $secs)
-        else
-            str_dur=$(printf "(%s sec)" $secs)
-        fi
-    fi
-    if [[ -z "$str_dur" ]] && [[ $1 -eq 0 ]]; then
-        return "$1"
-    fi
-    # Print on error or wainting too long
-    # Get the number of colors supported by the terminal
-    local ncolors
-    ncolors=$(tput colors 2>/dev/null)
-
-    # Define color codes and status based on the first argument
-    if [[ $1 -eq 0 ]]; then
-        local color_status="\e[0;32m" # Green for success
-        local color_cmd="\e[7m"       # Reversed colors for command
-        local status="success"
-    else
-        local color_status="\e[0;31m" # Red for failure
-        local color_cmd="\e[1;33m"    # Normal text on red background for command
-        local status="failed with code [${color_cmd}${1}${color_status}]"
-    fi
-
-    # Reset color code
-    local color_reset="\e[00m"
-
-    # If the terminal supports less than 8 colors, don't use color codes
-    if [[ ${ncolors:=0} -lt 8 ]]; then
-        color_status=""
-        color_cmd=""
-        color_reset=""
-    fi
-
-    # Display the command status
-    echo -e "${color_status}▶ Command [${color_cmd}$_cmd${color_status}] ${status} ${str_dur}${color_reset}"
-
-    if [[ "$_cmd" == vim* ]] || [[ "$_cmd" == ssh* ]]; then
-        return
-    fi
-    if [[ $duration -gt $show_timer_after ]]; then
-        if [[ "$1" == "0" ]]; then
-            (_beep "Done" "$_cmd" "$str_dur" &)
-        else
-            (_beep "E($1)" "$_cmd" "$str_dur" &)
-        fi
-    fi
-}
 
 set_screen_title() {
     echo -ne "\ek$1\e\\"
 }
-
-command_tracking_start() {
-    if [[ "$PROMPT_COMMAND" == *"$BASH_COMMAND"* || "$BASH_SUBSHELL" != 0 ]]; then
-        return
-    fi
-    command_timer=$SECONDS
-    _cmd="$BASH_COMMAND"
-    echo -ne "\033]0;${_cmd::20}\007"
-}
-while trap -p | grep -q command_tracking_start; do trap - DEBUG; done
-trap 'command_tracking_start' DEBUG
-
-command_tracking_end() {
-    local r=$?
-
-    if [[ -n "$_cmd" ]]; then
-        command_timer_stop $r
-        SECONDS=0
-        _cmd=
-    else
-        r=0
-    fi
-    _last_cmd=$_cmd
-    _last_r=$r
-
-    return $r
-}
-
-_add_prompt_command append "command_tracking_end"
 
 # ensure X forwarding is setup correctly, even for screen
 XAUTH=~/.Xauthority
@@ -367,41 +257,6 @@ fi
 if [ -f /usr/local/bin/mc ]; then
     complete -C /usr/local/bin/mc mc
 fi
-
-export cdhist_file="$HOME/.cd_history"
-
-touch "$cdhist_file"
-cdhist() {
-    local path="$1"
-    echo "$path" >>"$cdhist_file"
-}
-
-_log_cd_path() {
-    cdhist "$PWD"
-}
-
-[[ " ${chpwd_functions[*]} " == *" _log_cd_path "* ]] || chpwd_functions+=(_log_cd_path)
-
-cd_widget() {
-    tac "$cdhist_file" \
-        | sed -e 's@^/data/repo@~/repo@' -e 's@^/home/jethro@~@' \
-        | awk '!x[$0]++' \
-        | head -n 300 \
-        | tac \
-        | sponge "$cdhist_file"
-    cd_target="$(percol --prompt-bottom --result-bottom-up --reverse "$cdhist_file")"
-    if ((${#cd_target} != 0)); then
-        cd "${cd_target/#\~/$HOME}"
-    fi
-    while read -r line; do
-        timeout 0.5 test -d "${line/#\~/$HOME}" && echo "$line"
-    done <"$cdhist_file" | sponge "$cdhist_file"
-}
-
-bind -x '"\C-`": "cd_widget"'
-
-# Powerline prompt
-# shellcheck disable=SC2154
 
 if [ -n "$TMUX" ]; then
 

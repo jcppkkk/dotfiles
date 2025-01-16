@@ -1,10 +1,35 @@
 #!/bin/bash
 
 _beep() {
+    tty=$(tty | sed 's@/dev/@@')
     if [[ $- =~ .*i.* ]]; then
         paplay "${BASH_SOURCE%/*}/.15-complete.oga" --volume=60000
     fi
 }
+
+# Check if an idle time string output by 'who -u' represents a long idle time
+# (more than 3 minutes)
+function is_long_idle_time {
+    local -r idle_time=$1
+
+    [[ $idle_time == old ]] && return 0
+    [[ $idle_time == *:* ]] || return 1
+
+    local -r hh=${idle_time%:*}
+    local -r mm=${idle_time#*:}
+    local -r idle_minutes=$((60 * 10#$hh + 10#$mm))
+
+    ((idle_minutes > 3)) && return 0 || return 1
+}
+
+who_output=$(LC_ALL=C who -u)
+
+while read -r user tty _ _ _ idle_time pid _; do
+    if is_long_idle_time "$idle_time"; then
+        printf 'user=%s, tty=%s, idle_time=%s, pid=%s\n' \
+            "$user" "$tty" "$idle_time" "$pid"
+    fi
+done <<<"$who_output"
 
 command_timer_stop() {
     local show_timer_after=10

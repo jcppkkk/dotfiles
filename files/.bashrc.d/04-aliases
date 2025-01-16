@@ -190,4 +190,4 @@ alias dip='docker inspect --format "{{.NetworkSettings.IPAddress}}"'
 alias rmi='docker rmi'
 
 
-
+complete -F _complete_alias "${!BASH_ALIASES[@]}"

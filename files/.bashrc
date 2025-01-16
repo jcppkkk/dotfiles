@@ -320,22 +320,23 @@ CYAN=$(tput setaf 6)
 RED=$(tput setaf 1)
 RESET=$(tput sgr0)
 [[ "$-" == *e* ]] && set +e && e=e # store -e flag when sourcing external resource
-shopt -s extglob
-rm -f "$HOME"/.bashrc.d/*~
+find "$HOME"/.bashrc.d/ -name '*~' -delete
 # /etc/bashrc need to run after bashrc.d
-list=(~/.bashrc.d/*)
+mapfile -t bashrc_list < <(find ~/.bashrc.d/ -name '[^.]*' -type f -print0 | xargs -0 ls -1 | sort)
 # save stderr
 exec 8>&2 7>&1
 exec 2>&1
-for file in "${list[@]}"; do
+for file in "${bashrc_list[@]}"; do
     if [ -f "$file" ]; then
         name=$(basename "$file")
-        echo -e "${YELLOW}[Sourcing] ${name}${RESET}"
+        echo -e "${YELLOW}[Sourcing] ${name}${RESET} ... IFS: ${IFS-unset}${IFS+set to ${IFS@Q}}"
         # shellcheck source=/dev/null
         source "$file" > >(sed -E "s/(.*)/  ${CYAN}${name}: &${RESET}/") 2> >(sed -E "s/(.*)/  ${RED}${name}: &${RESET}/" >&2)
     fi
 done
 # restore stderr
 exec 2>&8 1>&7 8>&- 7>&-
-unset list
+unset bashrc_list
 [[ "$e" == "e" ]] && set -e && unset e # restore -e flag
+export PATH="$HOME/.local/bin:$PATH"
+source /data/repo/sre/bashrc

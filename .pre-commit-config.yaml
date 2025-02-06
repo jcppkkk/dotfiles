@@ -1,13 +1,15 @@
 ---
 exclude: |
   (?x)^(
+    files/.bashrc.d/01-function.sh|
+    files/.bashrc.d/02-load.sh|
+    files/.bashrc.d/git-completion.bash|
     files/.bashrc.d/git-flow-completion.bash|
     files/.bashrc.d/git-prompt.sh|
-    files/.bashrc.d/git-completion.bash|
     files/.bashrc.d/zz-alias-completion.bash|
     files/.bin/AM-INSTALLER|
-    files/.bashrc.d/01-function.sh|
-    files/.bashrc.d/02-load.sh
+    setup.d/files/function.sh|
+    setup.d/files/load.sh
   )$
 repos:
   - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt

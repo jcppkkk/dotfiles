@@ -20,8 +20,8 @@ pip install -U \
     pipenv
 
 mise settings set experimental true
-mise use -g \
-    pipx:git-up \
-    pipx:percol \
-    pipx:pre-commit \
-    pipx:flameshow
+
+uv tool install git-up
+uv tool install percol
+uv tool install pre-commit
+uv tool install flameshow

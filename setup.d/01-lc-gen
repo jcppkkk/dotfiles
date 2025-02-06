@@ -2,6 +2,5 @@
 # vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
 . common-lib
 
-if ! command -v mise >&/dev/null; then
-    curl https://mise.run | sh
-fi
+sudo locale-gen --keep-existing zh_TW.UTF-8 lzh_TW.UTF-8
+sudo update-locale

@@ -1,0 +1,25 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+#######################
+## install vim plugins manager
+#######################
+mkdir -p ~/.backup
+if [[ ! -d ~/.vim/autoload ]]; then
+    mkdir -p ~/.vim/autoload
+fi
+(
+    cd ~/.vim/autoload
+    if [[ -f plug.vim ]]; then
+        curl -z plug.vim -fLo plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    else
+        curl -fLo plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    fi
+)
+
+#######################
+## install vim plugins
+#######################
+vim +PlugInstall +qall
+find "$HOME/.vim/" -name \*.vim -exec dos2unix -q {} \;

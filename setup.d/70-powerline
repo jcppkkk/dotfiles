@@ -5,9 +5,25 @@
 # Require mise python
 eval "$("$HOME/.local/bin/mise" activate bash)"
 
-python -m pip install -U powerline-status powerline-gitstatus
+pip install -U powerline-status powerline-gitstatus
 
 # Setup  https://github.com/powerline/fonts
-wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf -P ~/.local/share/fonts/
-wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf -P ~/.config/fontconfig/conf.d/
-fc-cache -vf ~/.local/share/fonts/
+mkdir -p ~/.local/share/fonts/
+(
+    cd ~/.local/share/fonts/
+    if [[ -f PowerlineSymbols.otf ]]; then
+        ts_flag=(-z PowerlineSymbols.otf)
+    fi
+    curl -fL "${ts_flag[@]}" -o PowerlineSymbols.otf https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf
+)
+mkdir -p ~/.config/fontconfig/conf.d/
+(
+    cd ~/.config/fontconfig/conf.d/
+    if [[ -f 10-powerline-symbols.conf ]]; then
+        ts_flag=(-z 10-powerline-symbols.conf)
+    fi
+    curl -fL "${ts_flag[@]}" -o 10-powerline-symbols.conf https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf
+)
+
+# patch fonts for powerline
+fc-cache -vf ~/.local/share/fonts/ ~/.fonts

@@ -14,6 +14,8 @@
   go_right = ""
 [profiles]
   [[default]]
+    audible_bell = True
+    visible_bell = True
     background_color = "#282828"
     font = Source Code Pro Medium 16
     foreground_color = "#ebdbb2"

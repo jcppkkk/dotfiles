@@ -40,6 +40,18 @@ fail() {
     echo -e "${RED}[FAIL]${NC} $1"
 }
 
+source /etc/lsb-release
+
+platform='unknown'
+unamestr=`uname`
+if [[ "$unamestr" == 'Linux' ]]; then
+	platform='linux'
+elif [[ "$unamestr" == 'FreeBSD' ]]; then
+	platform='freebsd'
+elif [[ "$unamestr" == 'Darwin' ]]; then
+	platform='mac'
+fi
+
 # trap ERR to provide an error handler whenever a command exits nonzero
 #  this is a more verbose version of set -o errexit
 trap 'errexit' ERR

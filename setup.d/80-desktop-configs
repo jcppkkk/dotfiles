@@ -2,27 +2,27 @@
 # vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
 . common-lib
 
-# set moving window to Super+click
-gsettings set org.cinnamon.desktop.wm.preferences mouse-button-modifier '<Super>'
+if [[ "$platform" == linux ]]; then
+    # set moving window to Super+click
+    gsettings set org.cinnamon.desktop.wm.preferences mouse-button-modifier '<Super>'
+    gsettings set org.gnome.desktop.wm.preferences focus-new-windows 'smart'
 
-# start fcitx5 on login
-install /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart
+    # start fcitx5 on login
+    install /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart
+    # linuxmint/cinnamon: Option for Alt-Tab switcher to list windows on current monitor only
+    FILE_PATH="/usr/share/cinnamon/js/ui/appSwitcher/appSwitcher.js"
+    PATCH_FILE="appSwitcher.patch"
 
-# linuxmint/cinnamon: Option for Alt-Tab switcher to list windows on current monitor only
-FILE_PATH="/usr/share/cinnamon/js/ui/appSwitcher/appSwitcher.js"
-PATCH_FILE="appSwitcher.patch"
-
-NEW_LINE="windows = windows.filter(w => w.get_monitor() === global.screen.get_current_monitor())"
-if [[ -f "$FILE_PATH" ]]; then
-    if grep -qF "$NEW_LINE" "$FILE_PATH"; then
-        pass "appSwitcher 修補已經應用，不需要再次插入。"
-    else
-        if patch "$FILE_PATH" <"$PATCH_FILE"; then
-            change "appSwitcher 修補已成功應用。"
+    NEW_LINE="windows = windows.filter(w => w.get_monitor() === global.screen.get_current_monitor())"
+    if [[ -f "$FILE_PATH" ]]; then
+        if grep -qF "$NEW_LINE" "$FILE_PATH"; then
+            pass "appSwitcher 修補已經應用，不需要再次插入。"
         else
-            fail "appSwitcher 修補應用失敗，請檢查補丁文件和目標文件。"
+            if patch "$FILE_PATH" <"$PATCH_FILE"; then
+                change "appSwitcher 修補已成功應用。"
+            else
+                fail "appSwitcher 修補應用失敗，請檢查補丁文件和目標文件。"
+            fi
         fi
     fi
 fi
-
-sudo apt install -y xclip

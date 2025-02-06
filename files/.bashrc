@@ -12,6 +12,7 @@ fi
 #export LANGUAGE="zh_TW.UTF-8"
 #export LANG="zh_TW.UTF-8"
 export LC_TIME="en_US.utf8"
+export LC_ALL="zh_TW.UTF-8"
 #export LC_CTYPE="zh_TW.UTF-8"
 export LC_COLLATE=C
 export -a chpwd_functions
@@ -41,19 +42,6 @@ _add_prompt_command() {
 #-------------------------------------------------------------
 # Show dotfile changes at login
 #-------------------------------------------------------------
-if hash greadlink 2>/dev/null; then readlink=greadlink; fi
-if hash readlink 2>/dev/null; then readlink=readlink; fi
-
-if ! [[ ${BASH_SOURCE[0]} == *"/dev/fd/"* ]]; then
-    d=$(dirname "$($readlink -f "${BASH_SOURCE[0]}")")
-    if [[ -d $d/../.git ]]; then
-        (
-            cd "$d/.."
-            git diff --stat
-        )
-    fi
-fi
-
 function stacktrace {
     local size=${#BASH_SOURCE[@]}
     i=0
@@ -315,28 +303,36 @@ prepend_custom_path
 #-------------------------------------------------------------
 # import scripts
 #-------------------------------------------------------------
-YELLOW=$(tput setaf 3)
-CYAN=$(tput setaf 6)
-RED=$(tput setaf 1)
-RESET=$(tput sgr0)
-[[ "$-" == *e* ]] && set +e && e=e # store -e flag when sourcing external resource
-find "$HOME"/.bashrc.d/ -name '*~' -delete
-# /etc/bashrc need to run after bashrc.d
-mapfile -t bashrc_list < <(find ~/.bashrc.d/ -name '[^.]*' -type f -print0 | xargs -0 ls -1 | sort)
-# save stderr
-exec 8>&2 7>&1
-exec 2>&1
-for file in "${bashrc_list[@]}"; do
-    if [ -f "$file" ]; then
-        name=$(basename "$file")
-        echo -e "${YELLOW}[Sourcing] ${name}${RESET} ... IFS: ${IFS-unset}${IFS+set to ${IFS@Q}}"
-        # shellcheck source=/dev/null
-        source "$file" > >(sed -E "s/(.*)/  ${CYAN}${name}: &${RESET}/") 2> >(sed -E "s/(.*)/  ${RED}${name}: &${RESET}/" >&2)
-    fi
-done
-# restore stderr
-exec 2>&8 1>&7 8>&- 7>&-
-unset bashrc_list
-[[ "$e" == "e" ]] && set -e && unset e # restore -e flag
-export PATH="$HOME/.local/bin:$PATH"
-source /data/repo/sre/bashrc
+include_scripts() {
+    YELLOW=$(tput setaf 3)
+    CYAN=$(tput setaf 6)
+    RED=$(tput setaf 1)
+    RESET=$(tput sgr0)
+    find "$HOME"/.bashrc.d/ -name '*~' -delete
+    # /etc/bashrc need to run after bashrc.d
+    local bashrc_list
+    mapfile -t bashrc_list < <(find ~/.bashrc.d/ -name '[^.]*' -type f -print0 | xargs -0 ls -1 | sort)
+    # disable errexit
+    local reset
+    reset=$(shopt -p -o errexit)
+    shopt -s -o errexit
+    # save stderr
+    exec 8>&2 7>&1
+    exec 2>&1
+    for file in "${bashrc_list[@]}"; do
+        if [ -f "$file" ]; then
+            name=$(basename "$file")
+            echo -e "${YELLOW}[Sourcing] ${name}${RESET}"
+            # shellcheck source=/dev/null
+            source "$file" > >(sed -E "s/(.*)/  ${CYAN}${name}: &${RESET}/") 2> >(sed -E "s/(.*)/  ${RED}${name}: &${RESET}/" >&2)
+        fi
+    done
+    # restore stderr
+    exec 2>&8 1>&7 8>&- 7>&-
+    # restore errexit
+    eval "$reset"
+}
+
+include_scripts
+
+alias gam="/home/jethro/bin/gamadv-xtd3/gam"

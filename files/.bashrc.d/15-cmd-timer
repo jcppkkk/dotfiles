@@ -1,116 +1,86 @@
 #!/bin/bash
 
+_beep_sound=$(realpath "$(dirname "${BASH_SOURCE[0]}")")/.15-complete.oga
+
 _beep() {
-    tty=$(tty | sed 's@/dev/@@')
-    if [[ $- =~ .*i.* ]]; then
-        paplay "${BASH_SOURCE%/*}/.15-complete.oga" --volume=60000
-    fi
+    #paplay "$_beep_sound" --volume=60000
+    AUDIODRIVER=alsa play -q -n synth pl G2 pl B2 pl D3 pl G3 pl D4 pl G4 delay 0.3 .35 .4 .45 .5 .55 remix - fade q .6 3 1.5 vol 0.5
 }
-
-# Check if an idle time string output by 'who -u' represents a long idle time
-# (more than 3 minutes)
-function is_long_idle_time {
-    local -r idle_time=$1
-
-    [[ $idle_time == old ]] && return 0
-    [[ $idle_time == *:* ]] || return 1
-
-    local -r hh=${idle_time%:*}
-    local -r mm=${idle_time#*:}
-    local -r idle_minutes=$((60 * 10#$hh + 10#$mm))
-
-    ((idle_minutes > 3)) && return 0 || return 1
-}
-
-who_output=$(LC_ALL=C who -u)
-
-while read -r user tty _ _ _ idle_time pid _; do
-    if is_long_idle_time "$idle_time"; then
-        printf 'user=%s, tty=%s, idle_time=%s, pid=%s\n' \
-            "$user" "$tty" "$idle_time" "$pid"
-    fi
-done <<<"$who_output"
 
 command_timer_stop() {
-    local show_timer_after=10
-    local duration=$((SECONDS - ${command_timer:-$SECONDS}))
+    local previous_exit_status=$1
+    local execution_time=$(($(date +%s) - last_command_ts))
     local str_dur=""
-    if [[ $duration -gt $show_timer_after ]]; then
-        local hours=$((duration / 3600))
-        local mins=$(((duration % 3600) / 60))
-        local secs=$((duration % 60))
-        if ((duration >= 3600)); then
-            str_dur=$(printf "(%02g:%02g:%02g)" $hours $mins $secs)
-        elif ((duration >= 60)); then
-            str_dur=$(printf "(%02g:%02g)" $mins $secs)
-        else
-            str_dur=$(printf "(%s sec)" $secs)
-        fi
-    fi
-    if [[ -z "$str_dur" ]] && [[ $1 -eq 0 ]]; then
-        return "$1"
-    fi
-    # Print on error or wainting too long
-    # Get the number of colors supported by the terminal
-    local ncolors
-    ncolors=$(tput colors 2>/dev/null)
-
-    # Define color codes and status based on the first argument
-    if [[ $1 -eq 0 ]]; then
-        local color_status="\e[0;32m" # Green for success
-        local color_cmd="\e[7m"       # Reversed colors for command
-        local status="success"
-    else
-        local color_status="\e[0;31m" # Red for failure
-        local color_cmd="\e[1;33m"    # Normal text on red background for command
-        local status="failed with code [${color_cmd}${1}${color_status}]"
-    fi
-
-    # Reset color code
-    local color_reset="\e[00m"
-
-    # If the terminal supports less than 8 colors, don't use color codes
-    if [[ ${ncolors:=0} -lt 8 ]]; then
-        color_status=""
-        color_cmd=""
-        color_reset=""
-    fi
-
-    # Display the command status
-    echo -e "${color_status}▶ Command [${color_cmd}$_cmd${color_status}] ${status} ${str_dur}${color_reset}"
-
-    if [[ "$_cmd" == vim* ]] || [[ "$_cmd" == ssh* ]]; then
+    # snooze if the terminal is using and command success
+    if ((previous_exit_status == 0 && execution_time < 5)); then
         return
     fi
-    if [[ $duration -gt $show_timer_after ]]; then
-        (_beep &)
+    # Print on error or session is not input (idle/waiting result)
+    local hours=$((execution_time / 3600))
+    local mins=$(((execution_time % 3600) / 60))
+    local secs=$((execution_time % 60))
+    if ((execution_time >= 3600)); then
+        str_dur=$(printf "%02g:%02g:%02g" $hours $mins $secs)
+    elif ((execution_time >= 60)); then
+        str_dur=$(printf "%02g:%02g" $mins $secs)
+    else
+        str_dur=$(printf "%s sec" $secs)
     fi
+
+    # If the terminal supports less than 8 colors, don't use color codes
+    local ncolors
+    ncolors=$(tput colors 2>/dev/null)
+    if [[ ${ncolors:=0} -ge 8 ]]; then
+        GREEN=$(
+            tput sgr0
+            tput setaf 2
+        )
+        GREEN_BG=$(
+            tput sgr0
+            tput setab 2
+        )
+        RED=$(
+            tput sgr0
+            tput setaf 1
+        )
+        RED_BG=$(
+            tput sgr0
+            tput setab 1
+        )
+        RESET=$(tput sgr0)
+    fi
+    if [[ $previous_exit_status -eq 0 ]]; then
+        echo -e "⏰ ${GREEN}CMD ${GREEN_BG} $last_command ${GREEN} succed in ${str_dur}${RESET}"
+    else
+        echo -e "⏰ ${RED}CMD ${RED_BG} $last_command ${RED} exit ${RED_BG} ${previous_exit_status} ${RED} in ${str_dur}${RESET}"
+    fi
+
+    (_beep &)
 }
+
 command_tracking_start() {
     if [[ "$PROMPT_COMMAND" == *"$BASH_COMMAND"* || "$BASH_SUBSHELL" != 0 ]]; then
         return
     fi
-    command_timer=$SECONDS
-    _cmd="$BASH_COMMAND"
-    echo -ne "\033]0;${_cmd::20}\007"
+    # shellcheck disable=SC2034
+    last_command=${BASH_COMMAND}
+    last_command_ts=$(date +%s)
 }
-while trap -p | grep -q command_tracking_start; do trap - DEBUG; done
-trap 'command_tracking_start' DEBUG
 
 command_tracking_end() {
-    local r=$?
-
-    if [[ -n "$_cmd" ]]; then
-        command_timer_stop $r
-        SECONDS=0
-        _cmd=
+    local previous_exit_status=$?
+    if [[ -n "$last_command" ]]; then
+        command_timer_stop $previous_exit_status
+        unset last_command
+        unset last_command_ts
     else
-        r=0
+        previous_exit_status=0
     fi
-    _last_cmd=$_cmd
-    _last_r=$r
-
-    return $r
+    return $previous_exit_status
 }
 
-_add_prompt_command append "command_tracking_end"
+if [[ $- =~ .*i.* ]]; then
+    while trap -p | grep -q command_tracking_start; do trap - DEBUG; done
+    trap 'command_tracking_start' DEBUG
+    _add_prompt_command append "command_tracking_end"
+fi

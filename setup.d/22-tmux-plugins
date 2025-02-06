@@ -1,0 +1,15 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+#######################
+## install tmux plugins
+#######################
+if [[ ! -d ~/.tmux/plugins/tpm ]]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+else
+    (
+        cd ~/.tmux/plugins/tpm || exit
+        git pull --rebase
+    )
+fi

@@ -37,11 +37,11 @@ case $platform in
     'linux')
         check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
         # aptitude can solve depenency problem for clang-*
-        _install_pkg() { sudo apt-get install -y "$@"; }
+        _install_pkg() { sudo apt-get install -q -y "$@"; }
         update_pkg_list() { ubuntu_apt_update; }
         # setup aptitude first
         install_pkg aptitude
-        _install_pkg() { sudo aptitude install -y "$@"; }
+        _install_pkg() { sudo aptitude install -q -y "$@"; }
         ;;
     'mac')
         check_pkg() { brew list -1 | grep -q "^${1}\$"; }
@@ -67,7 +67,7 @@ case $platform in
         fi
 
         # Define Linux-specific packages
-        linux_packages=(
+        packages+=(
             # shell tools
             hstr
             # Filesystem tools
@@ -83,12 +83,10 @@ case $platform in
             # GUI
             diodon xclip
         )
-        packages+=("${linux_packages[@]}")
         ;;
     'mac')
         # Define macOS-specific packages
-        mac_packages=(ctags python coreutils)
-        packages+=("${mac_packages[@]}")
+        packages+=(ctags python coreutils)
         ;;
 esac
 

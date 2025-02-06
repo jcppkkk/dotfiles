@@ -15,7 +15,6 @@ load_powerline() {
     local powerline=""
     for site in "${sites[@]}"; do
         check_file="$site/powerline/bindings/bash/powerline.sh"
-        echo "Checking $check_file"
         if [ -f "$check_file" ]; then
             powerline="$check_file"
             break

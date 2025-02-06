@@ -77,7 +77,7 @@ case $platform in
             # Development tools
             build-essential vim meld tig direnv exuberant-ctags
             unzip manpages-dev manpages-posix-dev cmake shellcheck
-            git-delta
+            git-delta git-lfs
             # Fonts and UI
             fonts-firacode tmux
             # GUI

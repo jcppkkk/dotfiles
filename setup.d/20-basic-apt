@@ -57,7 +57,7 @@ esac
 ## install packages on new machine
 #######################
 
-packages=(git dos2unix wget curl)
+packages=()
 
 case $platform in
     'linux')
@@ -70,23 +70,59 @@ case $platform in
         packages+=(
             # shell tools
             hstr
+            vim
+            wget
+            curl
             # Filesystem tools
-            sshfs sshpass cifs-utils plocate silversearcher-ag
+            cifs-utils
+            plocate
+            silversearcher-ag
+            sshfs
+            sshpass
             # Shell and system admin tools
-            jq moreutils apt-file bmon ncdu lnav htop
+            apt-file
+            bmon
+            htop
+            jq
+            lnav
+            moreutils
+            ncdu
             # Development tools
-            build-essential vim meld tig direnv exuberant-ctags
-            unzip manpages-dev manpages-posix-dev cmake shellcheck
-            git-delta git-lfs
-            # Fonts and UI
-            fonts-firacode tmux
+            build-essential
+            cmake
+            direnv
+            exuberant-ctags
+            git
+            git-delta
+            git-lfs
+            meld
+            shellcheck
+            tig
+            unzip
+            dos2unix
+            # Terminal
+            fonts-firacode
+            terminator
+            tmux
             # GUI
-            diodon xclip
+            flameshot
+            xclip
+            # Mint clipboard manager
+            gpaste-2
+            gir1.2-gpaste-2
         )
         ;;
     'mac')
         # Define macOS-specific packages
-        packages+=(ctags python coreutils)
+        packages+=(
+            coreutils
+            ctags
+            curl
+            dos2unix
+            git
+            python
+            wget
+        )
         ;;
 esac
 

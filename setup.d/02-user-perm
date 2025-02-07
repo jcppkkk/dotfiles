@@ -1,0 +1,7 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+. common-lib
+
+if ! sudo grep -q "^$USER ALL=NOPASSWD: ALL" /etc/sudoers; then
+    sudo bash -c "echo '$USER ALL=NOPASSWD: ALL' >> /etc/sudoers"
+fi

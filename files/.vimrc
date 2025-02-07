@@ -129,6 +129,32 @@ Plug 'junegunn/vim-easy-align'
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
+" 配置一些自定义符号
+let g:easy_align_delimiters = {
+\ '>': { 'pattern': '>>\|=>\|>'  },
+\ '/': {
+\     'pattern':         '//\+\|/\*\|\*/',
+\     'delimiter_align': 'l',
+\     'ignore_groups':   ['!Comment'] },
+\ ']': {
+\     'pattern':       '[[\]]',
+\     'left_margin':   0,
+\     'right_margin':  0,
+\     'stick_to_left': 0
+\   },
+\ ')': {
+\     'pattern':       '[()]',
+\     'left_margin':   0,
+\     'right_margin':  0,
+\     'stick_to_left': 0
+\   },
+\ 'd': {
+\     'pattern':      ' \(\S\+\s*[;=]\)\@=',
+\     'left_margin':  0,
+\     'right_margin': 0
+\   }
+\ }
+
 Plug 'Valloric/ListToggle'
 let g:lt_location_list_toggle_map = '<leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader>q'
@@ -505,27 +531,6 @@ elseif &term == "terminator"
 elseif &term == "putty-256color"
 	set term=xterm-256color
 endif
-map  <silent> <M-Up>          :call <SID>LocationPrevious()<CR>
-map  <silent> <S-Up>          :call Pre_err()<CR>
-map  <silent> <C-Up>          <Plug>(GitGutterPrevHunk)
-map! <silent> <C-Up>          <Plug>(GitGutterPrevHunk)
-map  <silent> <M-Down>        :call <SID>LocationNext()<CR>|
-map  <silent> <S-Down>        :call Next_err()<CR>
-map  <silent> <C-Down>        <Plug>(GitGutterNextHunk)
-map! <silent> <C-Down>        <Plug>(GitGutterNextHunk)
-
-map  <silent> <C-B>           :call Do_make__()<CR>|         " excute make in vim and open quickfix window
-nmap <silent> <C-F4>          :bd<CR>
-nmap <silent> <C-F7>          :silent gr "<c-r>=expand("<cword>")<CR>" .\|redraw!<CR>
-map  <silent> <C-H>           :%s/\V\<<c-r>=expand("<cword>")<CR>\>//g<left><left>
-map  <silent> <C-left>        :bp<CR>|                       " previous buffer
-map  <silent> <C-right>       :bn<CR>|                       " next buffer
-map  <silent> <C-S-left>      <C-W><C-H>
-map  <silent> <C-S-right>     <C-W><C-L>
-vmap  <F2> :w! >> sonar<cr>:'<,'>d<cr>
-map  <silent> <F12>           :call Switch_indent()<CR>
-map  <silent> <F5>            :w<CR>:ll<CR>|
-
 function! ToggleColumn()
     " Toggle the display of the line number
     set invnumber
@@ -540,18 +545,37 @@ function! ToggleColumn()
         setlocal signcolumn=auto
     endif
 endfunction
-map  <silent> <F7>            :call ToggleColumn()<CR>
 
-map  <silent> <F8>            :set hls!<BAR>set hls?<CR>|    " <F8> 會在 searching highlight 及非 highlight 間切換
-map  <silent> <Leader>ce :edit ~/.vimrc<CR>|            " quickly edit this file
-map  <silent> <Leader>cs :source ~/.vimrc<CR>|          " quickly source this file
-map  <silent> <Leader>fc /\v^[<=>]{7}( .*\|$)<CR>|      " find merge conflict markers
-map  <silent> <Leader>nh :nohlsearch<CR>|               " disable last one highlight
-
-map! <silent> <S-Tab>         <C-D>|                        " tab indenta
-vmap <silent> <S-Tab>         <gv_|                         " tab indent
-nmap <silent> <S-Tab>         <<|                           " tab indent
-vmap <silent> <Tab>           >gv_|                         " tab indent
-nmap <silent> <Tab>           >>|                           " tab indent
-map  <silent> ZZ              :silent call SaveAllExit()<CR>
-set  cmdheight=1                 " make command line two lines high
+map  <silent>    <M-Up>      :call <SID>LocationPrevious()<CR>
+map  <silent>    <S-Up>      :call Pre_err()<CR>
+map  <silent>    <C-Up>      <Plug>(GitGutterPrevHunk)
+map! <silent>    <C-Up>      <Plug>(GitGutterPrevHunk)
+map  <silent>    <M-Down>    :call <SID>LocationNext()<CR>|
+map  <silent>    <S-Down>    :call Next_err()<CR>
+map  <silent>    <C-Down>    <Plug>(GitGutterNextHunk)
+map! <silent>    <C-Down>    <Plug>(GitGutterNextHunk)
+map  <silent>    <C-B>       :call Do_make__()<CR>|                  " excute make in vim and open quickfix window
+nmap <silent>    <C-F4>      :bd<CR>
+nmap <silent>    <C-F7>      :silent gr '<c-r>=expand('<cword>')<CR>' .\|redraw!<CR>
+map  <silent>    <C-H>       :%s/\V\<<c-r>=expand('<cword>')<CR>\>///g<left><left>
+map  <silent>    <C-left>    :bp<CR>|                                " previous buffer
+map  <silent>    <C-right>   :bn<CR>|                                " next buffer
+map  <silent>    <C-S-left>  <C-W><C-H>
+map  <silent>    <C-S-right> <C-W><C-L>
+vmap <silent>    <F2>        :w!         >> sonar<cr>:'<,'>d<cr>
+map  <silent>    <F12>       :call Switch_indent()<CR>
+map  <silent>    <F5>        :w<CR>:ll<CR>|
+map  <silent>    <F7>        :call ToggleColumn()<CR>
+map  <silent>    <F8>        :set hls!<BAR>set hls?<CR>|             " 在 searching highlight 及非 highlight 間切換
+map  <silent>    <F9>        :sort<CR>
+map  <silent>    <Leader>ce  :edit ~/.vimrc<CR>|                     " quickly edit this file
+map  <silent>    <Leader>cs  :source ~/.vimrc<CR>|                   " quickly source this file
+map  <silent>    <Leader>fc  /\v^[<=>]{7}( .*\|$)<CR>|               " find merge conflict markers
+map  <silent>    <Leader>nh  :nohlsearch<CR>|                        " disable last one highlight
+map! <silent>    <S-Tab>     <C-D>|                                  " tab indenta
+vmap <silent>    <S-Tab>     <gv_|                                   " tab indent
+nmap <silent>    <S-Tab>     <<|                                     " tab indent
+vmap <silent>    <Tab>       >gv_|                                   " tab indent
+nmap <silent>    <Tab>       >>|                                     " tab indent
+map  <silent>    ZZ          :silent call SaveAllExit()<CR>
+set  cmdheight=1 " make command line two lines high

@@ -78,6 +78,7 @@ Plug 'vim-scripts/Improved-AnsiEsc'
 let g:AutoAdapt_FilePattern = '*.h,*.c,*.cpp,*.sh,env_setup'
 let g:rainbow_active = 1
 Plug 'ludovicchabant/vim-gutentags'
+let g:gutentags_file_list_command = 'rg --files'
 let g:gutentags_ctags_tagfile = ".tags"
 "shows the context of the currently visible buffer contents
 Plug 'wellle/context.vim'

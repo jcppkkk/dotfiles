@@ -9,30 +9,6 @@ function install_pkg() {
     fi
 }
 
-ubuntu_apt_update() {
-    if [[ -f /etc/apt/sources.list.d/official-package-repositories.list ]]; then
-        sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list.d/official-package-repositories.list
-    fi
-    if [[ -f /etc/apt/sources.list ]]; then
-        sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list
-    fi
-    LOG_FILE="/var/log/apt/history.log"
-    if [[ ! -f "$LOG_FILE" ]]; then
-        return
-    fi
-    LAST_UPDATE=$(grep -m 1 "Start-Date" "$LOG_FILE" | awk '{print $2, $3}')
-    if [[ -z "$LAST_UPDATE" ]]; then
-        echo "未找到 apt update 的執行記錄。"
-        return
-    fi
-    LAST_UPDATE_TIMESTAMP=$(date -d "$LAST_UPDATE" +%s)
-    CURRENT_TIMESTAMP=$(date +%s)
-    SECONDS_SINCE_LAST_UPDATE=$((CURRENT_TIMESTAMP - LAST_UPDATE_TIMESTAMP))
-    if [[ $SECONDS_SINCE_LAST_UPDATE -gt 86400 ]]; then
-        echo "已超過一天未執行 apt update。"
-        sudo apt-get update
-    fi
-}
 case $platform in
     'linux')
         check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }

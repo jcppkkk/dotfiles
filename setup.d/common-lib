@@ -1,3 +1,4 @@
+#!/bin/bash
 # shellcheck shell=bash
 # vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
 
@@ -41,16 +42,50 @@ fail() {
 }
 
 source /etc/lsb-release
-
-platform='unknown'
-unamestr=`uname`
-if [[ "$unamestr" == 'Linux' ]]; then
-	platform='linux'
-elif [[ "$unamestr" == 'FreeBSD' ]]; then
-	platform='freebsd'
-elif [[ "$unamestr" == 'Darwin' ]]; then
-	platform='mac'
+if [[ $DISTRIB_ID = LinuxMint ]] && [[ -f /etc/upstream-release/lsb-release ]]; then
+    # for Linux Mint, we treat it as Ubuntu
+    source /etc/upstream-release/lsb-release
 fi
+
+case $(uname) in
+    Linux)
+        platform='linux'
+        ;;
+    FreeBSD)
+        platform='freebsd'
+        ;;
+    Darwin)
+        platform='mac'
+        ;;
+    *)
+        # shellcheck disable=SC2034
+        platform='unknown'
+        ;;
+esac
+
+ubuntu_apt_update() {
+    if [[ -f /etc/apt/sources.list.d/official-package-repositories.list ]]; then
+        sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list.d/official-package-repositories.list
+    fi
+    if [[ -f /etc/apt/sources.list ]]; then
+        sudo sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list
+    fi
+    LOG_FILE="/var/log/apt/history.log"
+    if [[ ! -f "$LOG_FILE" ]]; then
+        return
+    fi
+    LAST_UPDATE=$(grep -m 1 "Start-Date" "$LOG_FILE" | awk '{print $2, $3}')
+    if [[ -n "$LAST_UPDATE" ]]; then
+        LAST_UPDATE_TIMESTAMP=$(date -d "$LAST_UPDATE" +%s)
+        CURRENT_TIMESTAMP=$(date +%s)
+        SECONDS_SINCE_LAST_UPDATE=$((CURRENT_TIMESTAMP - LAST_UPDATE_TIMESTAMP))
+        if [[ $SECONDS_SINCE_LAST_UPDATE -lt 86400 ]]; then
+            pass "距離上次 apt update 不到一天，無需執行。"
+            return
+        fi
+    fi
+    sudo apt update
+}
 
 # trap ERR to provide an error handler whenever a command exits nonzero
 #  this is a more verbose version of set -o errexit

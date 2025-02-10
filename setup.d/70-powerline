@@ -2,7 +2,7 @@
 # vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
 . common-lib
 
-uv tool install --with powerline-gitstatus powerline-shell
+uv tool install --with powerline-gitstatus powerline-status -p 3.8
 
 # Setup  https://github.com/powerline/fonts
 mkdir -p ~/.local/share/fonts/

@@ -86,16 +86,6 @@ export LSCOLORS=ExGxFxdxCxDxDxBxBxExEx
 # File & string-related functions:
 #-------------------------------------------------------------
 
-vag() {
-    if [[ $1 == -rn ]]; then
-        shift
-    fi
-    tmp=$(mktemp)
-    ag --hidden --ignore .git/ --ignore .tags --ignore "*~" --vimgrep "$@" >"$tmp"
-    vim -c "cfile $tmp" -c "1bd"
-    rm -f "$tmp"
-}
-
 dswap() {
     # Swap 2 filenames around, if they exist
     #(from Uzi's bashrc).

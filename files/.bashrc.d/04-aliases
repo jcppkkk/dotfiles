@@ -168,7 +168,20 @@ gbr2tag() {
 
 
 alias tig='tig --stat=$COLUMNS'
+#-------------------------------------------------------------
+# Search Code
+#-------------------------------------------------------------
+#
 alias ag='ag --hidden --ignore=.git --ignore=tags --ignore="*~"'
+vag() {
+    if [[ $1 == -rn ]]; then
+        shift
+    fi
+    tmp=$(mktemp)
+    ag --hidden --ignore .git/ --ignore .tags --ignore "*~" --vimgrep "$*" >"$tmp"
+    vim -c "cfile $tmp" -c "1bd"
+    rm -f "$tmp"
+}
 
 #-------------------------------------------------------------
 # Admin assistant
@@ -188,6 +201,5 @@ alias dr='docker run'
 alias dp='docker push'
 alias dip='docker inspect --format "{{.NetworkSettings.IPAddress}}"'
 alias rmi='docker rmi'
-
 
 complete -F _complete_alias "${!BASH_ALIASES[@]}"

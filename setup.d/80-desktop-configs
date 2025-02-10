@@ -8,7 +8,10 @@ if [[ "$platform" == linux ]]; then
     gsettings set org.gnome.desktop.wm.preferences focus-new-windows 'smart'
 
     # start fcitx5 on login
-    install /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart
+    if [[ -f /usr/share/applications/org.fcitx.Fcitx5.desktop ]]; then
+        mkdir -p ~/.config/autostart
+        ln -sf /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart
+    fi
     # linuxmint/cinnamon: Option for Alt-Tab switcher to list windows on current monitor only
     FILE_PATH="/usr/share/cinnamon/js/ui/appSwitcher/appSwitcher.js"
     PATCH_FILE="appSwitcher.patch"
@@ -18,7 +21,7 @@ if [[ "$platform" == linux ]]; then
         if grep -qF "$NEW_LINE" "$FILE_PATH"; then
             pass "appSwitcher 修補已經應用，不需要再次插入。"
         else
-            if patch "$FILE_PATH" <"$PATCH_FILE"; then
+            if sudo cat "$PATCH_FILE" | sudo patch "$FILE_PATH"; then
                 change "appSwitcher 修補已成功應用。"
             else
                 fail "appSwitcher 修補應用失敗，請檢查補丁文件和目標文件。"

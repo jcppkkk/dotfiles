@@ -17,7 +17,7 @@
       "theme": "default"
     },
     "shell": {
-      "colorscheme": "gruvbox_dark",
+      "colorscheme": "solarized",
       "local_themes": {
         "continuation": "continuation",
         "select": "select"
@@ -25,7 +25,7 @@
       "theme": "default"
     },
     "tmux": {
-      "colorscheme": "gruvbox_dark",
+      "colorscheme": "solarized",
       "theme": "default"
     },
     "vim": {

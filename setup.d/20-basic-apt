@@ -55,6 +55,9 @@ case $platform in
             silversearcher-ag
             sshfs
             sshpass
+            autofs
+            # Services
+            openssh-server
             # Shell and system admin tools
             apt-file
             bmon

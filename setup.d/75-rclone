@@ -1,0 +1,20 @@
+#!/bin/bash
+# vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=8 :
+common_lib="$(dirname "$(readlink -f "$0")")/common-lib"
+if [[ -f "$common_lib" ]]; then
+    # shellcheck source=common-lib
+    . "$common_lib"
+else
+    echo "Cannot find common-lib."
+    exit 1
+fi
+
+version=$(rclone --version 2>>errors | head -n 1)
+current_version=$(curl -fsS https://downloads.rclone.org/version.txt)
+
+if [ "$version" = "$current_version" ]; then
+    pass "The latest version of rclone ${version} is already installed."
+    exit
+fi
+
+curl https://rclone.org/install.sh | sudo bash

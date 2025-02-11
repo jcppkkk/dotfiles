@@ -189,7 +189,6 @@ let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
 let g:airline#extensions#ale#enabled = 1
 
-
 call plug#end()
 
 set wildmode=longest,list
@@ -563,7 +562,6 @@ map  <silent>    <C-left>    :bp<CR>|                                " previous 
 map  <silent>    <C-right>   :bn<CR>|                                " next buffer
 map  <silent>    <C-S-left>  <C-W><C-H>
 map  <silent>    <C-S-right> <C-W><C-L>
-vmap <silent>    <F2>        :w!         >> sonar<cr>:'<,'>d<cr>
 map  <silent>    <F12>       :call Switch_indent()<CR>
 map  <silent>    <F5>        :w<CR>:ll<CR>|
 map  <silent>    <F7>        :call ToggleColumn()<CR>

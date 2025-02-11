@@ -9,12 +9,19 @@ else
     exit 1
 fi
 
-version=$(rclone --version 2>>errors | head -n 1)
+version=$(rclone --version 2>/dev/null | head -n 1)
 current_version=$(curl -fsS https://downloads.rclone.org/version.txt)
 
-if [ "$version" = "$current_version" ]; then
-    pass "The latest version of rclone ${version} is already installed."
-    exit
+if [[ "$version" == "$current_version" ]]; then
+    pass "rclone is already the latest version"
+else
+    change "Install / update rclone"
+    curl https://rclone.org/install.sh | sudo bash
 fi
 
-curl https://rclone.org/install.sh | sudo bash
+if grep -q '^user_allow_other' /etc/fuse.conf; then
+    pass "user_allow_other is already set in /etc/fuse.conf"
+else
+    change 'add "user_allow_other" to /etc/fuse.conf'
+    echo "user_allow_other" | sudo tee -a /etc/fuse.conf
+fi

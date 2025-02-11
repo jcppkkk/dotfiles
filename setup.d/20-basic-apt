@@ -93,6 +93,7 @@ case $platform in
             # GUI
             flameshot
             xclip
+            remmina remmina-plugin-rdp
             # Mint clipboard manager
             gpaste-2
             gir1.2-gpaste-2

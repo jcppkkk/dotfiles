@@ -18,11 +18,7 @@ if [[ ! -d ~/.vim/autoload ]]; then
 fi
 (
     cd ~/.vim/autoload
-    if [[ -f plug.vim ]]; then
-        curl -z plug.vim -fLo plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    else
-        curl -fLo plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    fi
+    [[ -f plug.vim ]] || curl -fLo plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 )
 
 #######################

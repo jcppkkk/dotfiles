@@ -19,6 +19,7 @@ ExecStartPre=-/bin/fusermount -u %h/mnt/%i
 ExecStartPre=-/usr/bin/mkdir -p %h/mnt/%i
 ExecStart= \
   /usr/bin/rclone mount \
+    -vv \
     --config=%h/.config/rclone/rclone.conf \
     --vfs-cache-mode full \
     --buffer-size 16M \
@@ -26,8 +27,6 @@ ExecStart= \
     --vfs-cache-max-size 300M \
     --fs-cache-expire-duration 240h \
     --fs-cache-expire-interval 240h \
-    --log-level INFO \
-    --log-file /tmp/rclone-%i.log \
     --umask 022 \
     --allow-other \
     --use-mmap \

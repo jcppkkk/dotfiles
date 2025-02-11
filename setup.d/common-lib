@@ -190,5 +190,4 @@ ubuntu_apt_update() {
 trap 'errexit' ERR
 # setting errtrace allows our ERR trap handler to be propagated to functions,
 #  expansions and subshells
-set -o errtrace
-set -eE
+set -eEu -o pipefail -o errtrace

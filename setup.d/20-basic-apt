@@ -70,6 +70,7 @@ case $platform in
             bmon
             htop
             jq
+            yq
             lnav
             moreutils
             ncdu

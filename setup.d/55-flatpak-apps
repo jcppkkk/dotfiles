@@ -12,8 +12,10 @@ fi
 [[ "$DISTRIB_ID" != Ubuntu ]] && exit
 command -v flatpak &>/dev/null || sudo apt-get install -y flatpak
 
-flatpak --user override --filesystem=/usr/share/icons:ro
 flatpak install -y org.telegram.desktop
-flatpak install -y app/com.mattermost.Desktop/x86_64/stable
 flatpak install -y com.ticktick.TickTick
 flatpak install -y flathub org.keepassxc.KeePassXC
+flatpak --user override --filesystem=/usr/share/icons:ro
+for path in ~/Documents/ ~/Downloads/ ~/Music/ ~/Pictures/ ~/Videos/; do
+    flatpak --user override --filesystem="$path"
+done

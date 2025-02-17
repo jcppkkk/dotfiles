@@ -56,6 +56,7 @@ case $platform in
             vim
             wget
             curl
+            parallel
             # Filesystem tools
             cifs-utils
             plocate

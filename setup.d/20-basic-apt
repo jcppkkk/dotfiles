@@ -87,6 +87,7 @@ case $platform in
             tig
             unzip
             dos2unix
+            libz-dev # for mise ruby build
             # Terminal
             fonts-firacode
             terminator

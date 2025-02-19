@@ -15,7 +15,6 @@ export LC_TIME="en_US.utf8"
 export LC_ALL="zh_TW.UTF-8"
 #export LC_CTYPE="zh_TW.UTF-8"
 export LC_COLLATE=C
-export -a chpwd_functions
 
 _add_prompt_command() {
     local action="$1"

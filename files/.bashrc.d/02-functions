@@ -5,6 +5,33 @@ PATH_add() {
     fi
 }
 
+ifs_wrapper() {
+    [[ -n "${IFS+x}" ]] && local IFS_backup=$IFS
+    IFS=$1
+    shift
+    "$@" && ret=$? || ret=$?
+
+    if [[ -n "${IFS_backup+x}" ]]; then
+        IFS=$IFS_backup
+    else
+        unset IFS
+    fi
+    return "$ret"
+}
+
+array_contains() {
+    local arr_name=$1
+    local search_value=$2
+
+    _array_contains() {
+        local -n _arr=$1
+        local search_value=$2
+        [[ "$IFS${_arr[*]}$IFS" =~ ${IFS}${search_value}${IFS} ]]
+    }
+
+    ifs_wrapper $'\001' _array_contains $arr_name $search_value
+}
+
 patch_function() {
     local func_name=$1
     local append_line=$2

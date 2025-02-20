@@ -9,33 +9,6 @@ else
     exit 1
 fi
 
-function install_pkg() {
-    if ! _install_pkg "$@"; then
-        update_pkg_list
-        _install_pkg "$@"
-    fi
-}
-
-case $platform in
-    'linux')
-        check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
-        # aptitude can solve depenency problem for clang-*
-        _install_pkg() { sudo apt-get install -q -y "$@"; }
-        update_pkg_list() { apt-update-smart; }
-        # setup aptitude first
-        install_pkg aptitude
-        _install_pkg() { sudo aptitude install -q -y "$@"; }
-        ;;
-    'mac')
-        check_pkg() { brew list -1 | grep -q "^${1}\$"; }
-        _install_pkg() { brew install "$@"; }
-        update_pkg_list() { :; }
-        if ! brew help >/dev/null; then
-            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        fi
-        ;;
-esac
-
 #######################
 ## install packages on new machine
 #######################
@@ -117,4 +90,4 @@ case $platform in
 esac
 
 # Install all packages
-install_pkg "${packages[@]}"
+ensure_pkg "${packages[@]}"

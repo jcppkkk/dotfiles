@@ -9,8 +9,14 @@ else
     exit 1
 fi
 
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg >/dev/null
-sudo apt-get install apt-transport-https --yes
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+if [[ ! -f /usr/share/keyrings/helm.gpg ]]; then
+    ensure_pkg curl apt-transport-https
+    curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg >/dev/null
+fi
+
+REPO_LINE="deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main"
+if ! grep -q "^$REPO_LINE" /etc/apt/sources.list.d/helm-stable-debian.list; then
+    echo "$REPO_LINE" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+fi
 apt-update-smart
-sudo apt-get install helm
+ensure_pkg helm

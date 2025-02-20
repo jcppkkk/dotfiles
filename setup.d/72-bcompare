@@ -9,7 +9,14 @@ else
     exit 1
 fi
 
-sudo wget https://www.scootersoftware.com/DEB-GPG-KEY-scootersoftware.asc -O /etc/apt/trusted.gpg.d/DEB-GPG-KEY-scootersoftware.asc
-sudo wget https://www.scootersoftware.com/scootersoftware.list -O /etc/apt/sources.list.d/scootersoftware.list
-sudo apt update
-sudo apt install bcompare -y
+sudo curl \
+    -z /etc/apt/trusted.gpg.d/DEB-GPG-KEY-scootersoftware.asc \
+    -o /etc/apt/trusted.gpg.d/DEB-GPG-KEY-scootersoftware.asc \
+    https://www.scootersoftware.com/DEB-GPG-KEY-scootersoftware.asc
+sudo curl \
+    -z /etc/apt/sources.list.d/scootersoftware.list \
+    -o /etc/apt/sources.list.d/scootersoftware.list \
+    https://www.scootersoftware.com/scootersoftware.list
+
+update_pkg_list
+ensure_pkg bcompare

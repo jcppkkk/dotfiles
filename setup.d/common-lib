@@ -17,12 +17,21 @@ function errexit() {
     echo "Exiting with status ${code}"
     exit "${code}"
 }
+# trap ERR to provide an error handler whenever a command exits nonzero
+#  this is a more verbose version of set -o errexit
+trap 'errexit' ERR
+# setting errtrace allows our ERR trap handler to be propagated to functions,
+#  expansions and subshells
+set -eE -o pipefail -o errtrace
+
+# imporot common functions
+. ../files/.bashrc.d/02-functions
 
 # 定義顏色
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+RED=$(tput setaf 1)
+NC=$(tput sgr0)
 
 pass() {
     echo -e "${GREEN}[PASS]${NC} $1"
@@ -58,131 +67,81 @@ case $(uname) in
         ;;
 esac
 
-apt-update-smart() {
-    local SOURCES_LIST="/etc/apt/sources.list"
-    local XATTR_META="user.apt_meta"
-    local UPDATE_INTERVAL=86400 # 1 day in seconds
-    local changes=()
-
-    # 檢查必要檔案和權限
-    if [ ! -f "$SOURCES_LIST" ]; then
-        echo "Error: $SOURCES_LIST not found" >&2
-        return 1
-    fi
-    if [ ! -d "/etc/apt/sources.list.d" ]; then
-        echo "Error: /etc/apt/sources.list.d not found" >&2
-        return 1
-    fi
-
-    # 取得或更新 metadata (format: timestamp;content:hash;file1:hash;file2:hash)
-    get_meta() {
-        getfattr -n "$XATTR_META" "$SOURCES_LIST" 2>/dev/null | grep -o '".*"' | tr -d '"' || echo ""
-    }
-    save_meta() {
-        if ! sudo setfattr -n "$XATTR_META" -v "$1" "$SOURCES_LIST"; then
-            echo "Error: Failed to save metadata" >&2
-            return 1
+case $platform in
+    'linux')
+        check_pkg() { dpkg-query --show --showformat='${db:Status-Status}\n' "$1" >/dev/null 2>/dev/null; }
+        update_pkg_list() { sudo env "PATH=$PATH" apt update; }
+        # aptitude can solve depenency problem for clang-*, setup aptitude first
+        if ! check_pkg aptitude; then
+            sudo apt-get install -q -y aptitude
         fi
-    }
-    get_hash() {
-        if [ ! -f "$1" ]; then
-            echo "Error: File not found - $1" >&2
-            return 1
-        fi
-        sha256sum "$1" 2>/dev/null | cut -d' ' -f1 || echo ""
-    }
-
-    # 建立當前狀態的 metadata
-    local curr_meta old_meta old_time need_update file
-    curr_meta="$(date +%s)"
-
-    # 收集所有當前的 list 檔案路徑
-    declare -A current_files
-    mapfile -d $'\0' -t files < <(find /etc/apt -name "*.list" -print0)
-    for file in "${files[@]}"; do
-        [[ ! -f "$file" ]] && continue
-        local file_hash
-        file_hash=$(get_hash "$file") || continue
-        current_files["$file"]="$file_hash"
-        curr_meta+=";$file:$file_hash"
-    done
-
-    # 分析變更
-    old_meta=$(get_meta)
-    old_time=$(echo "$old_meta" | cut -d';' -f1)
-    need_update=0
-
-    # 時間檢查
-    if [ -z "$old_time" ] || [ $(($(date +%s) - old_time)) -gt $UPDATE_INTERVAL ]; then
-        changes+=("更新間隔超過 1 天")
-        need_update=1
-    fi
-
-    # 檔案變更檢查
-    if [ -n "$old_meta" ]; then
-        # 建立舊檔案的 hash map
-        mapfile -d ";" -t old_meta <<<"$old_meta;"
-        declare -A old_files
-        for entry in "${old_meta[@]}"; do
-            [[ -z "$entry" ]] && continue
-            [[ ! "$entry" = *:* ]] && continue
-            local old_file=${entry%:*}
-            local old_hash=${entry#*:}
-            old_files["$old_file"]="$old_hash"
-        done
-
-        # 比對檔案變更
-        for file in "${!current_files[@]}"; do
-            if [ -n "${old_files[$file]}" ]; then
-                # 檔案存在，檢查 hash 是否變更
-                if [ "${current_files[$file]}" != "${old_files[$file]}" ]; then
-                    changes+=("變更: $file [${old_files[$file]}] -> [${current_files[$file]}]")
-                    need_update=1
+        ensure_pkg() {
+            echo Checking installation of "$@"
+            missing_pkgs=()
+            for pkg in "$@"; do
+                if ! check_pkg "$pkg"; then
+                    missing_pkgs+=("$pkg")
                 fi
-                unset "old_files[$file]"
-            else
-                # 新檔案
-                changes+=("新增: $file")
-                need_update=1
+            done
+            if [[ ${#missing_pkgs[@]} -eq 0 ]]; then
+                return
             fi
-        done
+            echo Missing packages: "${missing_pkgs[@]}"
+            sudo aptitude install -q -y "${missing_pkgs[@]}"
+        }
+        ;;
+    'mac')
+        check_pkg() { brew list -1 | grep -q "^${1}\$"; }
+        update_pkg_list() { :; }
+        ensure_pkg() { brew install "$@"; }
+        if ! brew help >/dev/null; then
+            ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        fi
+        ;;
+esac
 
-        # 剩下在 old_files 中的就是被刪除的檔案
-        for file in "${!old_files[@]}"; do
-            changes+=("刪除: $file")
-            need_update=1
-        done
-    else
-        changes+=("初始化")
-        need_update=1
+setup_script_output_prefix() {
+    caller=${BASH_SOURCE[2]##*/}
+    exec 5>&1
+    exec 1> >(sed -E "s#^#${YELLOW}[$caller]${NC} #" >&5)
+    exec 6>&2
+    exec 2> >(sed -E "s#^#${YELLOW}[$caller]${NC} #" >&6)
+}
+
+skip_script_if_executed() {
+    if [[ " $* " = *" -f "* ]]; then
+        change "Force setup enabled, executing..."
+        return
     fi
 
-    # 執行更新
-    if [ $need_update -eq 1 ]; then
-        echo "變更摘要："
-        printf '%s\n' "${changes[@]}"
-
-        # 更換鏡像站
-        #for list_file in "${!current_files[@]}"; do
-        #    sudo sed -i 's/archive.ubuntu.com\|security.ubuntu.com/free.nchc.org.tw/' "$list_file"
-        #done
-
-        # 確保 apt update 成功執行
-        if ! sudo apt update; then
-            echo "Error: apt update failed" >&2
-            return 1
-        fi
-
-        # 儲存新的 metadata
-        save_meta "$curr_meta" || return 1
+    caller=${BASH_SOURCE[2]##*/}
+    executed=$(getfattr -n user.executed -d "${caller}" 2>/dev/null | sed -n 's/.*="\(.*\)"/\1/p' || echo "")
+    if [[ -z "${executed}" ]]; then
+        change "Executing..."
+        return
+    fi
+    executed_hours=$((($(date +%s) - executed) / 3600))
+    if ((executed_hours < 24)); then
+        pass "Script executed ${executed_hours} hours ago, skipping"
+        export skipped=1
+        exit 0
     else
-        pass "apt repositories are up to date"
+        change "Executing..."
     fi
 }
 
-# trap ERR to provide an error handler whenever a command exits nonzero
-#  this is a more verbose version of set -o errexit
-trap 'errexit' ERR
-# setting errtrace allows our ERR trap handler to be propagated to functions,
-#  expansions and subshells
-set -eE -o pipefail -o errtrace
+mark_script_executed() {
+    caller=${BASH_SOURCE[2]##*/}
+    setfattr -n user.executed -v "$(date +%s)" "${caller}"
+}
+
+cleanup() {
+    if (($? == 0)) && [[ -z "${skipped}" ]]; then
+        mark_script_executed
+    fi
+}
+
+# shellcheck disable=SC2154
+trap 'status=$?; cleanup; exit $status' EXIT
+setup_script_output_prefix
+skip_script_if_executed "$@"

@@ -20,19 +20,24 @@ if ! command -v pipx &>/dev/null; then
     pip install --user pipx
 fi
 
-# install python tools
-uv tool install -U percol
+tools=(
+    percol
+    pipenv
+    poetry
+    ruff
+    git-up
+    pre-commit
+    ansible
+    flameshow
+    'git+https://github.com/jcppkkk/update-kube-config.git'
+)
 
-# package manager
-uv tool install -U pipenv
-uv tool install -U poetry
+# shellcheck disable=SC2034
+mapfile -t current_tools < <(uv tool list | grep -v "^-" | cut -d" " -f1)
 
-# dev tools
-uv tool install -U ruff
-uv tool install -U git-up
-uv tool install -U pre-commit
-
-# devops tools
-uv tool install -U ansible
-uv tool install -U flameshow
-uv tool install -U git+https://github.com/jcppkkk/update-kube-config.git
+for tool in "${tools[@]}"; do
+    if ! array_contains current_tools "$tool"; then
+        uv tool install "$tool"
+    fi
+done
+uv tool upgrade --all

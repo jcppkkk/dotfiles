@@ -9,5 +9,5 @@ else
     exit 1
 fi
 
-curl -fsS -o- https://deb.packages.mattermost.com/setup-repo.sh | sudo UPDATE_GPG_KEY=yes bash
-sudo apt install mattermost-desktop
+curl -fsS -o- https://deb.packages.mattermost.com/setup-repo.sh | sudo env "PATH=$PATH" PDATE_GPG_KEY=yes bash
+ensure_pkg mattermost-desktop

@@ -8,7 +8,12 @@ cd "$(dirname "$0")" || exit
 here=$(pwd)
 
 cd setup.d || exit 1
-run-parts -v --exit-on-error --regex='[0-9][0-9]-*' .
+if [[ " $* " == *" -f "* ]]; then
+    arg="--arg=-f"
+fi
+
+# shellcheck disable=SC2086
+run-parts --exit-on-error --regex='[0-9][0-9]-*' $arg .
 
 #######################
 ## Local changes

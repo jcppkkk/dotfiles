@@ -18,7 +18,7 @@ if [[ ! -f /etc/apt/sources.list.d/kubernetes.list ]]; then
     sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
 fi
 apt-update-smart
-sudo apt-get install -y kubectl
+ensure_pkg kubectl
 
 # https://krew.sigs.k8s.io/docs/user-guide/setup/install/
 # Krew is the plugin manager for kubectl command-line tool.

@@ -21,7 +21,7 @@ case $platform in
         check_pkg() { dpkg -s "$1" >/dev/null 2>&1; }
         # aptitude can solve depenency problem for clang-*
         _install_pkg() { sudo apt-get install -q -y "$@"; }
-        update_pkg_list() { ubuntu_apt_update; }
+        update_pkg_list() { apt-update-smart; }
         # setup aptitude first
         install_pkg aptitude
         _install_pkg() { sudo aptitude install -q -y "$@"; }

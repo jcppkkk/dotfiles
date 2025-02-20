@@ -63,7 +63,7 @@ case $(uname) in
         ;;
 esac
 
-ubuntu_apt_update() {
+apt-update-smart() {
     local SOURCES_LIST="/etc/apt/sources.list"
     local XATTR_META="user.apt_meta"
     local UPDATE_INTERVAL=86400 # 1 day in seconds

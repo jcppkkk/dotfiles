@@ -17,7 +17,7 @@ if [[ ! -f /etc/apt/sources.list.d/kubernetes.list ]]; then
     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
     sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
 fi
-ubuntu_apt_update
+apt-update-smart
 sudo apt-get install -y kubectl
 
 # https://krew.sigs.k8s.io/docs/user-guide/setup/install/

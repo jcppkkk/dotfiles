@@ -64,6 +64,7 @@ let g:ale_fixers = {
 			\ 'go': ['gofmt', 'goimports']
 			\}
 let g:ale_sh_shfmt_options = '-i 4 -ci -bn'
+let g:ale_sh_shellcheck_options = '-e SC2155'
 
 
 """"""""""""""""""" language support - others

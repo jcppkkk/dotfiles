@@ -268,7 +268,11 @@ fi
 # customize PATH
 #-------------------------------------------------------------
 
-# the latter path will be added to the front of PATH
+join_by() {
+    local IFS="$1"
+    shift
+    echo "$*"
+}
 prepend_custom_path() {
     local custom_paths
     custom_paths=(
@@ -281,11 +285,8 @@ prepend_custom_path() {
         /usr/local/bin
         /usr/sbin
     )
-    for p in "${custom_paths[@]}"; do
-        if [[ -d $p ]]; then
-            PATH=$p${PATH:+:$PATH}
-        fi
-    done
+    insert_path=$(join_by ':' "${custom_paths[@]}")
+    PATH=${insert_path}${PATH:+:$PATH}
 }
 prepend_custom_path
 

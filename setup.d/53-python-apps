@@ -13,22 +13,26 @@ eval "$("$HOME/.local/bin/mise" activate bash)"
 
 mise use --global python@3.12 python@3.10 python@3.8
 mise plugin add poetry
+mise settings set experimental true
 
 pip install --upgrade pip
 if ! command -v pipx &>/dev/null; then
     pip install --user pipx
 fi
 
-pip install -U \
-    ansible \
-    ruff-lsp \
-    ruff \
-    poetry \
-    pipenv
+# install python tools
+uv tool install -U percol
 
-mise settings set experimental true
+# package manager
+uv tool install -U pipenv
+uv tool install -U poetry
 
-uv tool install git-up
-uv tool install percol
-uv tool install pre-commit
-uv tool install flameshow
+# dev tools
+uv tool install -U ruff
+uv tool install -U git-up
+uv tool install -U pre-commit
+
+# devops tools
+uv tool install -U ansible
+uv tool install -U flameshow
+uv tool install -U git+https://github.com/jcppkkk/update-kube-config.git

@@ -14,4 +14,5 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew install \
     gcc \
     derailed/k9s/k9s \
-    fx
+    fx \
+    kubectx

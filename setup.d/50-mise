@@ -12,3 +12,6 @@ fi
 if ! command -v mise >&/dev/null; then
     curl https://mise.run | sh
 fi
+
+eval "$("$HOME/.local/bin/mise" activate bash)"
+mise settings set experimental true

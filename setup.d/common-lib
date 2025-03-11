@@ -69,25 +69,34 @@ esac
 
 case $platform in
     'linux')
-        check_pkg() { dpkg-query --show --showformat='${db:Status-Status}\n' "$1" >/dev/null 2>/dev/null; }
+        check_pkg() { [[ "$(dpkg-query --show --showformat='${db:Status-Status}' "$1" 2>/dev/null)" = installed ]]; }
         update_pkg_list() { sudo env "PATH=$PATH" apt update; }
         # aptitude can solve depenency problem for clang-*, setup aptitude first
         if ! check_pkg aptitude; then
             sudo apt-get install -q -y aptitude
         fi
         ensure_pkg() {
-            echo Checking installation of "$@"
-            missing_pkgs=()
+            change "Checking installation of: $*"
+            #shellcheck disable=SC2034
+            mapfile -t installed_pkgs < <(dpkg-query --show --showformat='${db:Status-Status} ${Package}\n' "$@" | grep ^installed | cut -d" " -f2)
+            pkgs_to_install=()
             for pkg in "$@"; do
-                if ! check_pkg "$pkg"; then
-                    missing_pkgs+=("$pkg")
+                if ! array_contains installed_pkgs "$pkg"; then
+                    pkgs_to_install+=("$pkg")
                 fi
             done
-            if [[ ${#missing_pkgs[@]} -eq 0 ]]; then
-                return
+
+            if [[ ${#pkgs_to_install[@]} -eq 0 ]]; then
+                pass "All packages are already installed"
+                return 0
             fi
-            echo Missing packages: "${missing_pkgs[@]}"
-            sudo aptitude install -q -y "${missing_pkgs[@]}"
+
+            change "Installing missing packages: ${pkgs_to_install[*]}"
+            if ! sudo aptitude install -y "${pkgs_to_install[@]}"; then
+                fail "Failed to install packages: ${pkgs_to_install[*]}"
+                return 1
+            fi
+            pass "Successfully installed all packages"
         }
         ;;
     'mac')
@@ -113,21 +122,24 @@ skip_script_if_executed() {
         change "Force setup enabled, executing..."
         return
     fi
-
     caller=${BASH_SOURCE[2]##*/}
-    executed=$(getfattr -n user.executed -d "${caller}" 2>/dev/null | sed -n 's/.*="\(.*\)"/\1/p' || echo "")
-    if [[ -z "${executed}" ]]; then
+    executed_ts=$(getfattr -n user.executed -d "${caller}" 0>/dev/null | sed -n 's/.*="\(.*\)"/\1/p' || echo "")
+    if [[ -z "${executed_ts}" ]]; then
         change "Executing..."
         return
     fi
-    executed_hours=$((($(date +%s) - executed) / 3600))
-    if ((executed_hours < 24)); then
-        pass "Script executed ${executed_hours} hours ago, skipping"
-        export skipped=1
-        exit 0
-    else
-        change "Executing..."
+    commonlib_ts=$(stat -c %Y "${BASH_SOURCE[1]}")
+    if ((executed_ts < commonlib_ts)); then
+        change "Common library updated, executing..."
+        return
     fi
+    file_ts=$(stat -c %Y "${caller}")
+    if ((executed_ts > file_ts)); then
+        pass "Script already executed, skipping"
+        export skipped=1
+        exit
+    fi
+    change "Executing..."
 }
 
 mark_script_executed() {

@@ -9,27 +9,20 @@ else
     exit 1
 fi
 
-eval "$("$HOME/.local/bin/mise" activate bash)"
+# pipx
+# pipx is installed by OS
 
-mise use --global python@3.12 python@3.10 python@3.8
-mise plugin add poetry
-mise settings set experimental true
-
-pip install --upgrade pip
-if ! command -v pipx &>/dev/null; then
-    pip install --user pipx
-fi
-
+# UV
 tools=(
+    'git+https://github.com/jcppkkk/update-kube-config.git'
+    ansible
+    flameshow
+    git-up
     percol
     pipenv
     poetry
-    ruff
-    git-up
     pre-commit
-    ansible
-    flameshow
-    'git+https://github.com/jcppkkk/update-kube-config.git'
+    ruff
 )
 
 # shellcheck disable=SC2034

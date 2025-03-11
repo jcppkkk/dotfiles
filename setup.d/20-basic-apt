@@ -52,16 +52,18 @@ case $platform in
             build-essential
             cmake
             direnv
+            dos2unix
             exuberant-ctags
             git
             git-delta
             git-lfs
+            zlib1g-dev # for mise ruby build
             meld
+            pipx
+            python3-pip
             shellcheck
             tig
             unzip
-            dos2unix
-            libz-dev # for mise ruby build
             # Terminal
             fonts-firacode
             terminator

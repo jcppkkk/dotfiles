@@ -136,6 +136,18 @@ if ! shopt -oq posix; then
     if command -v ssh-multi.sh >/dev/null; then
         shopt -u hostcomplete && complete -F _ssh ssh-multi.sh
     fi
+    if [[ -f /usr/share/bash-completion/completions/ssh ]]; then
+        . /usr/share/bash-completion/bash_completion
+        if [[ $(type -t _ssh) == function ]]; then
+            ssh_func=_ssh
+        elif [[ $(type -t _comp_cmd_ssh) == function ]]; then
+            ssh_func=_comp_cmd_ssh
+        fi
+        if [[ -n $ssh_func ]]; then
+            echo "complete -F $ssh_func ssh-multi.sh"
+            complete -F "$ssh_func" "ssh-multi.sh"
+        fi
+    fi
 fi
 
 #-------------------------------------------------------------
@@ -233,6 +245,9 @@ if [ -f ~/bin/vault ]; then
 fi
 if [ -f /usr/local/bin/mc ]; then
     complete -C /usr/local/bin/mc mc
+fi
+if [ -f ~/.bin/mc ]; then
+    complete -C ~/.bin/mc mc
 fi
 
 if [ -n "$TMUX" ]; then

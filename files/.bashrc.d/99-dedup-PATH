@@ -1,8 +1,2 @@
 #!/bin/bash
-PATH="$(echo -e "${PATH//:/\\n}" | awk '!x[$0]++' | grep -v '^$' | paste -sd ":" -)"
-removepath() {
-    local path="$1"
-    PATH="$(echo -e "${PATH//:/\\n}" | grep -v "$path" | paste -sd ":" -)"
-    export PATH
-}
-
+PATH="$(echo "$PATH" | tr ':' '\n' | awk '!x[$0]++' | paste -sd ":" -)"

@@ -1,5 +1,5 @@
 #!/bin/bash
 
-PATH_add "$HOME"/.local/bin
-
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv |grep -v PATH+)"
+PATH_append "/home/linuxbrew/.linuxbrew/bin"
+PATH_append "/home/linuxbrew/.linuxbrew/sbin"

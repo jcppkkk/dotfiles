@@ -9,12 +9,15 @@ if [[ $- != *i* && ${setupdotfile:-} == "" ]]; then
     return
 fi
 
-#export LANGUAGE="zh_TW.UTF-8"
-#export LANG="zh_TW.UTF-8"
-export LC_TIME="en_US.utf8"
-export LC_ALL="zh_TW.UTF-8"
-#export LC_CTYPE="zh_TW.UTF-8"
-export LC_COLLATE=C
+LANG=zh_TW.UTF-8
+export LANGUAGE=$LANG
+export LANG=$LANG
+export LC_TIME=$LANG
+export LC_ALL=$LANG
+export LC_CTYPE=$LANG
+export LC_COLLATE=$LANG
+export LC_ALL=$LANG
+unset LANG
 
 _add_prompt_command() {
     local action="$1"
@@ -278,32 +281,6 @@ if [ -n "$TMUX" ]; then
         echo "You have no mail."
     fi
 fi
-
-#-------------------------------------------------------------
-# customize PATH
-#-------------------------------------------------------------
-
-join_by() {
-    local IFS="$1"
-    shift
-    echo "$*"
-}
-prepend_custom_path() {
-    local custom_paths
-    custom_paths=(
-        "$HOME"/.bin
-        "$HOME"/.cargo/bin              # rust
-        "${KREW_ROOT:-$HOME/.krew}/bin" # plugin manager for kubectl
-        "$HOME"/bin/gamadv-xtd3         # Google Apps Manager
-        "$HOME"/.local/share/JetBrains/Toolbox/apps
-        /usr/local/go/bin
-        /usr/local/bin
-        /usr/sbin
-    )
-    insert_path=$(join_by ':' "${custom_paths[@]}")
-    PATH=${insert_path}${PATH:+:$PATH}
-}
-prepend_custom_path
 
 #-------------------------------------------------------------
 # import scripts

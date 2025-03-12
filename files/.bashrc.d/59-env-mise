@@ -1,5 +1,4 @@
 #!/bin/bash
-PATH_add "$HOME"/.local/bin
 
 if ! array_contains chpwd_functions _mise_hook; then
 	eval "$(mise activate bash)"

@@ -1,7 +1,13 @@
 #!/bin/bash
-PATH_add() {
-    if [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]]; then
+PATH_prepend() {
+    if [[ -d "$1" ]]; then
         PATH="$1${PATH:+":$PATH"}"
+    fi
+}
+
+PATH_append() {
+    if [[ -d "$1" ]] && [[ ! :$PATH: =~ :$1: ]]; then
+        PATH="${PATH:+"$PATH:"}$1"
     fi
 }
 

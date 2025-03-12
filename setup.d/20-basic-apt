@@ -60,7 +60,6 @@ case $platform in
             zlib1g-dev # for mise ruby build
             meld
             pipx
-            python3-pip
             shellcheck
             tig
             unzip

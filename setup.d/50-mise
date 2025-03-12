@@ -15,3 +15,4 @@ fi
 
 eval "$("$HOME/.local/bin/mise" activate bash)"
 mise settings set experimental true
+mise upgrade

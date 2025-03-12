@@ -12,6 +12,8 @@ fi
 eval "$("$HOME/.local/bin/mise" activate bash)"
 mise use --global go@1.23
 go install github.com/BurntSushi/toml/cmd/tomlv@master
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.0
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 go install golang.org/x/tools/cmd/goimports@latest
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
+go install github.com/nao1215/gup@latest
+gup update || true

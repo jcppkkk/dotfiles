@@ -10,9 +10,14 @@ else
 fi
 
 find /sys/fs/bcache/ -mindepth 1 -maxdepth 1 -type d | while read -r cache; do
-    echo 0 | sudo tee \
-        "$cache/congested_read_threshold_us" \
-        "$cache/congested_write_threshold_us"
-    echo 1 | sudo tee \
-        /sys/block/bcache*/bcache/writeback_percent
+    sudo bash -v -c "\
+        echo 0 > '$cache/congested_read_threshold_us'
+        echo 0 > '$cache/congested_write_threshold_us'\
+        "
+done
+
+find /sys/block -maxdepth 1 -name 'bcache*' -type l | while read -r bcache; do
+    sudo bash -v -c "\
+        echo 0 > '$bcache/bcache/writeback_percent'\
+        "
 done

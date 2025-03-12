@@ -15,7 +15,7 @@ if [[ ! -f /usr/share/keyrings/helm.gpg ]]; then
 fi
 
 REPO_LINE="deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main"
-if ! grep -q "^$REPO_LINE" /etc/apt/sources.list.d/helm-stable-debian.list; then
+if ! grep -q -F "$REPO_LINE" /etc/apt/sources.list.d/helm-stable-debian.list; then
     echo "$REPO_LINE" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 fi
 apt-update-smart

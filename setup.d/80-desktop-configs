@@ -20,19 +20,17 @@ if [[ "$platform" == linux ]]; then
         ln -sf /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart
     fi
     # linuxmint/cinnamon: Option for Alt-Tab switcher to list windows on current monitor only
-    FILE_PATH="/usr/share/cinnamon/js/ui/appSwitcher/appSwitcher.js"
-    PATCH_FILE="appSwitcher.patch"
+    patch_script="$(dirname "$(realpath "$0")")/scripts/apply-appswitcher-patch.sh"
+    chmod +x "$patch_script"
 
-    NEW_LINE="windows = windows.filter(w => w.get_monitor() === global.screen.get_current_monitor())"
-    if [[ -f "$FILE_PATH" ]]; then
-        if grep -qF "$NEW_LINE" "$FILE_PATH"; then
-            pass "appSwitcher 修補已經應用，不需要再次插入。"
-        else
-            if sudo cat "$PATCH_FILE" | sudo patch "$FILE_PATH"; then
-                change "appSwitcher 修補已成功應用。"
-            else
-                fail "appSwitcher 修補應用失敗，請檢查補丁文件和目標文件。"
-            fi
-        fi
+    $patch_script
+
+    # Set up post-install hook for cinnamon-common
+    if [[ -d /etc/apt/apt.conf.d/ ]] && [[ ! -f /etc/apt/apt.conf.d/99cinnamon-patch ]]; then
+        change "安裝 cinnamon-common 升級後自動修補。"
+        sudo mkdir -p /etc/apt/apt.conf.d
+        echo 'DPkg::Post-Invoke {"'"$patch_script"' || true"};' | sudo tee /etc/apt/apt.conf.d/99cinnamon-patch
+        sudo chown root:root /etc/apt/apt.conf.d/99cinnamon-patch
+        sudo chmod 644 /etc/apt/apt.conf.d/99cinnamon-patch
     fi
 fi

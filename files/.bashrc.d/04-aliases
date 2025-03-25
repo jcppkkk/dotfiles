@@ -169,8 +169,9 @@ gbr2tag() {
 ocohook() {
     # .git/hooks/prepare-commit-msg -> /data/jethro/.local/share/mise/installs/npm-opencommit/3.2.5/lib/node_modules/opencommit/out/cli.cjs
     repo_root=$(git rev-parse --show-toplevel)
-    oco_path=$HOME/.local/share/mise/installs/npm-opencommit/latest/lib/node_modules/opencommit/out/cli.cjs
+    oco_path=$HOME/.local/share/mise/installs/node/latest/lib/node_modules/opencommit/out/cli.cjs
     if [[ ! -f $repo_root/.git/hooks/prepare-commit-msg ]] || [[ $(readlink "$repo_root/.git/hooks/prepare-commit-msg") != "$oco_path" ]]; then
+        mkdir -p "$repo_root/.git/hooks"
         ln -fvs "$oco_path" "$repo_root/.git/hooks/prepare-commit-msg"
     else
         echo "Already linked"
@@ -212,5 +213,6 @@ alias dr='docker run'
 alias dp='docker push'
 alias dip='docker inspect --format "{{.NetworkSettings.IPAddress}}"'
 alias rmi='docker rmi'
+alias k9s='LC_ALL=C \k9s'
 
 complete -F _complete_alias "${!BASH_ALIASES[@]}"

@@ -19,10 +19,10 @@
   "consistency": {
     "english": {
       "localLanguage": "english",
-      "commitFix": "fixing(server): change variable 'port' to uppercase 'PORT'",
-      "commitFeat": "featuring(server): allow server to listen on environment variable port",
-      "commitFixOmitScope": "fixing: change variable 'port' to uppercase 'PORT'",
-      "commitFeatOmitScope": "featuring: allow server to listen on environment variable port",
+      "commitFix": "fixing(server): change variable 'port' to uppercase 'PORT'\n",
+      "commitFeat": "featuring(server): allow server to listen on environment variable port\n",
+      "commitFixOmitScope": "fixing: change variable 'port' to uppercase 'PORT'\n",
+      "commitFeatOmitScope": "featuring: allow server to listen on environment variable port\n",
       "commitDescription": "Fix variable name and add environment variable support"
     }
   }

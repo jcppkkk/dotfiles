@@ -94,7 +94,6 @@ Plug 'ekalinin/Dockerfile.vim'
 """"""""""""""""""" language support - Python
 Plug 'vim-python/python-syntax'
 let g:python_highlight_all = 1
-Plug 'ambv/black'
 
 """"""""""""""""""" language support - C / C++
 Plug 'vim-scripts/cuteErrorMarker'
@@ -188,7 +187,17 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#excludes = []
 let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
+augroup open-tabs
+    au!
+    au VimEnter * ++nested if !&diff | tab all | tabfirst | endif
+augroup end
+map <C-left>    <Plug>AirlineSelectPrevTab " previous buffer
+map <C-right>   <Plug>AirlineSelectNextTab " next buffer
+map <C-S-Left>  :tabmove -1<CR>            " move tab to left
+map <C-S-Right> :tabmove +1<CR>            " move tab to right
 let g:airline#extensions#ale#enabled = 1
+let g:airline#extensions#tabline#left_sep = ''
+let g:airline#extensions#tabline#right_sep = ''
 
 call plug#end()
 
@@ -329,7 +338,6 @@ set dictionary=/usr/share/dict/words            " used with CTRL-X CTRL-K
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set fileencodings=utf-8-bom,ucs-bom,utf-8,cp936,big5,gb18030,ucs
 set fileformats=unix,dos
-set showtabline=1                       " auto hide tab title if only 1 tab
 set nobinary
 
 
@@ -547,35 +555,32 @@ function! ToggleColumn()
     endif
 endfunction
 
-map  <silent>    <M-Up>      :call <SID>LocationPrevious()<CR>
-map  <silent>    <S-Up>      :call Pre_err()<CR>
-map  <silent>    <C-Up>      <Plug>(GitGutterPrevHunk)
-map! <silent>    <C-Up>      <Plug>(GitGutterPrevHunk)
-map  <silent>    <M-Down>    :call <SID>LocationNext()<CR>|
-map  <silent>    <S-Down>    :call Next_err()<CR>
-map  <silent>    <C-Down>    <Plug>(GitGutterNextHunk)
-map! <silent>    <C-Down>    <Plug>(GitGutterNextHunk)
-map  <silent>    <C-B>       :call Do_make__()<CR>|                  " excute make in vim and open quickfix window
-nmap <silent>    <C-F4>      :bd<CR>
-nmap <silent>    <C-F7>      :silent gr '<c-r>=expand('<cword>')<CR>' .\|redraw!<CR>
-map  <silent>    <C-H>       :%s/\V\<<c-r>=expand('<cword>')<CR>\>///g<left><left>
-map  <silent>    <C-left>    :bp<CR>|                                " previous buffer
-map  <silent>    <C-right>   :bn<CR>|                                " next buffer
-map  <silent>    <C-S-left>  <C-W><C-H>
-map  <silent>    <C-S-right> <C-W><C-L>
-map  <silent>    <F12>       :call Switch_indent()<CR>
-map  <silent>    <F5>        :w<CR>:ll<CR>|
-map  <silent>    <F7>        :call ToggleColumn()<CR>
-map  <silent>    <F8>        :set hls!<BAR>set hls?<CR>|             " 在 searching highlight 及非 highlight 間切換
-map  <silent>    <F9>        :sort<CR>
-map  <silent>    <Leader>ce  :edit ~/.vimrc<CR>|                     " quickly edit this file
-map  <silent>    <Leader>cs  :source ~/.vimrc<CR>|                   " quickly source this file
-map  <silent>    <Leader>fc  /\v^[<=>]{7}( .*\|$)<CR>|               " find merge conflict markers
-map  <silent>    <Leader>nh  :nohlsearch<CR>|                        " disable last one highlight
-map! <silent>    <S-Tab>     <C-D>|                                  " tab indenta
-vmap <silent>    <S-Tab>     <gv_|                                   " tab indent
-nmap <silent>    <S-Tab>     <<|                                     " tab indent
-vmap <silent>    <Tab>       >gv_|                                   " tab indent
-nmap <silent>    <Tab>       >>|                                     " tab indent
-map  <silent>    ZZ          :silent call SaveAllExit()<CR>
+map  <M-Up>      :call <SID>LocationPrevious()<CR>
+map  <S-Up>      :call Pre_err()<CR>
+map  <C-Up>      <Plug>(GitGutterPrevHunk)
+map! <C-Up>      <Plug>(GitGutterPrevHunk)
+map  <M-Down>    :call <SID>LocationNext()<CR>|
+map  <S-Down>    :call Next_err()<CR>
+map  <C-Down>    <Plug>(GitGutterNextHunk)
+map! <C-Down>    <Plug>(GitGutterNextHunk)
+map  <C-B>       :call Do_make__()<CR>|                  " excute make in vim and open quickfix window
+map  <C-F4>      :bd<CR>
+map  <C-F7>      :silent gr '<c-r>=expand('<cword>')<CR>' .\|redraw!<CR>
+map  <C-H>       :%s/\V\<<c-r>=expand('<cword>')<CR>\>///g<left><left>
+
+map  <F12>       :call Switch_indent()<CR>
+map  <F5>        :w<CR>:ll<CR>|
+map  <F7>        :call ToggleColumn()<CR>
+map  <F8>        :set hls!<BAR>set hls?<CR>|             " 在 searching highlight 及非 highlight 間切換
+map  <F9>        :sort<CR>
+map  <Leader>ce  :edit ~/.vimrc<CR>|                     " quickly edit this file
+map  <Leader>cs  :source ~/.vimrc<CR>|                   " quickly source this file
+map  <Leader>fc  /\v^[<=>]{7}( .*\|$)<CR>|               " find merge conflict markers
+map  <Leader>nh  :nohlsearch<CR>|                        " disable last one highlight
+map! <S-Tab>     <C-D>|                                  " tab indenta
+vmap <S-Tab>     <gv_|                                   " tab indent
+map  <S-Tab>     <<|                                     " tab indent
+vmap <Tab>       >gv_|                                   " tab indent
+map  <Tab>       >>|                                     " tab indent
+map  ZZ          :silent call SaveAllExit()<CR>
 set  cmdheight=1 " make command line two lines high

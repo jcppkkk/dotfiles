@@ -1,0 +1,29 @@
+{
+  "hash": "73ce2cdf83cb13f6f35735e6008ee7959afc8ed94d21bea68b2b6fa5a5a73e3a",
+  "prompts": [
+    "There should always be a blank line at the beginning of the body.",
+    "Each line of the body should always have 100 characters or less.",
+    "There should always be a blank line at the beginning of the footer.",
+    "Each line of the footer should always have 100 characters or less.",
+    "The header should always have 100 characters or less.",
+    "Please manualy set the prompt for rule \"header-trim\".",
+    "The subject should never be in one of the following case: \n  - sentence-case\n  - start-case\n  - pascal-case\n  - upper-case.",
+    "The subject should never be empty.",
+    "The subject should never end with '.'.",
+    "The type should always be in lower-case case.",
+    "The type should never be empty.",
+    "The type should always be one of the following values: \n  - featuring (A new feature)\n  - fixing (A bug fix)\n  - documenting (Documentation only changes)\n  - styling (Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc))\n  - refactoring (A code change that neither fixes a bug nor adds a feature)\n  - testing (Adding missing tests or correcting existing tests)\n  - chores (Other changes that don't modify src or test files)\n  - perf (A code change that improves performance)\n  - build (Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm))\n  - ci (Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs))\n  - revert (Reverts a previous commit).",
+    "The body should never be empty.",
+    "The scope should never be empty."
+  ],
+  "consistency": {
+    "english": {
+      "localLanguage": "english",
+      "commitFix": "fixing(server): change variable 'port' to uppercase 'PORT'",
+      "commitFeat": "featuring(server): allow server to listen on environment variable port",
+      "commitFixOmitScope": "fixing: change variable 'port' to uppercase 'PORT'",
+      "commitFeatOmitScope": "featuring: allow server to listen on environment variable port",
+      "commitDescription": "Fix variable name and add environment variable support"
+    }
+  }
+}

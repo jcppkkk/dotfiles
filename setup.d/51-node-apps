@@ -10,5 +10,8 @@ else
 fi
 
 eval "$("$HOME/.local/bin/mise" activate bash)"
-mise use --global node@20
-mise use --global npm:opencommit
+mise use --global node@latest node@20
+eval "$("$HOME/.local/bin/mise" activate bash)"
+which npm
+npm update -g npm
+npm install -g @commitlint/{cli,config-conventional,load} opencommit

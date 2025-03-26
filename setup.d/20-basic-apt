@@ -30,6 +30,7 @@ case $platform in
             wget
             curl
             parallel
+            pv
             # Filesystem tools
             cifs-utils
             plocate

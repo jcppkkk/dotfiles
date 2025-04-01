@@ -38,6 +38,7 @@ case $platform in
             sshfs
             sshpass
             autofs
+            iotop
             # Services
             openssh-server
             # Shell and system admin tools

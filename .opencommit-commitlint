@@ -1,11 +1,11 @@
 {
-  "hash": "73ce2cdf83cb13f6f35735e6008ee7959afc8ed94d21bea68b2b6fa5a5a73e3a",
+  "hash": "adb078a48d3aeac165313f2dbe91a8a9a02f34de631176afdfa2b8f2464617c2",
   "prompts": [
     "There should always be a blank line at the beginning of the body.",
-    "Each line of the body should always have 100 characters or less.",
+    "Each line of the body should always have 70 characters or less.",
     "There should always be a blank line at the beginning of the footer.",
-    "Each line of the footer should always have 100 characters or less.",
-    "The header should always have 100 characters or less.",
+    "Each line of the footer should always have 70 characters or less.",
+    "The header should always have 70 characters or less.",
     "Please manualy set the prompt for rule \"header-trim\".",
     "The subject should never be in one of the following case:\n  - sentence-case\n  - start-case\n  - pascal-case\n  - upper-case.",
     "The subject should never be empty.",
@@ -18,7 +18,7 @@
   ],
   "consistency": {
     "繁體中文": {
-      "commitMessage": "修正(server.ts)：將端口變數從小寫端口改為大寫PORT\n\n現在port變數已更名為PORT，以符合命名慣例，因為PORT是一個常量。這樣的更改使代碼更具可讀性，並且在應用程序啟動時，能夠更清晰地表達端口的用途。\n\n支援環境變數可以使應用程序更靈活，因為它現在可以通過process.env.PORT環境變數運行在任何可用端口上。",
+      "commitMessage": "修正(server.ts)：將端口變數從小寫端口改為大寫PORT\n\n現在port變數已更名為PORT，以符合命名慣例，因為PORT是一個常量。支援環境變數可以使應用程序更靈活，因為它現在可以通過process.env.PORT環境變數運行在任何可用端口上。",
       "config": {
         "OCO_OMIT_SCOPE": false,
         "OCO_DESCRIPTION": true,

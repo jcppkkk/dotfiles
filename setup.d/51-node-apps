@@ -11,6 +11,7 @@ fi
 
 eval "$("$HOME/.local/bin/mise" activate bash)"
 mise use --global node@latest node@20
+mise plugin i yarn
 eval "$("$HOME/.local/bin/mise" activate bash)"
 which npm
 npm update -g npm

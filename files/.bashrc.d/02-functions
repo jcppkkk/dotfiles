@@ -133,4 +133,12 @@ _toggle_function_completions() {
     tput rc
 }
 
+repeat() {
+    count=$1
+    shift
+    for _ in $(seq "$count"); do
+        "$@"
+    done
+}
+
 complete -F _toggle_function_completions toggle_function

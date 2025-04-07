@@ -64,7 +64,6 @@ let g:ale_fixers = {
 			\ 'go': ['gofmt', 'goimports']
 			\}
 let g:ale_sh_shfmt_options = '-i 4 -ci -bn'
-let g:ale_sh_shellcheck_options = '-e SC2155'
 
 
 """"""""""""""""""" language support - others
@@ -171,6 +170,7 @@ let g:copilot_filetypes = {
     \ 'yaml': v:true,
     \ 'perl': v:true
     \ }
+let g:copilot_node_command = "~/.local/share/mise/installs/node/latest/bin/node"
 
 "========================== Themes
 Plug 'morhetz/gruvbox'
@@ -490,7 +490,7 @@ autocmd FileType               python     setl makeprg=pychecker\ -Q\ --only\ %\
 autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               gitcommit  setl shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType               gitcommit  setl shiftwidth=2 softtabstop=2 expandtab formatoptions+=mB
 autocmd FileType               yaml       setl ts=2 sts=2 sw=2 expandtab indentkeys-=0# indentkeys-=<:> iskeyword=-,@,48-57,_,192-255
 autocmd FileType               sh         syntax sync fromstart | DetectIndent
 autocmd FileType               bash       syntax sync fromstart | DetectIndent

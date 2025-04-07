@@ -39,11 +39,6 @@
     binary = true
     textconv = tar -tvzf
 [filter "gitconfig"]
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	process = git-lfs filter-process
-	required = true
-	smudge = git-lfs smudge -- %f
 [filter "vimrc"]
 	clean = sed /LOCAL_SCRIPTS_START/,/LOCAL_SCRIPTS_END/d
 [git-up "fetch"]
@@ -96,3 +91,14 @@
 [delta]
 	navigate = true
 	side-by-side = true
+[scalar]
+	repo = /data/repo/sonar/update_pack
+	repo = /data/repo/sonar/server
+[maintenance]
+	repo = /data/repo/sonar/update_pack
+	repo = /data/repo/sonar/server
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

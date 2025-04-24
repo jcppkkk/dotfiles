@@ -27,3 +27,5 @@ files/.config/keepassxc/
 files/.config/libreoffice/
 files/.config/org.keshavnrj.ubuntu/
 files/.config/pix/
+/.opencommit-commitlint
+/.env-store*

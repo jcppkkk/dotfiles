@@ -12,17 +12,13 @@ clean_gitconfig_filter_fn() {
 
     # Process the file - remove scalar and maintenance sections
     if [[ -s "$tmpfile" ]]; then
-        # Find and remove scalar section
-        scalar_keys=$(git config --file "$tmpfile" --get-regexp "scalar\.")
-        if [[ -n "$scalar_keys" ]]; then
-            git config --file "$tmpfile" --remove-section scalar
-        fi
-
-        # Find and remove maintenance section
-        maintenance_keys=$(git config --file "$tmpfile" --get-regexp "maintenance\.")
-        if [[ -n "$maintenance_keys" ]]; then
-            git config --file "$tmpfile" --remove-section maintenance
-        fi
+        for section in scalar maintenance safe; do
+            # Find and remove the section
+            section_keys=$(git config --file "$tmpfile" --get-regexp "^$section\.")
+            if [[ -n "$section_keys" ]]; then
+                git config --file "$tmpfile" --remove-section "$section"
+            fi
+        done
 
         # Output the cleaned file to stdout
         cat "$tmpfile"

@@ -15,6 +15,7 @@
   go_right = ""
   resize_left = ""
   resize_right = ""
+  help = ""
 [profiles]
   [[default]]
     audible_bell = True
@@ -35,4 +36,5 @@
     [[[child1]]]
       type = Terminal
       parent = window0
+      profile = default
 [plugins]

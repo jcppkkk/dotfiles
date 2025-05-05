@@ -1,0 +1,6 @@
+#!/bin/bash
+target=$(realpath "$(which oco)")
+script_dir=$(dirname "$(realpath "$0")")
+mkdir -p "$script_dir/.git/hooks"
+ln -fs "$target" "$script_dir/.git/hooks/prepare-commit-msg"
+mise exec node@latest -- "$script_dir/.git/hooks/prepare-commit-msg" "$@"

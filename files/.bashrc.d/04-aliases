@@ -191,9 +191,9 @@ githook() {
     (
         cd "$repo_root/.git" || return
         mkdir -p hooks
-        src="$HOME/shared_codes/prepare-commit-msg"
+        src=$(realpath "$HOME/.git-templates/hooks/prepare-commit-msg")
         target=hooks/prepare-commit-msg
-        if [[ -f $target ]] && [[ $(realpath "$target") != "$(realpath "$src")" ]]; then
+        if [[ -f $target ]] && [[ $(realpath "$target") != "$src" ]]; then
             echo "$(realpath "$target") != $src"
             rm -vf "$target"
         fi

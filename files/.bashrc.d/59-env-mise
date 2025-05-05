@@ -3,3 +3,5 @@
 if ! array_contains chpwd_functions _mise_hook; then
 	eval "$(mise activate bash)"
 fi
+
+alias oco='$HOME/.bin/oco'

@@ -3,11 +3,11 @@
 # customize PATH
 #-------------------------------------------------------------
 
+PATH_prepend "$HOME/.local/share/mise/shims"
 PATH_prepend /usr/sbin
 
 PATH_append "$HOME/.bin"
 PATH_append "$HOME/.local/bin"
-PATH_append "$HOME/.local/share/mise/shims"
 PATH_append "$HOME/.cargo/bin"              # rust
 PATH_append "${KREW_ROOT:-$HOME/.krew}/bin" # plugin manager for kubectl
 PATH_append "$HOME/bin/gamadv-xtd3"         # Google Apps Manager

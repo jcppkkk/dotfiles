@@ -208,11 +208,6 @@ if hash thefuck 2>/dev/null; then
 fi
 
 #-------------------------------------------------------------
-# direnv https://direnv.net/docs/hook.html
-#-------------------------------------------------------------
-eval "$(direnv hook bash)"
-
-#-------------------------------------------------------------
 # kitty intergration
 #-------------------------------------------------------------
 get() {
@@ -297,7 +292,7 @@ include_scripts() {
     # disable errexit
     local reset
     reset=$(shopt -p -o errexit)
-    shopt -s -o errexit
+    shopt -u -o errexit
     # save stderr
     exec 8>&2 7>&1
     exec 2>&1

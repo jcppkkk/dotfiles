@@ -1,15 +1,4 @@
 #!/bin/bash
-PATH_prepend() {
-    if [[ -d "$1" ]]; then
-        PATH="$1${PATH:+":$PATH"}"
-    fi
-}
-
-PATH_append() {
-    if [[ -d "$1" ]] && [[ ! :$PATH: =~ :$1: ]]; then
-        PATH="${PATH:+"$PATH:"}$1"
-    fi
-}
 
 ifs_restore() {
     if [[ -n "${IFS_backup+x}" ]]; then
@@ -20,8 +9,13 @@ ifs_restore() {
 }
 
 ifs_wrapper() {
+    function_to_call=$1
+    shift
+    # shellcheck disable=SC2034
+    local -n ifs_wrapper_array_name=$1
+    shift
     # choose a special character that is not in the arguments to use as IFS
-    local i=1
+    local i=2
     # shellcheck disable=SC2059
     choose_ifs=$(printf "\\$(printf %03o "$i")")
     while [[ "$*" =~ $choose_ifs ]]; do
@@ -36,39 +30,63 @@ ifs_wrapper() {
     [[ -n "${IFS+x}" ]] && local IFS_backup=$IFS
     trap 'ifs_restore; trap - RETURN' RETURN
     IFS="$choose_ifs"
-    "$@"
+
+    "$function_to_call" ifs_wrapper_array_name "$@"
 }
 
-# shellcheck disable=SC2317
 _array_contains() {
-    local -n _arr=$1
+    local -n _array_contains_array_name=$1
     local search_value=$2
-    [[ "$IFS${_arr[*]}$IFS" =~ ${IFS}${search_value}${IFS} ]]
+    [[ "$IFS${_array_contains_array_name[*]}$IFS" =~ ${IFS}${search_value}${IFS} ]]
 }
 
 array_contains() {
-    local arr_name=$1
+    # shellcheck disable=SC2034
+    local -n array_contains_array_name=$1
     local search_value=$2
 
-    ifs_wrapper _array_contains "$arr_name" "$search_value"
+    ifs_wrapper _array_contains array_contains_array_name "$search_value"
 }
 
 _array_remove() {
-    local -n _arr=$1
+    local -n _array_remove_array_name=$1
     local search_value=$2
-    elm_string="$IFS${_arr[*]}$IFS"
+    elm_string="$IFS${_array_remove_array_name[*]}$IFS"
     elm_string="${elm_string//$IFS$search_value$IFS/$IFS}"
     # string first and last $IFS
     elm_string="${elm_string##"$IFS"}"
     elm_string="${elm_string%%"$IFS"}"
     # shellcheck disable=SC2206
-    _arr=($elm_string)
+    _array_remove_array_name=($elm_string)
+
 }
 
 array_remove() {
-    local arr_name=$1
+    # shellcheck disable=SC2034
+    local -n array_remove_array_name=$1
     local search_value=$2
-    ifs_wrapper _array_remove "$arr_name" "$search_value"
+    ifs_wrapper _array_remove array_remove_array_name "$search_value"
+}
+
+PATH_prepend() {
+    if [[ -d "$1" ]]; then
+        local PATH_prepend_path_array
+        IFS=':' read -r -a PATH_prepend_path_array <<<"$PATH"
+        array_remove PATH_prepend_path_array "$1"
+        PATH_prepend_path_array=("$1" "${PATH_prepend_path_array[@]}")
+        local IFS=":"
+        PATH="${PATH_prepend_path_array[*]}"
+    fi
+
+}
+
+PATH_append() {
+    if [[ -d "$1" ]]; then
+        array_remove PATH_append_path_array "$1"
+        PATH="${PATH:+"$PATH:"}$1"
+    else
+        echo "PATH_append: $1 is not a directory"
+    fi
 }
 
 patch_function() {

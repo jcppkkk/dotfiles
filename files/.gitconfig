@@ -91,12 +91,6 @@
 [delta]
 	navigate = true
 	side-by-side = true
-[scalar]
-	repo = /data/repo/sonar/update_pack
-	repo = /data/repo/sonar/server
-[maintenance]
-	repo = /data/repo/sonar/update_pack
-	repo = /data/repo/sonar/server
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f

@@ -3,7 +3,6 @@
 # customize PATH
 #-------------------------------------------------------------
 
-PATH_prepend "$HOME/.local/share/mise/shims"
 PATH_prepend /usr/sbin
 
 PATH_append "$HOME/.bin"

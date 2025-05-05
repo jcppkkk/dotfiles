@@ -9,6 +9,8 @@
 /files/.bashrc.d/bashrc_local
 /files/.bashrc.d/local_env
 /files/.config/.gitignore
+/files/.config/systemd/*
+!/files/.config/systemd/user/rclone@.service
 /files/.fonts/.uuid
 /files/.local/share
 /files/.vim/.netrwhist

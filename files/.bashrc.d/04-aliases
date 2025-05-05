@@ -187,30 +187,20 @@ gbr2tag() {
 }
 
 githook() {
-    # .git/hooks/prepare-commit-msg -> /data/jethro/.local/share/mise/installs/npm-opencommit/3.2.5/lib/node_modules/opencommit/out/cli.cjs
     repo_root=$(git rev-parse --show-toplevel)
-    oco_path=$HOME/.local/share/mise/installs/node/latest/lib/node_modules/opencommit/out/cli.cjs
-    mapfile -t git_dirs < <(find . -maxdepth 3 -type d -name ".git")
-    for git_dir in "${git_dirs[@]}"; do
-        if [[ ! -d $git_dir ]]; then
-            continue
+    (
+        cd "$repo_root/.git" || return
+        mkdir -p hooks
+        src="$HOME/shared_codes/prepare-commit-msg"
+        target=hooks/prepare-commit-msg
+        if [[ -f $target ]] && [[ $(realpath "$target") != "$(realpath "$src")" ]]; then
+            echo "$(realpath "$target") != $src"
+            rm -vf "$target"
         fi
-        mkdir -p "$git_dir/hooks"
-        target="$git_dir/hooks/prepare-commit-msg"
-        if [[ ! -L $target ]] || [[ $(realpath "$target") != $(realpath "$oco_path") ]]; then
-            rm -f "$target"
-            ln -fvs "$oco_path" "$git_dir/hooks/prepare-commit-msg"
+        if [[ ! -f "$target" ]]; then
+            ln -fvs "$src" "$target"
         fi
-        for hook in "$HOME/.git-templates/hooks/"*; do
-            if [[ ! -f $hook ]]; then
-                continue
-            fi
-            hook_name=$(basename "$hook")
-            if [[ ! -f $git_dir/hooks/$hook_name ]]; then
-                ln -fv "$hook" "$git_dir/hooks/$hook_name"
-            fi
-        done
-    done
+    )
 }
 
 alias tig='tig --stat=$COLUMNS'

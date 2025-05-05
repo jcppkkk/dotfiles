@@ -27,6 +27,20 @@ ssh() {
     fi
 }
 
+sshfs() {
+    if [[ ! -d "$2" ]]; then
+        mkdir -vp "$2"
+    fi
+    command sshfs "$@" \
+        -o transform_symlinks \
+        -o dir_cache=yes \
+        -o dcache_max_size=10000 \
+        -o dcache_timeout=86400 \
+        -o max_conns=12 \
+        -o ServerAliveInterval=15 \
+        -o reconnect
+}
+
 alias mv='mv -i'
 alias mkdir='mkdir -p'
 alias grep='grep --color=auto --binary-files=without-match'
@@ -172,16 +186,31 @@ gbr2tag() {
     done
 }
 
-ocohook() {
+githook() {
     # .git/hooks/prepare-commit-msg -> /data/jethro/.local/share/mise/installs/npm-opencommit/3.2.5/lib/node_modules/opencommit/out/cli.cjs
     repo_root=$(git rev-parse --show-toplevel)
     oco_path=$HOME/.local/share/mise/installs/node/latest/lib/node_modules/opencommit/out/cli.cjs
-    if [[ ! -f $repo_root/.git/hooks/prepare-commit-msg ]] || [[ $(readlink "$repo_root/.git/hooks/prepare-commit-msg") != "$oco_path" ]]; then
-        mkdir -p "$repo_root/.git/hooks"
-        ln -fvs "$oco_path" "$repo_root/.git/hooks/prepare-commit-msg"
-    else
-        echo "Already linked"
-    fi
+    mapfile -t git_dirs < <(find . -maxdepth 3 -type d -name ".git")
+    for git_dir in "${git_dirs[@]}"; do
+        if [[ ! -d $git_dir ]]; then
+            continue
+        fi
+        mkdir -p "$git_dir/hooks"
+        target="$git_dir/hooks/prepare-commit-msg"
+        if [[ ! -L $target ]] || [[ $(realpath "$target") != $(realpath "$oco_path") ]]; then
+            rm -f "$target"
+            ln -fvs "$oco_path" "$git_dir/hooks/prepare-commit-msg"
+        fi
+        for hook in "$HOME/.git-templates/hooks/"*; do
+            if [[ ! -f $hook ]]; then
+                continue
+            fi
+            hook_name=$(basename "$hook")
+            if [[ ! -f $git_dir/hooks/$hook_name ]]; then
+                ln -fv "$hook" "$git_dir/hooks/$hook_name"
+            fi
+        done
+    done
 }
 
 alias tig='tig --stat=$COLUMNS'
@@ -248,7 +277,7 @@ gitignore() {
 
 ignoredir() {
     dirpath=$1
-    echo '*' > "$dirpath/.gitignore"
+    echo '*' >"$dirpath/.gitignore"
 }
 
 #-------------------------------------------------------------

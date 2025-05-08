@@ -3,9 +3,6 @@
 # customize PATH
 #-------------------------------------------------------------
 
-PATH_prepend /usr/sbin
-
-PATH_append "$HOME/.bin"
 PATH_append "$HOME/.local/bin"
 PATH_append "$HOME/.cargo/bin"              # rust
 PATH_append "${KREW_ROOT:-$HOME/.krew}/bin" # plugin manager for kubectl

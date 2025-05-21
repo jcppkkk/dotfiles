@@ -311,5 +311,3 @@ include_scripts() {
 }
 
 include_scripts
-
-alias gam="/home/jethro/bin/gamadv-xtd3/gam"

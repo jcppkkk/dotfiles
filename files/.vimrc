@@ -1,6 +1,9 @@
-
 " Protect large files from sourcing and other overhead.
 " Files become read only
+
+set langmenu=zh_TW.utf8
+language zh_TW.utf8
+
 if !exists("my_auto_commands_loaded")
 	let my_auto_commands_loaded = 1
 	" Large files are > 10M
@@ -32,10 +35,14 @@ endif
 call plug#begin()
 " format / indent
 Plug 'roryokane/detectindent'
-autocmd BufReadPost *.jade   DetectIndent
-autocmd BufReadPost *.coffee DetectIndent
-let g:detectindent_preferred_expandtab = 1
 let g:detectindent_preferred_indent = 4
+augroup AutoDetectIndent
+	autocmd!
+	" 清除此群組內之前設定的 autocmd
+	autocmd BufReadPost * :DetectIndent
+	autocmd VimEnter * echom "expandtab"&expandtab "tabstop"&tabstop "shiftwidth"&shiftwidth "softtabstop"&softtabstop
+augroup END
+
 Plug 'vim-scripts/Modeliner'
 
 " syntax checker
@@ -44,12 +51,12 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'rhysd/vim-lsp-ale'
 
 if executable('ruff')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'ruff',
-        \ 'cmd': ['ruff', 'server'],
-        \ 'allowlist': ['python'],
-        \ 'workspace_config': {},
-        \ })
+	au User lsp_setup call lsp#register_server({
+				\ 'name': 'ruff',
+				\ 'cmd': ['ruff', 'server'],
+				\ 'allowlist': ['python'],
+				\ 'workspace_config': {},
+				\ })
 endif
 let g:ale_fix_on_save = 1
 let g:ale_linters = {
@@ -131,29 +138,29 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " 配置一些自定义符号
 let g:easy_align_delimiters = {
-\ '>': { 'pattern': '>>\|=>\|>'  },
-\ '/': {
-\     'pattern':         '//\+\|/\*\|\*/',
-\     'delimiter_align': 'l',
-\     'ignore_groups':   ['!Comment'] },
-\ ']': {
-\     'pattern':       '[[\]]',
-\     'left_margin':   0,
-\     'right_margin':  0,
-\     'stick_to_left': 0
-\   },
-\ ')': {
-\     'pattern':       '[()]',
-\     'left_margin':   0,
-\     'right_margin':  0,
-\     'stick_to_left': 0
-\   },
-\ 'd': {
-\     'pattern':      ' \(\S\+\s*[;=]\)\@=',
-\     'left_margin':  0,
-\     'right_margin': 0
-\   }
-\ }
+			\ '>': { 'pattern': '>>\|=>\|>'  },
+			\ '/': {
+			\     'pattern':         '//\+\|/\*\|\*/',
+			\     'delimiter_align': 'l',
+			\     'ignore_groups':   ['!Comment'] },
+			\ ']': {
+			\     'pattern':       '[[\]]',
+			\     'left_margin':   0,
+			\     'right_margin':  0,
+			\     'stick_to_left': 0
+			\   },
+			\ ')': {
+			\     'pattern':       '[()]',
+			\     'left_margin':   0,
+			\     'right_margin':  0,
+			\     'stick_to_left': 0
+			\   },
+			\ 'd': {
+			\     'pattern':      ' \(\S\+\s*[;=]\)\@=',
+			\     'left_margin':  0,
+			\     'right_margin': 0
+			\   }
+			\ }
 
 Plug 'Valloric/ListToggle'
 let g:lt_location_list_toggle_map = '<leader>l'
@@ -165,11 +172,11 @@ imap <silent> <C-j> <Plug>(copilot-previous)
 imap <silent> <C-k> <Plug>(copilot-next)
 imap <silent> <C-\> <Plug>(copilot-suggest)
 let g:copilot_filetypes = {
-    \ 'gitcommit': v:true,
-    \ 'markdown': v:true,
-    \ 'yaml': v:true,
-    \ 'perl': v:true
-    \ }
+			\ 'gitcommit': v:true,
+			\ 'markdown': v:true,
+			\ 'yaml': v:true,
+			\ 'perl': v:true
+			\ }
 let g:copilot_node_command = "~/.local/share/mise/installs/node/latest/bin/node"
 
 "========================== Themes
@@ -188,8 +195,8 @@ let g:airline#extensions#tabline#excludes = []
 let g:airline#extensions#tabline#exclude_preview = 1
 let g:airline#extensions#tabline#fnametruncate = 8
 augroup open-tabs
-    au!
-    au VimEnter * ++nested if !&diff | tab all | tabfirst | endif
+	au!
+	au VimEnter * ++nested if !&diff | tab all | tabfirst | endif
 augroup end
 map <C-left>    <Plug>AirlineSelectPrevTab " previous buffer
 map <C-right>   <Plug>AirlineSelectNextTab " next buffer
@@ -217,10 +224,10 @@ set modelines=5         " no modelines [http://www.guninski.com/vim1.html]
 set modeline
 let g:secure_modelines_verbose=1 " securemodelines vimscript
 function! AppendModeline()
-  let l:modeline = printf(" vim: set ts=%d sw=%d tw=%d %set :",
-        \ &tabstop, &shiftwidth, &textwidth, &expandtab ? '' : 'no')
-  let l:modeline = substitute(&commentstring, "%s", l:modeline, "")
-  call append(line("$"), l:modeline)
+	let l:modeline = printf(" vim: set shiftwidth=%d tw=%d %set :",
+				\ &shiftwidth, &textwidth, &expandtab ? '' : 'no')
+	let l:modeline = substitute(&commentstring, "%s", l:modeline, "")
+	call append(line("$"), l:modeline)
 endfunction
 nnoremap <silent> <Leader>ml :call AppendModeline()<CR>
 
@@ -362,21 +369,21 @@ function! SaveAllExit()
 	endtry
 endfun
 
-let g:indent_mod = -1
+let g:indent_mod = 0
 function! Switch_indent()
-	let g:indent_mod = (g:indent_mod + 1 ) % 4
 	if g:indent_mod == 0
 		DetectIndent
 	endif
 	if g:indent_mod == 1
-		set softtabstop=0 sw=4 tabstop=4 expandtab
+		set expandtab softtabstop=0 sw=4
 	endif
 	if g:indent_mod == 2
-		set softtabstop=0 sw=8 tabstop=8 noexpandtab
+		set noexpandtab softtabstop=0 sw=8
 	endif
 	if g:indent_mod == 3
-		set softtabstop=0 sw=4 tabstop=4 noexpandtab
+		set noexpandtab softtabstop=0 sw=4
 	endif
+	let g:indent_mod = (g:indent_mod + 1 ) % 4
 	echom "softtabstop"&softtabstop "sw"&sw "tabstop"&tabstop "expandtab"&expandtab
 endfunction
 
@@ -464,37 +471,37 @@ set t_Co=256
 " auto load extensions for different file types
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-autocmd BufNewFile,BufReadPost *.coffee   setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.erb      setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.gcov     setl filetype=gcov
-autocmd BufNewFile,BufReadPost Rockerfile setl filetype=Dockerfile
-autocmd BufNewFile,BufReadPost *.go       setl shiftwidth=4 noexpandtab   tabstop=4
-autocmd BufNewFile,BufReadPost *.hbs      setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.json     setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.liquid   setl shiftwidth=4 softtabstop=4 expandtab
-autocmd BufNewFile,BufReadPost *.xsd      setl shiftwidth=2 softtabstop=2 expandtab
-autocmd BufNewFile,BufReadPost *.toml     setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               nginx      setl shiftwidth=4 softtabstop=4 expandtab
-autocmd FileType               log        AnsiEsc
-autocmd FileType               Dockerfile setl shiftwidth=2 softtabstop=2 tabstop=8
-autocmd FileType               Podfile    setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               c          setl fo=cq        wm=0          formatoptions+=r
-autocmd FileType               css        setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               html       setl shiftwidth=4 softtabstop=4 expandtab
-autocmd FileType               jade       setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               javascript setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               make       setl shiftwidth=2 softtabstop=2 tabstop=8 iskeyword=-,@,48-57,_,192-255
-autocmd FileType               markdown   setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               php        setl shiftwidth=4 softtabstop=4 expandtab
-autocmd FileType               python     setl makeprg=pychecker\ -Q\ --only\ %\ 2>/dev/null efm=%f:%l:\ %m shiftwidth=4 softtabstop=4 expandtab cindent
-autocmd FileType               ruby       setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               scss       setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               xml        setl shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType               gitcommit  setl shiftwidth=2 softtabstop=2 expandtab formatoptions+=mB
-autocmd FileType               yaml       setl ts=2 sts=2 sw=2 expandtab indentkeys-=0# indentkeys-=<:> iskeyword=-,@,48-57,_,192-255
-autocmd FileType               sh         syntax sync fromstart | DetectIndent
-autocmd FileType               bash       syntax sync fromstart | DetectIndent
-autocmd FileType               gitcommit  call setpos('.', [0, 1, 1, 0])|call ToggleSpell()
+" '<,'>!sort -k5,6
+autocmd FileType  coffee     setl expandtab    shiftwidth=2
+autocmd FileType  css        setl expandtab    shiftwidth=2
+autocmd FileType  gitcommit  setl expandtab    shiftwidth=2 formatoptions+=mB | call setpos('.', [0, 1, 1, 0])|call ToggleSpell()
+autocmd FileType  jade       setl expandtab    shiftwidth=2
+autocmd FileType  javascript setl expandtab    shiftwidth=2
+autocmd FileType  json       setl expandtab    shiftwidth=2
+autocmd FileType  markdown   setl expandtab    shiftwidth=2
+autocmd FileType  Podfile    setl expandtab    shiftwidth=2
+autocmd FileType  ruby       setl expandtab    shiftwidth=2
+autocmd FileType  scss       setl expandtab    shiftwidth=2
+autocmd FileType  toml       setl expandtab    shiftwidth=2
+autocmd FileType  xml        setl expandtab    shiftwidth=2
+autocmd FileType  xsd        setl expandtab    shiftwidth=2
+autocmd FileType  yaml       setl expandtab    shiftwidth=2 indentkeys-=0# indentkeys-=<:> iskeyword=-,@,48-57,_,192-255
+autocmd FileType  erb        setl expandtab    shiftwidth=4
+autocmd FileType  hbs        setl expandtab    shiftwidth=4
+autocmd FileType  html       setl expandtab    shiftwidth=4
+autocmd FileType  liquid     setl expandtab    shiftwidth=4
+autocmd FileType  nginx      setl expandtab    shiftwidth=4
+autocmd FileType  php        setl expandtab    shiftwidth=4
+autocmd FileType  python     setl expandtab    shiftwidth=4 cindent makeprg=pychecker\ -Q\ --only\ %\ 2>/dev/null efm=%f:%l:\ %m
+autocmd FileType  go         setl noexpandtab  shiftwidth=4
+autocmd FileType  Dockerfile setl noexpandtab  shiftwidth=2
+autocmd FileType  make       setl noexpandtab  shiftwidth=2 iskeyword=-,@,48-57,_,192-255
+
+autocmd BufReadPre,BufNewFile *.rockerfile setlocal filetype=Dockerfile
+autocmd FileType  log        AnsiEsc
+autocmd FileType  sh         syntax sync fromstart
+autocmd FileType  bash       syntax sync fromstart
+autocmd FileType  c          setl fo=cq        wm=0          formatoptions+=r
 
 
 " The Silver Searcher
@@ -541,18 +548,18 @@ elseif &term == "putty-256color"
 	set term=xterm-256color
 endif
 function! ToggleColumn()
-    " Toggle the display of the line number
-    set invnumber
-    " Toggle GitGutter signs
-    GitGutterSignsToggle
-    " Toggle ALE signs
-    ALEToggle
-    " Toggle vim-lsp signs
-    if &signcolumn == 'auto'
-        setlocal signcolumn=no
-    else
-        setlocal signcolumn=auto
-    endif
+	" Toggle the display of the line number
+	set invnumber
+	" Toggle GitGutter signs
+	GitGutterSignsToggle
+	" Toggle ALE signs
+	ALEToggle
+	" Toggle vim-lsp signs
+	if &signcolumn == 'auto'
+		setlocal signcolumn=no
+	else
+		setlocal signcolumn=auto
+	endif
 endfunction
 
 map  <M-Up>      :call <SID>LocationPrevious()<CR>

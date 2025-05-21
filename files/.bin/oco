@@ -1,0 +1,4 @@
+#!/bin/bash
+set -x
+oco=$(mise which oco)
+mise exec node@latest -- "$oco" "$@"

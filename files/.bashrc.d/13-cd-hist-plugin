@@ -10,26 +10,33 @@ if [[ ! ":${chpwd_functions[*]}:" =~ :append_cdhist: ]]; then
 fi
 unset IFS
 
-# build sed args to reverse path to home links
-readarray -t home_links < <(find ~/ -maxdepth 1 -type l -xtype d -print)
-sed_args=()
-for link in "${home_links[@]}"; do
-    target=$(readlink "$link")
-    sed_args+=(-e "s@^$target@$link@")
-done
-
 append_cdhist() {
-    echo "$PWD" | sed "${sed_args[@]}" -e "s@^~@$HOME@" >>"$cdhist_file"
+    real_dir=$(realpath "$PWD" 2>/dev/null || echo "$PWD")
+    echo "$real_dir" >>"$cdhist_file"
 }
 
 cleanup_cdhist() {
+    # Check if lock file exists and is older than 300 seconds
+    if [[ -f "$cdhist_file.lock" ]]; then
+        lock_age=$(($(date +%s) - $(stat -c %Y "$cdhist_file.lock")))
+        if ((lock_age > 300)); then
+            message="Warning: cdhist lock file is older than 300 seconds"
+            tmux list-clients -F "#{client_name}" 2>/dev/null | xargs -I{} tmux display-message -c {} "$message" 2>/dev/null
+            rm -f "$cdhist_file.lock"
+        fi
+    fi
     # remove duplicates and non-existing directories
-    tac "$cdhist_file" \
-        | sed "${sed_args[@]}" -e "s@^~@$HOME@" \
-        | awk '!x[$0]++' \
-        | while read -r line; do timeout 0.5 test -d "$line" && echo "$line"; done \
-        | tac \
-        | sponge "$cdhist_file"
+    (
+        flock --nonblock 9 || exit 1
+        tac "$cdhist_file" |
+            awk '!x[$0]++' |
+            while read -r line; do
+                real_line=$(timeout 0.5 realpath "$line" 2>/dev/null || echo "$line")
+                timeout 0.5 test -d "$real_line" && echo "$real_line"
+            done |
+            tac |
+            sponge "$cdhist_file"
+    ) 9>"$cdhist_file.lock"
 }
 
 cd_widget() {

@@ -31,6 +31,8 @@ case $platform in
             curl
             parallel
             pv
+            flocks
+            util-linux # flock
             # Filesystem tools
             cifs-utils
             plocate

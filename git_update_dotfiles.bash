@@ -6,8 +6,6 @@ trap 'clean_up $LINENO' INT ERR
 set -e
 
 PATH=$PATH:/usr/local/bin
-# shellcheck source=/dev/null
-source "$HOME/venv/bin/activate"
 
 hash git || exit
 hash vim || exit
@@ -23,8 +21,6 @@ else
 fi
 
 { hash powerline-daemon 2>/dev/null && powerline-daemon -k; } || true
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-pip install -U -r "${script_dir}/requirements_dotfiles.txt"
 
 if [ -d "$HOME"/.vim/vundle ]; then
     mv -f "$HOME"/.vim/{vundle,Vundle.vim}

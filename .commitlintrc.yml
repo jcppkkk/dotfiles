@@ -11,18 +11,14 @@ rules:
   body-max-line-length:
     - 2
     - always
-    - 35
+    - 80
   footer-leading-blank:
     - 2
     - always
-  footer-max-line-length:
-    - 2
-    - always
-    - 35
   header-max-length:
     - 2
     - always
-    - 35
+    - 80
   subject-case:
     - 2
     - never

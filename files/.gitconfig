@@ -25,7 +25,7 @@
 	autocrlf = input
 	editor = vim
 	excludesfile = ~/.gitignore_global
-	pager = delta
+#	pager = delta
 	preloadindex = true
 	whitespace = cr-at-eol
 [credential]
@@ -53,11 +53,15 @@
 	defaultBranch = main
 [merge]
 	conflictStyle = zdiff3
-	tool = bc
+	tool = meld
 [mergetool]
 	keepBackup = false
 [mergetool "meld"]
-	cmd = flatpak run org.gnome.meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+	cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
+[mergetool "bc"]
+	trustExitCode = true
+[difftool "bc"]
+	trustExitCode = true
 [push]
 	default = current
 [rebase]
@@ -65,14 +69,10 @@
 [rerere]
 	autoupdate = true
 	enabled = 1
-[sequence]
-	editor = interactive-rebase-tool
+#[sequence]
+#	editor = interactive-rebase-tool
 [status]
 	submoduleSummary = false
-[mergetool "bc"]
-	trustExitCode = true
-[difftool "bc"]
-	trustExitCode = true
 [alias]
 	auto-mr = "!f() { \
 		main_branch=`git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`; \
@@ -86,8 +86,8 @@
 	dunk = !git diff | dunk
 [fetch]
 	prune = true
-[interactive]
-	diffFilter = delta --color-only
+#[interactive]
+#	diffFilter = delta --color-only
 [delta]
 	navigate = true
 	side-by-side = true

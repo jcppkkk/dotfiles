@@ -40,7 +40,7 @@ augroup AutoDetectIndent
 	autocmd!
 	" 清除此群組內之前設定的 autocmd
 	autocmd BufReadPost * :DetectIndent
-	autocmd VimEnter * echom "expandtab"&expandtab "tabstop"&tabstop "shiftwidth"&shiftwidth "softtabstop"&softtabstop
+	"autocmd VimEnter * echom "expandtab"&expandtab "tabstop"&tabstop "shiftwidth"&shiftwidth "softtabstop"&softtabstop
 augroup END
 
 Plug 'vim-scripts/Modeliner'
@@ -93,6 +93,7 @@ Plug 'wellle/context.vim'
 Plug 'mileszs/ack.vim'
 let g:ackprg = 'rg --vimgrep --smart-case'
 nnoremap <silent> <Leader>rg :Ack <C-R><C-W><CR>
+Plug 'jvirtanen/vim-hcl'
 
 """"""""""""""""""" language support - Docker
 Plug 'ekalinin/Dockerfile.vim'
@@ -274,6 +275,12 @@ set backspace=eol,start,indent  " allow backspacing over indent, eol, & start
 set undolevels=1000             " number of forgivable mistakes
 set updatecount=100             " write swap file to disk every 100 chars
 set complete=.,w,b,u,U,t,i,d    " do lots of scanning on tab completion
+" 1. netrw 不保留原本遠端的目錄階層（只抓檔案放在同一個目錄）
+let g:netrw_keepdir = 0
+" 2. 指定 netrw 把本地暫存檔案放到哪裡（預設是跟你工作目錄切出去的 .netrwhist/ ）
+"    這裡改成 /tmp/vim_netrw，只要確保你有寫入權限即可。
+let g:netrw_localcopydir = '/tmp/vim_netrw'
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " searching...
@@ -474,7 +481,7 @@ set t_Co=256
 " '<,'>!sort -k5,6
 autocmd FileType  coffee     setl expandtab    shiftwidth=2
 autocmd FileType  css        setl expandtab    shiftwidth=2
-autocmd FileType  gitcommit  setl expandtab    shiftwidth=2 formatoptions+=mB | call setpos('.', [0, 1, 1, 0])|call ToggleSpell()
+autocmd FileType  gitcommit  setl expandtab    shiftwidth=2 nocindent formatoptions+=mB | call setpos('.', [0, 1, 1, 0])|call ToggleSpell()
 autocmd FileType  jade       setl expandtab    shiftwidth=2
 autocmd FileType  javascript setl expandtab    shiftwidth=2
 autocmd FileType  json       setl expandtab    shiftwidth=2

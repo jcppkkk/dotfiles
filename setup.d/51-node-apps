@@ -10,8 +10,9 @@ else
 fi
 
 eval "$("$HOME/.local/bin/mise" activate bash)"
-mise plugin i yarn
 mise use --global node@latest node@20
 
+mise use -g npm:@openai/codex
 mise exec node@latest -- npm update -g npm
 mise exec node@latest -- npm install -g @commitlint/{cli,config-conventional,load} opencommit
+mise exec node@latest -- npm install -g task-master-ai

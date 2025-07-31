@@ -11,6 +11,10 @@
 /files/.config/.gitignore
 /files/.fonts/.uuid
 /files/.local/share
+/files/.vim/.netrwhist
+/files/.vim/autoload/plug.vim.old
+/files/.vim/plugged/
+
 
 
 # ignore ansible temprary file

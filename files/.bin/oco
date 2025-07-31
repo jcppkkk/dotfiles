@@ -1,4 +1,3 @@
 #!/bin/bash
-set -x
-oco=$(mise which oco)
-mise exec node@latest -- "$oco" "$@"
+target=$(mise exec node@latest -- which oco)
+mise exec node@latest -- "$target" "$@"

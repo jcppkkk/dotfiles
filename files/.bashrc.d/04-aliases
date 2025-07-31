@@ -217,7 +217,7 @@ get_repo_relative_path() {
     # 2. 相對路徑於當前目錄
     # 3. 相對路徑於 repo_root
     for candidate in "$input" "$PWD/$input" "$repo_root/$input"; do
-        if ! abs_candidate=$(realpath -e "$candidate" 2>/dev/null); then
+        if ! abs_candidate=$(realpath -s -e "$candidate" 2>/dev/null); then
             continue
         fi
         if [[ "$abs_candidate" == "$repo_root"* ]]; then

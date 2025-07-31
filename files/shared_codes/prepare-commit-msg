@@ -1,5 +1,5 @@
 #!/bin/bash
-target=$(realpath "$(which oco)")
+target=$(mise exec node@latest -- which oco)
 hook_dir=$(dirname "$0")
 
 # in order to trick opencommit, we need to create a symlink ending like .git/hooks/prepare-commit-msg

@@ -311,3 +311,7 @@ include_scripts() {
 }
 
 include_scripts
+
+# Task Master aliases added on 2025/7/24
+alias tm='task-master'
+alias taskmaster='task-master'

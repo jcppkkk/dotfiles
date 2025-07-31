@@ -9,25 +9,11 @@
 /files/.bashrc.d/bashrc_local
 /files/.bashrc.d/local_env
 /files/.config/.gitignore
-/files/.config/systemd/*
-!/files/.config/systemd/user/rclone@.service
 /files/.fonts/.uuid
 /files/.local/share
-/files/.vim/.netrwhist
-/files/.vim/autoload/
-/files/.vim/bundle
-/files/.vim/plugged/
-/files/.vim/sessions/
-/files/.vim/spell/
 
 
 # ignore ansible temprary file
 /site.retry
-files/.config/QtProject.conf
-files/.config/k9s/
-files/.config/keepassxc/
-files/.config/libreoffice/
-files/.config/org.keshavnrj.ubuntu/
-files/.config/pix/
 /.opencommit-commitlint
 /.env-store*

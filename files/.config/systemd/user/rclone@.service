@@ -19,7 +19,6 @@ ExecStartPre=-/bin/fusermount -u %h/mnt/%i
 ExecStartPre=-/usr/bin/mkdir -p %h/mnt/%i
 ExecStart= \
   /usr/bin/rclone mount \
-    -vv \
     --config=%h/.config/rclone/rclone.conf \
     --network-mode \
     --vfs-cache-mode full \

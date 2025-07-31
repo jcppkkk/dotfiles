@@ -32,6 +32,7 @@ case $platform in
             parallel
             pv
             flocks
+            entr       # required by tmux plugins (tpm)
             util-linux # flock
             # Filesystem tools
             cifs-utils
@@ -75,6 +76,7 @@ case $platform in
             flameshot
             xclip
             remmina remmina-plugin-rdp
+            xdotool # cursor-autopilot
             # Mint clipboard manager
             copyq
         )
